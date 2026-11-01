@@ -16,67 +16,78 @@
      "interface": "IAssemblyDoc",
      "member": "AddMate5",
      "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
-     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IAssemblyDoc",
      "member": "GetComponents",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-     "anchor": "Gets all of the components in the active configuration of this assembly."
+     "anchor": "Gets all of the components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "GetPathName",
-     "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
-     "interface": "IDesignTable",
+     "interface": "IModelDoc2",
      "member": "GetTitle",
-     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
-     "anchor": "Gets the design table title."
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetTypeName2",
      "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
+     "anchor": "Gets the type of feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IMateLoadReference",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IMateLoadReference/Name.md",
+     "anchor": "Gets the name of this mate load reference.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
-     "anchor": "Gets or sets the name of the selected component."
+     "anchor": "Gets or sets the name of the selected component.",
+     "kind": "property"
     },
     {
      "interface": "IAnnotation",
      "member": "Select2",
      "path": "C:/swapi/types/IAnnotation/Select2.md",
-     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]]."
+     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]].",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -102,67 +113,78 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IAssemblyDoc",
      "member": "GetComponents",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-     "anchor": "Gets all of the components in the active configuration of this assembly."
+     "anchor": "Gets all of the components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetPathName",
      "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "anchor": "Gets the full path name for this component.",
+     "kind": "method"
     },
     {
-     "interface": "IDesignTable",
+     "interface": "IModelDoc2",
      "member": "GetTitle",
-     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
-     "anchor": "Gets the design table title."
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "IsSuppressed",
      "path": "C:/swapi/types/IComponent2/IsSuppressed.md",
-     "anchor": "Gets whether this component is suppressed."
+     "anchor": "Gets whether this component is suppressed.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
-     "anchor": "Gets or sets the name of the selected component."
+     "anchor": "Gets or sets the name of the selected component.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "Select4",
      "path": "C:/swapi/types/IComponent2/Select4.md",
-     "anchor": "Selects this component."
+     "anchor": "Selects this component.",
+     "kind": "method"
     },
     {
      "interface": "IModelDocExtension",
      "member": "SelectByID2",
      "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
-     "anchor": "Selects the specified entity."
+     "anchor": "Selects the specified entity.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "SetSuppression2",
      "path": "C:/swapi/types/IComponent2/SetSuppression2.md",
-     "anchor": "Sets the suppression state of this component."
+     "anchor": "Sets the suppression state of this component.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IComponent2",
      "member": "Visible",
-     "path": "C:/swapi/types/IAnnotation/Visible.md",
-     "anchor": "Gets or sets the visibility state of this annotation."
+     "path": "C:/swapi/types/IComponent2/Visible.md",
+     "anchor": "Gets or sets the visibility state of this component.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -180,8 +202,8 @@
    "claim": "Add a concentric mate between two components by locating matching cylinder faces.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-    "anchor": "Gets all of the components in the active configuration of this assembly."
+    "path": "C:/swapi/types/IConcentricMateFeatureData/_overview.md",
+    "anchor": "Allows access to a concentric mate feature."
    },
    "members": [
     {
@@ -191,22 +213,22 @@
      "anchor": "Gets all of the components in the active configuration of this assembly."
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "GetPathName",
-     "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
     },
     {
-     "interface": "IDesignTable",
+     "interface": "IModelDoc2",
      "member": "GetTitle",
-     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
-     "anchor": "Gets the design table title."
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
     },
     {
      "interface": "IFeature",
@@ -215,25 +237,31 @@
      "anchor": "Gets the type of feature."
     },
     {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    },
-    {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
      "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "",
+     "member": "Name",
+     "documented": false,
+     "gap": "实现取的是 `IAssemblyDoc::AddMate5` 的返回值（该页 ## Returns 逐字「[[Mate]]」）；`IMate` / `IMate2` 在 `C:\\swapi\\types` 下都没有 `Name` 成员页，`by_member_name` 索引里 `Name` 只挂在 IFeature / IBomFeature / IMateLoadReference 等 24 个接口上 ⇒ 草稿指向的 `IMateLoadReference.Name` 是**另一个对象**的成员，已订正为「查不到」。按铁律 5 记账，不编页。"
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g1",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 component"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IConcentricMateFeatureData/_overview（Description「Allows access to a concentric mate feature.」+ Remarks「Places selections so that they share the same axis.」）、IAssemblyDoc/AddMate5（Returns=Mate、Parameters 逐条、Remarks 的选择 marks 与 CreateMate 分流）、IMate2 全成员表（**无 Name**）、IComponent2/Name2、IFeature/GetTypeName2。★ 首句与官方同一件事。★ 草稿把 `mate.Name` 指到 ★ 草稿把 `mate.Name` 指到 IMateLoadReference.Name，是**指错对象**——已改记缺口。★ **补登 IAssemblyDoc.AddMate5**：它是本工具真正建配合的 COM 调用（提取器只跨一层，实际在 `add_concentric_mate_by_cylinders → add_mate5_checked` 更深处）。⚠ 留一条**未真机验证**的观察（不进 defects，因为不影响首句）：`mate` 是 AddMate5 回的 [[Mate]] 对象，官方 `IMate2` 无 `Name` ⇒ 未传 mate_name 时那一句 `get_com_member(mate, \"Name\")` 可能取不到值。"
    }
   },
   {
@@ -250,67 +278,78 @@
      "interface": "IAssemblyDoc",
      "member": "AddMate5",
      "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
-     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IAssemblyDoc",
      "member": "GetComponents",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-     "anchor": "Gets all of the components in the active configuration of this assembly."
+     "anchor": "Gets all of the components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "GetPathName",
-     "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
-     "interface": "IDesignTable",
+     "interface": "IModelDoc2",
      "member": "GetTitle",
-     "path": "C:/swapi/types/IDesignTable/GetTitle.md",
-     "anchor": "Gets the design table title."
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetTypeName2",
      "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
+     "anchor": "Gets the type of feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IMateLoadReference",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IMateLoadReference/Name.md",
+     "anchor": "Gets the name of this mate load reference.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
-     "anchor": "Gets or sets the name of the selected component."
+     "anchor": "Gets or sets the name of the selected component.",
+     "kind": "property"
     },
     {
      "interface": "IAnnotation",
      "member": "Select2",
      "path": "C:/swapi/types/IAnnotation/Select2.md",
-     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]]."
+     "anchor": "Obsolete. Superseded by [[IAnnotation::Select3]].",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -336,7 +375,8 @@
      "interface": "IComponent2",
      "member": "SetTransformAndSolve3",
      "path": "C:/swapi/types/IComponent2/SetTransformAndSolve3.md",
-     "anchor": "Sets the transform and solves for the mates for this component."
+     "anchor": "Sets the transform and solves for the mates for this component.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -381,31 +421,36 @@
      "interface": "IInterferenceDetectionMgr",
      "member": "Done",
      "path": "C:/swapi/types/IInterferenceDetectionMgr/Done.md",
-     "anchor": "Stops the interference detection."
+     "anchor": "Stops the interference detection.",
+     "kind": "method"
     },
     {
      "interface": "IAssemblyDoc",
      "member": "GetComponentCount",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponentCount.md",
-     "anchor": "Gets the number of components in the active configuration of this assembly."
+     "anchor": "Gets the number of components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
      "interface": "IInterferenceDetectionMgr",
      "member": "GetInterferenceCount",
      "path": "C:/swapi/types/IInterferenceDetectionMgr/GetInterferenceCount.md",
-     "anchor": "Calculates and gets the number of interferences."
+     "anchor": "Calculates and gets the number of interferences.",
+     "kind": "method"
     },
     {
      "interface": "IInterferenceDetectionMgr",
      "member": "GetInterferences",
      "path": "C:/swapi/types/IInterferenceDetectionMgr/GetInterferences.md",
-     "anchor": "Calculates and gets the interferences."
+     "anchor": "Calculates and gets the interferences.",
+     "kind": "method"
     },
     {
      "interface": "IInterference",
      "member": "Volume",
      "path": "C:/swapi/types/IInterference/Volume.md",
-     "anchor": "Gets the volume of the interference."
+     "anchor": "Gets the volume of the interference.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -415,50 +460,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IInterferenceDetectionMgr.Done 的官方 Description 与首句共享词干 detection/interference"
-   }
-  },
-  {
-   "tool": "solidworks_assembly_component_pattern_report",
-   "impl": "scripts/sw_assembly.py:iter_feature_tree",
-   "claim": "List the assembly feature tree node by node, including any component-pattern nodes.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-    "anchor": "Gets the first feature in this component."
-   },
-   "members": [
-    {
-     "interface": "IComponent2",
-     "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetFirstSubFeature",
-     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
-     "anchor": "Gets the first sub-feature that belongs to this feature."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextFeature",
-     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextSubFeature",
-     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
-     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
    }
   },
   {
@@ -478,44 +479,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
-   }
-  },
-  {
-   "tool": "solidworks_assembly_dissolve",
-   "impl": "scripts/sw_assembly_doc.py:dissolve_assembly",
-   "claim": "Delete the selected subassembly by dissolving it.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "Extension",
-     "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
    }
   },
   {
@@ -551,7 +514,8 @@
      "interface": "IAssemblyDoc",
      "member": "EditAssembly",
      "path": "C:/swapi/types/IAssemblyDoc/EditAssembly.md",
-     "anchor": "Switches back to the assembly document for editing."
+     "anchor": "Switches back to the assembly document for editing.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -577,37 +541,43 @@
      "interface": "ISketchManager",
      "member": "ActiveSketch",
      "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
-     "anchor": "Gets the active sketch."
+     "anchor": "Gets the active sketch.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "ISketchManager",
      "member": "InsertExplodeLineSketch",
      "path": "C:/swapi/types/ISketchManager/InsertExplodeLineSketch.md",
-     "anchor": "Inserts or closes an explode line sketch in an exploded view."
+     "anchor": "Inserts or closes an explode line sketch in an exploded view.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -652,7 +622,8 @@
      "interface": "IComponent2",
      "member": "ListExternalFileReferencesCount",
      "path": "C:/swapi/types/IComponent2/ListExternalFileReferencesCount.md",
-     "anchor": "Gets the number of external references on the component."
+     "anchor": "Gets the number of external references on the component.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -703,50 +674,6 @@
    }
   },
   {
-   "tool": "solidworks_assembly_iter_feature_tree",
-   "impl": "scripts/sw_assembly.py:iter_feature_tree",
-   "claim": "List the active assembly feature tree node by node, covering components, features and mates.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-    "anchor": "Gets the first feature in this component."
-   },
-   "members": [
-    {
-     "interface": "IComponent2",
-     "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetFirstSubFeature",
-     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
-     "anchor": "Gets the first sub-feature that belongs to this feature."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextFeature",
-     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextSubFeature",
-     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
-     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 component/feature"
-   }
-  },
-  {
    "tool": "solidworks_assembly_list_components",
    "impl": "scripts/sw_assembly.py:get_components",
    "claim": "List the components of the active assembly with name, file path, suppression state and visibility.",
@@ -760,31 +687,36 @@
      "interface": "IAssemblyDoc",
      "member": "GetComponents",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-     "anchor": "Gets all of the components in the active configuration of this assembly."
+     "anchor": "Gets all of the components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetPathName",
      "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "anchor": "Gets the full path name for this component.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "IsSuppressed",
      "path": "C:/swapi/types/IComponent2/IsSuppressed.md",
-     "anchor": "Gets whether this component is suppressed."
+     "anchor": "Gets whether this component is suppressed.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
-     "anchor": "Gets or sets the name of the selected component."
+     "anchor": "Gets or sets the name of the selected component.",
+     "kind": "property"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IComponent2",
      "member": "Visible",
-     "path": "C:/swapi/types/IAnnotation/Visible.md",
-     "anchor": "Gets or sets the visibility state of this annotation."
+     "path": "C:/swapi/types/IComponent2/Visible.md",
+     "anchor": "Gets or sets the visibility state of this component.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -794,62 +726,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IAssemblyDoc.GetComponents 的官方 Description 与首句共享词干 active/assembly/component"
-   }
-  },
-  {
-   "tool": "solidworks_assembly_list_mates",
-   "impl": "scripts/sw_assembly.py:collect_mate_feature_summary",
-   "claim": "List the mate group and its mate features with name, type and tree depth.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-    "anchor": "Gets the type of feature."
-   },
-   "members": [
-    {
-     "interface": "IComponent2",
-     "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetFirstSubFeature",
-     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
-     "anchor": "Gets the first sub-feature that belongs to this feature."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextFeature",
-     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextSubFeature",
-     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
-     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetTypeName2",
-     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
-    },
-    {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeature.GetTypeName2 的官方 Description 与首句共享词干 type"
    }
   },
   {
@@ -866,7 +742,8 @@
      "interface": "IAssemblyDoc",
      "member": "ReplaceComponents2",
      "path": "C:/swapi/types/IAssemblyDoc/ReplaceComponents2.md",
-     "anchor": "Replaces one or more selected components with another model."
+     "anchor": "Replaces one or more selected components with another model.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -892,43 +769,50 @@
      "interface": "IAssemblyDoc",
      "member": "GetComponents",
      "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
-     "anchor": "Gets all of the components in the active configuration of this assembly."
+     "anchor": "Gets all of the components in the active configuration of this assembly.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetExcludeFromBOM2",
      "path": "C:/swapi/types/IComponent2/GetExcludeFromBOM2.md",
-     "anchor": "Gets whether this component is excluded from the bills of materials (BOMs) in the specified configurations."
+     "anchor": "Gets whether this component is excluded from the bills of materials (BOMs) in the specified configurations.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetModelDoc2",
      "path": "C:/swapi/types/IComponent2/GetModelDoc2.md",
-     "anchor": "Gets the model document for this component."
+     "anchor": "Gets the model document for this component.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetPathName",
      "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "anchor": "Gets the full path name for this component.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "Name2",
      "path": "C:/swapi/types/IComponent2/Name2.md",
-     "anchor": "Gets or sets the name of the selected component."
+     "anchor": "Gets or sets the name of the selected component.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "ReferencedConfiguration",
      "path": "C:/swapi/types/IComponent2/ReferencedConfiguration.md",
-     "anchor": "Gets or sets the active configuration used by this component."
+     "anchor": "Gets or sets the active configuration used by this component.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -978,11 +862,11 @@
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g1",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.EditSuppress2 的官方 Description 与首句共享词干 component"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/EditSuppress2（Description / Returns / Remarks：等价于已废弃的 EditSuppress；在装配里会关闭组件文件且不自动保存；PropertyManager 打开时不允许抑制）与 IModelDoc2/EditSuppress（Obsolete 行）。★ 首句成立；实现选的是**后继入口** EditSuppress2，docstring 记了真机证据。"
    }
   },
   {
@@ -1004,11 +888,11 @@
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g1",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.EditUnsuppress2 的官方 Description 与首句共享词干 component"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/EditUnsuppress2（Description「Unsuppresses the selected feature or component.」、Returns、Remarks 说明与已废弃的 EditUnsuppress 同款）与 EditUnsuppress（Obsolete 行）。首句成立。"
    }
   },
   {
@@ -1047,6 +931,338 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "无官方成员页可对照（已按铁律 5 记账）⇒ 以实现文件里的函数定义行为证据"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_add_mate_checked",
+   "impl": "scripts/sw_assembly.py:add_mate5_checked",
+   "claim": "Add a mate between two preselected entities with the 15-parameter AddMate5 call.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+    "anchor": "If entities are not preselected, then ErrorStatus is swAddMateError_e.swAddMateError_IncorrectSelections, and nothing is returned."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IMate2",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IMate2 目录里无语义成员 Name（只有 Alignment/CanBeFlipped/DisplayDimension*/Distance*ArcCondition/Flipped/ForceMisalignment/Get*/Has* 等）；C:\\swapi\\index\\by_member_name.md 搜 `Name` 在 **IMate2** 上 0 命中（只有 IMateReference/IMateLoadReference 的 Name）；C:\\swapi\\types 下无 IMate/IMate2 的 Name.md。实现对 `mate.Name = name` 外层包 try/except pass ⇒ 这一句即使无效也不会报错。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IAssemblyDoc/AddMate5.md 的 Description/Signature/Parameters/Remarks 全页。首句三件事逐条对上：① Signature 参数数了**正好 15 个**（MateTypeFromEnum, AlignFromEnum, Flip, Distance, DistanceAbsUpperLimit, DistanceAbsLowerLimit, GearRatioNumerator, GearRatioDenominator, Angle, AngleAbsUpperLimit, AngleAbsLowerLimit, ForPositioningOnly, LockRotation, WidthMateOption, out ErrorStatus）；② 『between two preselected entities』＝官方 Remarks 第 1-3 步（先 ClearSelection2 → SelectByID2 各选一个实体 → 调本方法）＋『If entities are not preselected, then ErrorStatus is …IncorrectSelections, and nothing is returned.』；③ 描述第二句的 Obsolete 就是官方 Description 原文，Remarks 还给了分流（标准/高级/机械 ⇒ CreateMate）。实现 `sw_assembly.py::add_mate5_checked` 调 AddMate5(15 参) 并检查 swAddMateError_e（0 Unknown / 1 NoError 放行），`clear_selection=True`（默认）时按官方第 4 步 ClearSelection2(True)。★ 成员缺口如实记：`mate.Name = name`（可选参数）在官方页里查不到 IMate2.Name，记 documented:false；改名应走 IFeature.Name。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_add_parallel_mate",
+   "impl": "scripts/sw_assembly.py:add_mate_parallel",
+   "claim": "Add a parallel mate between two named faces of the active assembly.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/enums/swMateType_e.md",
+    "anchor": "swMatePARALLEL | 3"
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IMate2",
+     "member": "Name",
+     "documented": false,
+     "gap": "同 add_mate5_checked：C:\\swapi\\types\\IMate2 无 Name 成员页，C:\\swapi\\index\\by_member_name.md 里 IMate2 的 `Name` 0 命中；实现里 `mate.Name = name` 在 try/except 内（本工具走 add_mate5_checked，name 默认 None ⇒ 实际不执行）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 enums/swMateType_e.md、IAssemblyDoc/AddMate5.md（Parameters/Remarks）、IModelDocExtension/SelectByID2.md、IModelDoc2/ClearSelection2.md。首句拆三段逐一坐实：① 『parallel mate』＝官方 swMateType_e 的 swMatePARALLEL = 3，本仓 SW_MATE_PARALLEL = 3（sw_assembly.py 顶部常量），**逐值对上**；AddMate5 的 MateTypeFromEnum 官方说明是『Type of mate as defined in [[swMateType_e]]』⇒ 两者合起来才是完整依据（官方没有任何一句直接写「加平行配合」）。② 『two named faces』＝实现 ClearSelection2(True) 后 _select_by_id(ext, face1_name, \"FACE\", mark=1)、再 append=True 选第二个面，_select_by_id 就是 sw_connect.select_by_id → IModelDocExtension.SelectByID2（Name 参数官方写『Name of object to select』）；官方 Remarks 的 mark 表也写『Other swMateType_e option ⇒ 1』，与实现 mark=1 一致。③ 『active assembly』＝注入的 model 即活动装配文档。未发现描述与官方/实现不符。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_performance_analysis_report",
+   "impl": "scripts/sw_assembly.py:collect_mate_feature_summary",
+   "claim": "Summarise the mates and features of the active assembly as per-item counts.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly.py",
+    "anchor": "@return 包含 name、type、depth 的列表，用于验证真实机械配合是否写入特征树。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 先证「官方没有这个成员」：C:\\swapi\\types 下递归搜 *Performance* = **0 个文件**，C:\\swapi\\index\\by_member_name.md 全表含 performanc 的行 **0 命中** ⇒ 官方 API 里没有「性能分析」入口，按铁律 5 不编页；描述自己也写了『not a call to an official performance-analysis member』，与事实一致。故 claim_evidence 用 **impl 档**（本仓实现）：collect_mate_feature_summary 经 iter_feature_tree 遍历特征树（IModelDoc2.FirstFeature → IFeature.GetNextFeature / GetFirstSubFeature / GetNextSubFeature），逐项读 IFeature.Name 与 IFeature.GetTypeName2（官方 FirstFeature 页的 Remarks 也逐字要求『use IFeature::GetTypeName2 … instead of relying solely on IFeature::Name』，本实现两个都读，符合），再按 MateGroup/前缀 Mate/名称含 mate|配合 过滤。★ 订正草稿指错页：草稿给 feature.Name 登记 IBomFeature.Name（BOM 表名），实际是 IFeature.Name。★ 发现描述与实现不一致（**首句就带偏差**，故用 impl 档并在此明记）：描述写『as per-item counts』『reports real counts』，而实现返回的是逐项条目 {name,type,depth} 的**列表**，不做任何计数（scripts/sw_assembly.py:collect_mate_feature_summary 无 len/计数返回）。已上报，未改描述。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_component_pattern_report",
+   "impl": "scripts/sw_assembly.py:iter_feature_tree",
+   "claim": "List the assembly feature tree node by node, including any component-pattern nodes.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+    "anchor": "To access the next feature in the FeatureManager design tree and subfeatures, use [[IFeature::GetNextFeature]] or [[IFeature::IGetNextFeature]] and [[IFeature::GetFirstSubFeature]] or [[IFeature::IGetFirstSubFeature]] methods, respectively."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/FirstFeature 全页（含 Remarks 的遍历顺序限制）、IFeature/GetFirstSubFeature、GetNextFeature、GetNextSubFeature。首句的「node by node」正是 Remarks 那段遍历说明；实现 `sw_assembly.iter_feature_tree` 与之一一对应。★ 工具的 2 句 doc 自己声明「reports the whole tree rather than isolating pattern readings…not verified on a real machine」⇒ 没有把 pattern 计数冒充出来，诚实。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_dissolve",
+   "impl": "scripts/sw_assembly_doc.py:dissolve_assembly",
+   "claim": "Delete the selected subassembly by dissolving it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/DissolveSubAssembly.md",
+    "anchor": "Dissolves the selected subassembly in this assembly."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "DissolveSubAssembly",
+     "path": "C:/swapi/types/IAssemblyDoc/DissolveSubAssembly.md",
+     "anchor": "Dissolves the selected subassembly in this assembly."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IAssemblyDoc/DissolveSubAssembly（Description / Returns / Remarks 三条：必须先选、自动删特征、会关组件文件且不自动保存）、IModelDoc2/Extension、IModelDoc2/SelectionManager、ISelectionMgr/GetSelectedObjectCount2（Mark 取值 -1/0）。★ doc 的第 2、3 句逐条对得上 Remarks。★ **补登 IAssemblyDoc.DissolveSubAssembly**：草稿漏登了本工具**唯一**的那个动作成员（实现走 `call_assembly_doc(doc, \"DissolveSubAssembly\")`，成员名是变量、提取器看不见）。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_iter_feature_tree",
+   "impl": "scripts/sw_assembly.py:iter_feature_tree",
+   "claim": "List the active assembly feature tree node by node, covering components, features and mates.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+    "anchor": "To access the next feature in the FeatureManager design tree and subfeatures, use [[IFeature::GetNextFeature]] or [[IFeature::IGetNextFeature]] and [[IFeature::GetFirstSubFeature]] or [[IFeature::IGetFirstSubFeature]] methods, respectively."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/FirstFeature（Remarks：本方法回「model definition order」，与控制树显示顺序不同）、IFeature 的 GetFirstSubFeature / GetNextFeature / GetNextSubFeature（各自 Remarks 记 NULL 返回）。★ 首句「node by node, covering components, features and mates」= 遍历设计树；组件与配合在树里就是节点，遍历函数对三者一视同仁 ⇒ 首句成立（但它**不区分**节点种类，与 component_pattern 那条同因）。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_list_mates",
+   "impl": "scripts/sw_assembly.py:collect_mate_feature_summary",
+   "claim": "List the mate group and its mate features with name, type and tree depth.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+    "anchor": "When traversing the FeatureManager design tree, your application should use [[IFeature::GetTypeName2]] and [[IFeature::GetSpecificFeature2]] to identify specific features instead of relying solely on [[IFeature::Name]]."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/FirstFeature（Remarks 逐字：遍历设计树时应当用 GetTypeName2 + GetSpecificFeature2 认特征，**不要**只靠 Name）、IFeature/GetTypeName2 全页（Remarks 的表里逐条列了 MateCoincident / MateConcentric / MateDistanceDim 等配合类型名 ⇒ 实现按 `GetTypeName2` 前缀 `Mate` 认配合是有据的）、IFeature/Name。★ 草稿把 `Name` 指到 **IBomFeature.Name**（BOM 表特征）——那是**另一个接口**，已订正为 IFeature.Name。"
    }
   }
  ]

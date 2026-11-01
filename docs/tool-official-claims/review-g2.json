@@ -1,0 +1,2086 @@
+{
+ "batch": "G2",
+ "note": "human review of review-groups.json G2（29 个工具）。锚点均按官方页原文逐字写，并在写盘前程序化核对过；官方页查不到的成员按 documented:false + gap 记账（不编页）。",
+ "records": [
+  {
+   "tool": "solidworks_entities_on_body",
+   "impl": "scripts/sw_selection_spec.py:entities_report",
+   "claim": "List the edges, faces or vertices of one solid body with their geometry readings.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBody2/GetFaces.md",
+    "anchor": "Gets all of the faces on the body."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetEdges",
+     "path": "C:/swapi/types/IBody2/GetEdges.md",
+     "anchor": "Gets the edges for this body."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetFaces",
+     "path": "C:/swapi/types/IBody2/GetFaces.md",
+     "anchor": "Gets all of the faces on the body."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetVertices",
+     "path": "C:/swapi/types/IBody2/GetVertices.md",
+     "anchor": "Gets the vertices in this body."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetStartVertex",
+     "path": "C:/swapi/types/IEdge/GetStartVertex.md",
+     "anchor": "Gets the starting vertex for this edge."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetEndVertex",
+     "path": "C:/swapi/types/IEdge/GetEndVertex.md",
+     "anchor": "Gets the ending vertex for this edge."
+    },
+    {
+     "interface": "IVertex",
+     "member": "GetPoint",
+     "path": "C:/swapi/types/IVertex/GetPoint.md",
+     "anchor": "Gets the point corresponding to this vertex."
+    },
+    {
+     "interface": "IFace2",
+     "member": "GetArea",
+     "path": "C:/swapi/types/IFace2/GetArea.md",
+     "anchor": "Gets the area of this face."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IPartDoc/GetBodies2、IBody2/GetEdges·GetFaces·GetVertices、IEdge/GetStartVertex·GetEndVertex、IVertex/GetPoint、IFace2/GetArea 八页的 Description（GetVertices 另看 Remarks）。草稿把体来源登记成 IComponent2.GetBodies2（组件上取体）且缺 GetEdges/GetFaces/GetVertices/GetStartVertex/GetEndVertex —— 实现走的是 model.GetBodies2(0, True)（零件文档取实体）⇒ 改登记 IPartDoc，成员补全。首句的『edges/faces/vertices + geometry readings』分别由上述成员页逐条支持：几何读数 = GetArea（面）/ GetPoint（顶点）/ GetStartVertex+GetEndVertex（边，长度由本仓按两点算，官方 IEdge 无 Length）。"
+   }
+  },
+  {
+   "tool": "solidworks_equation_add",
+   "impl": "scripts/sw_equation.py:add_equation",
+   "claim": "Add one global equation to the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IEquationMgr/Add2.md",
+    "anchor": "Adds an equation at the specified index."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetEquationMgr",
+     "path": "C:/swapi/types/IModelDoc2/GetEquationMgr.md",
+     "anchor": "Gets the equation manager."
+    },
+    {
+     "interface": "IEquationMgr",
+     "member": "Add2",
+     "path": "C:/swapi/types/IEquationMgr/Add2.md",
+     "anchor": "Adds an equation at the specified index."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/GetEquationMgr 与 IEquationMgr/Add2 两页：Add2 的 Parameters 逐字写明 Index 0 基（-1 = 追加到末尾）、Solve = 立即求解、Returns 失败回 -1，与本仓入参和-1 判错完全一致；Remarks 的『双引号包维度名』也正是本仓报错文案的出处。"
+   }
+  },
+  {
+   "tool": "solidworks_equation_evaluate",
+   "impl": "scripts/sw_equation.py:evaluate_equations",
+   "claim": "Solve all global equations and return the result.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IEquationMgr/EvaluateAll.md",
+    "anchor": "Evaluates all equations."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetEquationMgr",
+     "path": "C:/swapi/types/IModelDoc2/GetEquationMgr.md",
+     "anchor": "Gets the equation manager."
+    },
+    {
+     "interface": "IEquationMgr",
+     "member": "EvaluateAll",
+     "path": "C:/swapi/types/IEquationMgr/EvaluateAll.md",
+     "anchor": "Evaluates all equations."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IEquationMgr/EvaluateAll 页：Description 『Evaluates all equations.』支持『solve all global equations』；★ 但 ## Returns 逐字『-1 for both success and failure』⇒ 返回值不区分成功/失败，首句的『return the result』在官方页找不到支持（见 defects 第 2 条）。"
+   }
+  },
+  {
+   "tool": "solidworks_export_active",
+   "impl": "mcp-server/server.py:solidworks_export_active",
+   "claim": "Export the active SolidWorks document to STEP, STL, IGES, Parasolid, PDF, or DXF.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/SaveAs3.md",
+    "anchor": "To save as an IGES, STL, or STEP file, the document to convert must be the active document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SaveAs3",
+     "path": "C:/swapi/types/IModelDocExtension/SaveAs3.md",
+     "anchor": "Saves the active document to the specified name with advanced options."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "GetExportFileData",
+     "path": "C:/swapi/types/ISldWorks/GetExportFileData.md",
+     "anchor": "Gets the data interface for the specified file type to which to export one or more drawing sheets."
+    },
+    {
+     "interface": "IExportPdfData",
+     "member": "SetSheets",
+     "path": "C:/swapi/types/IExportPdfData/SetSheets.md",
+     "anchor": "Sets the drawing [[sheets]] to export."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetSheetNames",
+     "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetUserPreferenceIntegerValue",
+     "path": "C:/swapi/types/IModelDoc2/GetUserPreferenceIntegerValue.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::GetUserPreferenceInteger]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SetUserPreferenceIntegerValue",
+     "path": "C:/swapi/types/IModelDoc2/SetUserPreferenceIntegerValue.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SetUserPreferenceInteger]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/SaveAs3（Description/Parameters/Remarks）、ISldWorks/GetExportFileData、IExportPdfData/SetSheets、IDrawingDoc/GetSheetNames、IModelDoc2/GetUserPreferenceIntegerValue。草稿把保存成员登记成 IModelDoc2.SaveAs3（该页逐字 Obsolete）⇒ 改成实现真正驱动的 IModelDocExtension.SaveAs3（7 参，第 4 参 ExportData = IExportPdfData）。Remarks 的『To save as an IGES, STL, or STEP file, the document to convert must be the active document.』正是首句『Export the active document to STEP/STL/IGES…』的官方出处。★ STL 质量档走 preference_guard，读到的是 IModelDoc2.Get/SetUserPreferenceIntegerValue —— 两页均标 Obsolete（Superseded by IModelDocExtension::Get/SetUserPreferenceInteger），见 defects 第 3 条。DXF 走 export_flat_pattern_dxf（更深一层，本层未展开）。"
+   }
+  },
+  {
+   "tool": "solidworks_export_assembly_bom",
+   "impl": "mcp-server/server.py:solidworks_export_assembly_bom",
+   "claim": "Export a component/property BOM CSV; the result always requires native BOM review.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+    "anchor": "Gets all of the components in the active configuration of this assembly."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetExcludeFromBOM2",
+     "path": "C:/swapi/types/IComponent2/GetExcludeFromBOM2.md",
+     "anchor": "Gets whether this component is excluded from the bills of materials (BOMs) in the specified configurations."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "ReferencedConfiguration",
+     "path": "C:/swapi/types/IComponent2/ReferencedConfiguration.md",
+     "anchor": "Gets or sets the active configuration used by this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetModelDoc2",
+     "path": "C:/swapi/types/IComponent2/GetModelDoc2.md",
+     "anchor": "Gets the model document for this component."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "CustomPropertyManager",
+     "path": "C:/swapi/types/IModelDocExtension/CustomPropertyManager.md",
+     "anchor": "# IModelDocExtension.CustomPropertyManager"
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IAssemblyDoc/GetComponents、IComponent2/GetExcludeFromBOM2·GetPathName·Name2·ReferencedConfiguration·GetModelDoc2、ICustomPropertyManager/Get6 各页。草稿只登记了 _model_summary 的三个成员（GetPathName/GetTitle/GetType），BOM 真正的读取链在 collect_assembly_bom 里（GetComponents → 逐组件 GetExcludeFromBOM2/Name2/ReferencedConfiguration/GetModelDoc2 → 自定义属性 Get6）⇒ 补登。★ IModelDocExtension/CustomPropertyManager.md 只有 front-matter 与标题、无正文描述，锚点只能取标题（已在此说明）。CSV/人工复核那半句没有官方页支持（是本仓产物纪律）。"
+   }
+  },
+  {
+   "tool": "solidworks_export_image",
+   "impl": "scripts/sw_export.py:export_image_report",
+   "claim": "Export the current view to a PNG or JPG image file.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/SaveAs3.md",
+    "anchor": "The filename extension indicates the conversion that should be performed (for example, **Part1.igs** to save to IGES)."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SaveAs3",
+     "path": "C:/swapi/types/IModelDocExtension/SaveAs3.md",
+     "anchor": "Saves the active document to the specified name with advanced options."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/SaveAs3 的 Description/Parameters/Remarks：扩展名决定转换格式（示例只给 IGES/STL/STEP，没有 PNG/JPG 的逐字句子）⇒ 首句的『PNG or JPG』与『current view』只有实现 + 真机口径（SaveAs3 无尺寸入参），见 defects 第 4 条。草稿登记的 IModelDoc2.SaveAs3 已废弃 ⇒ 改为 IModelDocExtension.SaveAs3。"
+   }
+  },
+  {
+   "tool": "solidworks_extrude_depth",
+   "impl": "scripts/sw_feature_readback.py:extrude_depth",
+   "claim": "Read the depth of one extrude feature together with the unit that value is expressed in.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IExtrudeFeatureData2/GetDepth.md",
+    "anchor": "Gets the depth of the extrusion feature in the forward or reverse direction."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature."
+    },
+    {
+     "interface": "IExtrudeFeatureData2",
+     "member": "GetDepth",
+     "path": "C:/swapi/types/IExtrudeFeatureData2/GetDepth.md",
+     "anchor": "Gets the depth of the extrusion feature in the forward or reverse direction."
+    },
+    {
+     "interface": "IExtrudeFeatureData2",
+     "member": "GetEndCondition",
+     "path": "C:/swapi/types/IExtrudeFeatureData2/GetEndCondition.md",
+     "anchor": "Gets the type of end condition of this extrusion feature for forward or reverse direction."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IExtrudeFeatureData2/GetDepth（Description/Parameters/Returns）、IPartDoc/FeatureByName、IModelDoc2/FirstFeature、IFeature/GetNextFeature·GetTypeName2·Name·GetDefinition、IExtrudeFeatureData2/GetEndCondition。草稿把 FeatureByName 记到 IAssemblyDoc（『in the assembly』）且把特征名记到 IBomFeature（『BOM table feature』）—— 两处都是按名字首匹配挑错的接口 ⇒ 改 IPartDoc.FeatureByName 与 IFeature.Name。★ GetDepth 页 ## Returns 只写『Depth of the extrusion』，不写单位；首句的『together with the unit』靠本仓真机证据（output/extrudefeaturedata-getdepth-evidence.json），见 defects 第 5 条。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_delete",
+   "impl": "scripts/sw_part.py:feature_delete",
+   "claim": "Delete one named feature of the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditDelete.md",
+    "anchor": "Deletes the selected items."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditDelete",
+     "path": "C:/swapi/types/IModelDoc2/EditDelete.md",
+     "anchor": "Deletes the selected items."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/EditDelete（Description/Remarks/Signature = void EditDelete()）、ClearSelection2、IModelDocExtension/SelectByID2、ISelectionMgr/GetSelectedObjectCount2。官方 Remarks 只说『use DeleteSelection2 to turn off prompting』，本仓先用 SelectByID2 选中再调 EditDelete，与『Deletes the selected items.』一致；选区计数 0 就拒调是本仓纪律。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_info",
+   "impl": "scripts/sw_feature_readback.py:feature_info",
+   "claim": "Read the metadata, face count, visibility and parent and child features of one feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeature/GetFaceCount.md",
+    "anchor": "Gets the number of faces in this feature."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Description",
+     "path": "C:/swapi/types/IFeature/Description.md",
+     "anchor": "Gets or sets the description for this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "CreatedBy",
+     "path": "C:/swapi/types/IFeature/CreatedBy.md",
+     "anchor": "Gets the name of the user who created the feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Visible",
+     "path": "C:/swapi/types/IFeature/Visible.md",
+     "anchor": "Gets the visibility state of this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetMaterialIdName",
+     "path": "C:/swapi/types/IFeature/GetMaterialIdName.md",
+     "anchor": "Gets the material name."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetID",
+     "path": "C:/swapi/types/IFeature/GetID.md",
+     "anchor": "Gets the feature ID of this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFaceCount",
+     "path": "C:/swapi/types/IFeature/GetFaceCount.md",
+     "anchor": "Gets the number of faces in this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetEditStatus",
+     "path": "C:/swapi/types/IFeature/GetEditStatus.md",
+     "anchor": "Gets whether the feature can currently be edited."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetChildren",
+     "path": "C:/swapi/types/IFeature/GetChildren.md",
+     "anchor": "Gets the child features belonging to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetParents",
+     "path": "C:/swapi/types/IFeature/GetParents.md",
+     "anchor": "Gets the parent features for this feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IFeature/GetFaceCount（Description/Returns/Remarks：『Number of faces in this feature』，并说明基准面等不产生面的情形）与 IFeature 的 Name/Description/CreatedBy/Visible/GetMaterialIdName/GetID/GetEditStatus/GetChildren/GetParents 各页。★ 草稿漏了实现里那张『逐名读取』元组（成员名是循环变量，静态提取抓不到）⇒ 人工补登 9 个。首句的 metadata / face count / visibility / parent and child features 分别对应上述成员。★ FeatureByName 在本机只在 IPartDoc / IAssemblyDoc / IDrawingDoc / IComponent2 下有页（IModelDoc2 下无此成员），本工具读的是零件特征 ⇒ 登记 IPartDoc。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_present",
+   "impl": "scripts/sw_feature_readback.py:feature_present",
+   "claim": "Check whether a named feature really exists in the FeatureManager tree.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+    "anchor": "Gets the first feature in the document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/FirstFeature、IFeature/GetNextFeature·Name·GetTypeName2：首句『Check whether a named feature really exists in the FeatureManager tree』= 遍历特征树取 Name（GetTypeName2 用于两层过滤，滤掉容器节点）。★ 官方没有『判断某特征是否存在』的直述句 ⇒ 锚点取枚举起点页（FirstFeature），支持来自三个枚举成员的组合，本行即为此说明。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_readback",
+   "impl": "scripts/sw_feature_readback.py:feature_readback",
+   "claim": "Read one feature back from the tree to check that it really exists.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+    "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetWhatsWrongCount",
+     "path": "C:/swapi/types/IModelDocExtension/GetWhatsWrongCount.md",
+     "anchor": "Gets the number of items in the What's Wrong dialog."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetWhatsWrong",
+     "path": "C:/swapi/types/IModelDocExtension/GetWhatsWrong.md",
+     "anchor": "Gets the What's Wrong dialog information for this model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/EditRebuild3（Returns = True 若只重建需要重建的特征）、IModelDocExtension/GetWhatsWrongCount（『Number of items in the What's Wrong dialog』）、GetWhatsWrong。首句『read one feature back … check that it really exists』= 重建 + 特征树回读 + 查错数三条判据。★ 官方没有『回读特征』这一句 ⇒ 锚点取本工具最先执行的官方步骤 EditRebuild3；存在性来自 FirstFeature/GetNextFeature/Name 枚举，错误来自 GetWhatsWrongCount（其 Returns 逐字是条目数，故本仓把『取不到』与『0 条』分开）。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_revolve_cut",
+   "impl": "scripts/sw_part.py:revolve_cut",
+   "claim": "Revolve a sketch profile as a cut and remove material around an axis.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureRevolve2.md",
+    "anchor": "Creates a base-, boss-, or cut-revolve feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSketch",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无 IFeature/GetSketch.md；CHM sldworksapi 亦无 IFeature~GetSketch 页（只查得到 IFeature.GetSpecificFeature2）。实现里 `for meth in (\"GetSpecificFeature2\", \"GetSketch\")` 的第二条分支在真机会 AttributeError 并被 except 吞掉 ⇒ 该成员不存在"
+    },
+    {
+     "interface": "IEntity",
+     "member": "Select2",
+     "path": "C:/swapi/types/IEntity/Select2.md",
+     "anchor": "Obsolete. Superseded by [[IEntity::Select4]]."
+    },
+    {
+     "interface": "IEntity",
+     "member": "Select4",
+     "path": "C:/swapi/types/IEntity/Select4.md",
+     "anchor": "Selects an entity and marks it."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureRevolve2",
+     "path": "C:/swapi/types/IFeatureManager/FeatureRevolve2.md",
+     "anchor": "Creates a base-, boss-, or cut-revolve feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IFeatureManager/FeatureRevolve2（Description/Parameters/Remarks：IsCut = cut revolve；剖面 mark=0、轴 mark=4/16）、ISketch/GetSketchSegments、IEntity/Select4、IFeature/GetSpecificFeature2。草稿只登记了 4 个成员（含把 FeatureByName 记到 IAssemblyDoc）⇒ 补登选择链（ClearSelection2/SelectByID2/Select4/Select2）。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_suppress",
+   "impl": "scripts/sw_part.py:feature_suppress",
+   "claim": "Suppress one named feature of the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditSuppress2.md",
+    "anchor": "Suppresses the selected feature, the selected component, or the owning feature of the selected face."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditSuppress2",
+     "path": "C:/swapi/types/IModelDoc2/EditSuppress2.md",
+     "anchor": "Suppresses the selected feature, the selected component, or the owning feature of the selected face."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/EditSuppress2（Description/Returns/Remarks：抑制当前选中项，PropertyManager 页打开时不允许）。官方零参、作用在当前选择 ⇒ 本仓先 SelectByID2 选中、计数为 0 就拒调，一致。"
+   }
+  },
+  {
+   "tool": "solidworks_feature_unsuppress",
+   "impl": "scripts/sw_part.py:feature_unsuppress",
+   "claim": "Unsuppress one named feature of the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/EditUnsuppress2.md",
+    "anchor": "Unsuppresses the selected feature or component."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditUnsuppress2",
+     "path": "C:/swapi/types/IModelDoc2/EditUnsuppress2.md",
+     "anchor": "Unsuppresses the selected feature or component."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/EditUnsuppress2（Description/Returns/Remarks）。与 feature_suppress 同构，官方语义『Unsuppresses the selected feature or component』与首句一致。"
+   }
+  },
+  {
+   "tool": "solidworks_fillet_params",
+   "impl": "scripts/sw_feature_readback.py:fillet_params",
+   "claim": "Read the default radius, type, edge count and flags of one simple fillet feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISimpleFilletFeatureData2/DefaultRadius.md",
+    "anchor": "Gets or sets the default radius of this simple fillet."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "DefaultRadius",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/DefaultRadius.md",
+     "anchor": "Gets or sets the default radius of this simple fillet."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "Type",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/Type.md",
+     "anchor": "Gets the type of simple fillet feature."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "OverflowType",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/OverflowType.md",
+     "anchor": "Gets or sets the overflow type of the simple fillet feature."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "RoundCorners",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/RoundCorners.md",
+     "anchor": "Gets or sets whether to round the corners of this simple fillet feature."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "KeepFeatures",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/KeepFeatures.md",
+     "anchor": "Gets or sets whether to keep existing features on the entities selected for the fillet."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "ConstantWidth",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/ConstantWidth.md",
+     "anchor": "Gets or sets whether this simple fillet has a constant width."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "PropagateToTangentFaces",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/PropagateToTangentFaces.md",
+     "anchor": "Gets or sets whether to extend fillet to all faces tangent to the selected face or edge."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "GetEdgeCount",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/GetEdgeCount.md",
+     "anchor": "Gets the number of edges on which to create a simple radius fillet."
+    },
+    {
+     "interface": "ISimpleFilletFeatureData2",
+     "member": "GetSetbackVerticesCount",
+     "path": "C:/swapi/types/ISimpleFilletFeatureData2/GetSetbackVerticesCount.md",
+     "anchor": "Gets the number of setback vertices for this simple fillet feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 ISimpleFilletFeatureData2/DefaultRadius（Description/Returns：默认半径；对称/非对称差别）及 Type/OverflowType/RoundCorners/KeepFeatures/ConstantWidth/PropagateToTangentFaces/GetEdgeCount/GetSetbackVerticesCount 各页。★ 注意：C:\\swapi\\types 里**没有** IFilletFeatureData2（圆角数据接口只有 ISimpleFilletFeatureData2 与 IVariableFilletFeatureData2）⇒ 草稿漏登的那 9 个成员按实际接口 ISimpleFilletFeatureData2 登记。★ FeatureByName 登记 IPartDoc（IModelDoc2 下无此成员；圆角是零件特征）。"
+   }
+  },
+  {
+   "tool": "solidworks_get_view_model_doc",
+   "impl": "scripts/sw_view.py:get_view_model_doc",
+   "claim": "Get the document that owns the model view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "AI Solidworks/官方文档/SWhelp/sldworksapivb6/SldWorks~ModelView~GetModelDoc.html",
+    "anchor": "GetModelDoc Method (ModelView)"
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "GetModelDoc",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IModelView\\ 里无 GetModelDoc.md（该目录列出的成员无此名）；CHM sldworksapi 的 .NET 树亦无 IModelView~GetModelDoc 页；只有 VB6 官方帮助 AI Solidworks\\官方文档\\SWhelp\\sldworksapivb6\\SldWorks~ModelView~GetModelDoc.html （标题 GetModelDoc Method (ModelView)，签名 GetModelDoc() As ModelDoc，无散文说明）"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 C:\\swapi\\types\\IModelView\\ 的成员目录与 CHM 两棵树：结构化页缺失，VB6 官方帮助只有标题+签名（『GetModelDoc Method (ModelView)』/『GetModelDoc() As ModelDoc』）⇒ 成员按 documented:false 记账，不编页；首句锚点取该官方页标题。实现里 view 来自 IModelDoc.ActiveView（IModelView），见 defects 第 6 条。"
+   }
+  },
+  {
+   "tool": "solidworks_health_check",
+   "impl": "mcp-server/server.py:solidworks_health_check",
+   "claim": "Check Python dependencies, SolidWorks COM registration, optional live connection, and Motion typelib.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "mcp-server/server.py",
+    "anchor": "checks[\"solidworks_revision\"] = get_com_member(sw, \"RevisionNumber\")"
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "RevisionNumber",
+     "path": "C:/swapi/types/ISldWorks/RevisionNumber.md",
+     "anchor": "Gets the version number of this SOLIDWORKS Design installation."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "首句讲的是本仓自检项（Python 依赖 / COM 注册 / 可选活连接 / Motion 类型库），没有官方页能支持这句话 ⇒ claim_evidence 用 impl，锚点抄实现里那行。唯一的 SolidWorks 成员是 ISldWorks.RevisionNumber（读了该页：『Gets the version number of this SOLIDWORKS Design installation』），其余三个来自 _model_summary。"
+   }
+  },
+  {
+   "tool": "solidworks_hole_pattern",
+   "impl": "scripts/sw_hole_features.py:hole_pattern_report",
+   "claim": "Create one hole per explicit position in the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+    "anchor": "Creates a cut extrude feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IEntity",
+     "member": "Select4",
+     "path": "C:/swapi/types/IEntity/Select4.md",
+     "anchor": "Selects an entity and marks it."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "InsertSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+     "anchor": "Inserts a new sketch in the current part or assembly document."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCircleByRadius",
+     "path": "C:/swapi/types/ISketchManager/CreateCircleByRadius.md",
+     "anchor": "Creates a circle based on a center point and a specified radius."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureCut4",
+     "path": "C:/swapi/types/IFeatureManager/FeatureCut4.md",
+     "anchor": "Creates a cut extrude feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IFeatureManager/FeatureCut4（Description『Creates a cut extrude feature.』、Parameters 的 T1/D1）与 ISketchManager/InsertSketch·CreateCircleByRadius、IModelDoc2/SketchManager。★ 草稿只登记了特征树三个成员 —— 孔位真正的落点是『建草图（InsertSketch + CreateCircleByRadius）→ extrude_cut → FeatureCut4』（4 层深：hole_pattern_report → create_hole_pattern → create_through_hole → _circle_cut），按『真正调用的成员』补登。"
+   }
+  },
+  {
+   "tool": "solidworks_hole_wizard",
+   "impl": "scripts/sw_hole_features.py:create_hole_wizard_at_selection_report",
+   "claim": "Create a hole-wizard hole on an axis-aligned face named by a direction selector and a size string.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+    "anchor": "Creates customized holes of various kinds."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByRay",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByRay.md",
+     "anchor": "Selects the first entity of the specified type that is intersected by a ray that starts at the specified point and runs parallel to the specified direction vector within the specified radius."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "HoleWizard5",
+     "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+     "anchor": "Creates customized holes of various kinds."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IFeatureManager/HoleWizard5 全页：Description『Creates customized holes of various kinds.』；Remarks 逐字『To add a hole or slot at one or more locations, call IModelDocExtension::SelectByRay with Mark = 0 for each location.』—— 正是本工具射线定位孔位的官方出处，参数约束（SSize 必须是规格串、FastenerTypeIndex 要配标准）也与本仓报错文案一致。GetBodies2/GetBodyBox 来自 resolve_face_selector（面选择器→面中心）。"
+   }
+  },
+  {
+   "tool": "solidworks_hole_wizard_at_point",
+   "impl": "scripts/sw_hole_features.py:create_hole_wizard_at_point_report",
+   "claim": "Create a Hole Wizard hole at an explicit point and read the hole parameters back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+    "anchor": "Creates customized holes of various kinds."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByRay",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByRay.md",
+     "anchor": "Selects the first entity of the specified type that is intersected by a ray that starts at the specified point and runs parallel to the specified direction vector within the specified radius."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "HoleWizard5",
+     "path": "C:/swapi/types/IFeatureManager/HoleWizard5.md",
+     "anchor": "Creates customized holes of various kinds."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "与 hole_wizard 同源：读了 HoleWizard5 页的 Description/Parameters/Remarks（要点射用 SelectByRay + Mark = 0）。与那条的唯一差别是射线起点由调用方给坐标，不再读包围盒 ⇒ 不登记 GetBodies2/GetBodyBox。"
+   }
+  },
+  {
+   "tool": "solidworks_insert_local_curve_driven_pattern",
+   "impl": "scripts/sw_pattern.py:insert_local_curve_driven_pattern_report",
+   "claim": "Skip this tool, NOT USABLE on this machine: both valid runs created no feature.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_pattern.py",
+    "anchor": "\"official\": \"IFeatureManager.FeatureLocalCurveDrivenPattern\","
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureLocalCurveDrivenPattern",
+     "path": "C:/swapi/types/IFeatureManager/FeatureLocalCurveDrivenPattern.md",
+     "anchor": "Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in [[ILocalCurvePatternFeatureData]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "首句『Skip this tool, NOT USABLE on this machine: both valid runs created no feature.』是本仓真机结论，没有官方页能支持 ⇒ claim_evidence 用 impl，锚点抄实现里声明官方入口那行。成员页已读：IFeatureManager/FeatureLocalCurveDrivenPattern 逐字『Obsolete. See IFeatureManager::CreateFeature and the Remarks in ILocalCurvePatternFeatureData.』（与实现的 obsolete_warning 一致）；SelectByID2 用于 mark 1 / mark 2 前置选择。"
+   }
+  },
+  {
+   "tool": "solidworks_inspect_configurations",
+   "impl": "mcp-server/server.py:solidworks_inspect_configurations",
+   "claim": "Inspect configuration names and the active configuration without modifying the document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/GetConfigurationNames.md",
+    "anchor": "Gets the names of the configurations in this document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetConfigurationNames",
+     "path": "C:/swapi/types/IModelDoc2/GetConfigurationNames.md",
+     "anchor": "Gets the names of the configurations in this document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ConfigurationManager",
+     "path": "C:/swapi/types/IModelDoc2/ConfigurationManager.md",
+     "anchor": "Gets the [[IConfigurationManager]] object, which allows access to a configuration in a model."
+    },
+    {
+     "interface": "IConfigurationManager",
+     "member": "ActiveConfiguration",
+     "path": "C:/swapi/types/IConfigurationManager/ActiveConfiguration.md",
+     "anchor": "Gets the active configuration."
+    },
+    {
+     "interface": "IConfiguration",
+     "member": "Name",
+     "path": "C:/swapi/types/IConfiguration/Name.md",
+     "anchor": "Gets or sets the configuration name."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDoc2/GetConfigurationNames（Returns：按创建顺序回配置名数组）、IModelDoc2/ConfigurationManager、IConfigurationManager/ActiveConfiguration、IConfiguration/Name。草稿只登记了 _model_summary 三个成员，配置名/活动配置这条读取链漏了 ⇒ 补登。首句的『without modifying the document』由这些只读成员（全 get/属性）支持，工具本身也只读。"
+   }
+  },
+  {
+   "tool": "solidworks_linear_pattern_report",
+   "impl": "scripts/sw_part.py:linear_pattern_report",
+   "claim": "Create a linear pattern of one feature and read the feature tree back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/FeatureLinearPattern5.md",
+    "anchor": "Number of instances of the linear pattern in Direction 1, including the original"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "FeatureLinearPattern5",
+     "path": "C:/swapi/types/IFeatureManager/FeatureLinearPattern5.md",
+     "anchor": "Obsolete. See [[IFeatureManager::CreateFeature]] and the Remarks in [[ILinearPatternFeatureData]] and [[ILocalLinearPatternFeatureData]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IFeatureManager/FeatureLinearPattern5 全页：Description 只有『Obsolete. See IFeatureManager::CreateFeature …』，但 Parameters 逐字写明 Num1『Number of instances of the linear pattern in Direction 1, including the original』与 Spacing1『Spacing in meter』—— 首句『Create a linear pattern』与『count 含原件』的出处都在这，故锚点取参数句。★ 入口本身是废弃成员（官方指向 CreateFeature），见 defects 第 7 条。"
+   }
+  },
+  {
+   "tool": "solidworks_list_render_materials",
+   "impl": "scripts/sw_render_material.py:list_render_materials",
+   "claim": "List the render-material appearance objects defined in the active document.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/GetRenderMaterials2.md",
+    "anchor": "Gets the appearances applied to this model document in the specified display states."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetRenderMaterialsCount2",
+     "path": "C:/swapi/types/IModelDocExtension/GetRenderMaterialsCount2.md",
+     "anchor": "Gets the number of appearances applied to this model document in the specified display states."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetRenderMaterials2",
+     "path": "C:/swapi/types/IModelDocExtension/GetRenderMaterials2.md",
+     "anchor": "Gets the appearances applied to this model document in the specified display states."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/GetRenderMaterials2（Description：指定显示状态下的外观；Returns = Array of appearances）与 GetRenderMaterialsCount2。首句『render-material appearance objects defined in the active document』与官方『appearances applied to this model document』一致；旧的 GetRenderMaterials/Count 已废弃，本仓用的是 2 代。"
+   }
+  },
+  {
+   "tool": "solidworks_loft_params",
+   "impl": "scripts/sw_feature_readback.py:loft_params",
+   "claim": "Read the profile count, guide count, tangency types, draft angle and closed flag of one loft feature.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ILoftFeatureData/GetProfileCount.md",
+    "anchor": "Gets the number of profiles associated with this loft feature."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GetProfileCount",
+     "path": "C:/swapi/types/ILoftFeatureData/GetProfileCount.md",
+     "anchor": "Gets the number of profiles associated with this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GetGuideCurvesCount",
+     "path": "C:/swapi/types/ILoftFeatureData/GetGuideCurvesCount.md",
+     "anchor": "Gets the number of guide curves for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GetFeatureScopeBodiesCount",
+     "path": "C:/swapi/types/ILoftFeatureData/GetFeatureScopeBodiesCount.md",
+     "anchor": "Gets the number of solid bodies affected by the loft feature in a multibody part."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "IsBossFeature",
+     "path": "C:/swapi/types/ILoftFeatureData/IsBossFeature.md",
+     "anchor": "Gets whether the loft feature is a boss feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "IsThinFeature",
+     "path": "C:/swapi/types/ILoftFeatureData/IsThinFeature.md",
+     "anchor": "Gets whether this loft feature is a thin feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "StartTangencyType",
+     "path": "C:/swapi/types/ILoftFeatureData/StartTangencyType.md",
+     "anchor": "Gets or sets the start tangency type for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "EndTangencyType",
+     "path": "C:/swapi/types/ILoftFeatureData/EndTangencyType.md",
+     "anchor": "Gets or sets the end tangency type for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GuideCurveInfluence",
+     "path": "C:/swapi/types/ILoftFeatureData/GuideCurveInfluence.md",
+     "anchor": "Gets or sets the type of guide curve influence for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "NumberOfSections",
+     "path": "C:/swapi/types/ILoftFeatureData/NumberOfSections.md",
+     "anchor": "Gets and sets the number of sections in this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "Close",
+     "path": "C:/swapi/types/ILoftFeatureData/Close.md",
+     "anchor": "Gets or sets whether to close this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "AdvancedSmoothing",
+     "path": "C:/swapi/types/ILoftFeatureData/AdvancedSmoothing.md",
+     "anchor": "Gets or sets whether to enable advanced smoothing for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "MaintainTangency",
+     "path": "C:/swapi/types/ILoftFeatureData/MaintainTangency.md",
+     "anchor": "Gets or sets whether to maintain tangency for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "Merge",
+     "path": "C:/swapi/types/ILoftFeatureData/Merge.md",
+     "anchor": "Gets or sets whether to merge the results of this loft feature in a multibody part."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "FeatureScope",
+     "path": "C:/swapi/types/ILoftFeatureData/FeatureScope.md",
+     "anchor": "Gets or sets whether to use scope for the loft feature in a multibody part."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "AutoSelect",
+     "path": "C:/swapi/types/ILoftFeatureData/AutoSelect.md",
+     "anchor": "Gets or sets whether to automatically select all or only specific bodies for the loft feature to affect in a multibody part."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "ReverseStartTangentDirection",
+     "path": "C:/swapi/types/ILoftFeatureData/ReverseStartTangentDirection.md",
+     "anchor": "Reverses the tangent direction for the start point of this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "ReverseEndTangentDirection",
+     "path": "C:/swapi/types/ILoftFeatureData/ReverseEndTangentDirection.md",
+     "anchor": "Reverses the tangent direction for the end point of this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "StartConstraintApplyToAll",
+     "path": "C:/swapi/types/ILoftFeatureData/StartConstraintApplyToAll.md",
+     "anchor": "Gets whether a start constraint was applied to this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "EndConstraintApplyToAll",
+     "path": "C:/swapi/types/ILoftFeatureData/EndConstraintApplyToAll.md",
+     "anchor": "Gets whether an end constraint was applied to this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "StartConstraintDraftAngleDirection",
+     "path": "C:/swapi/types/ILoftFeatureData/StartConstraintDraftAngleDirection.md",
+     "anchor": "Gets or sets the direction of the angle of the draft for the start constraint for the loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "EndConstraintDraftAngleDirection",
+     "path": "C:/swapi/types/ILoftFeatureData/EndConstraintDraftAngleDirection.md",
+     "anchor": "Gets or sets the direction of the angle of the draft for the end constraint for the loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "StartConstraintDraftAngle",
+     "path": "C:/swapi/types/ILoftFeatureData/StartConstraintDraftAngle.md",
+     "anchor": "Gets or sets the angle of the draft for the start constraint of the loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "EndConstraintDraftAngle",
+     "path": "C:/swapi/types/ILoftFeatureData/EndConstraintDraftAngle.md",
+     "anchor": "Gets or sets the draft angle for the end constraint for the loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "StartTangentLength",
+     "path": "C:/swapi/types/ILoftFeatureData/StartTangentLength.md",
+     "anchor": "Gets or sets the start tangent length for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "EndTangentLength",
+     "path": "C:/swapi/types/ILoftFeatureData/EndTangentLength.md",
+     "anchor": "Gets or sets the end tangent length for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GetWallThickness",
+     "path": "C:/swapi/types/ILoftFeatureData/GetWallThickness.md",
+     "anchor": "Gets the wall thickness in the specified direction for this loft feature."
+    },
+    {
+     "interface": "ILoftFeatureData",
+     "member": "GetGuideTangencyType",
+     "path": "C:/swapi/types/ILoftFeatureData/GetGuideTangencyType.md",
+     "anchor": "Gets the tangency type of the guide curve (i.e., controls the tangency where the loft meets the guide curves) for this loft feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 ILoftFeatureData 的 27 个读侧成员页（GetProfileCount 起，含 GetWallThickness 与 GetGuideTangencyType；后两个带实参，实现里单独带参调）。★ 草稿只登记了结构成员 —— 放样参数是 _read_feature_params 按『成员名元组』循环读的（静态提取抓不到元组内容）⇒ 人工补登。首句的 profile count / guide count / tangency types / draft angle / closed flag 分别对应 GetProfileCount / GetGuideCurvesCount / StartTangencyType·EndTangencyType / StartConstraintDraftAngle·EndConstraintDraftAngle / Close。★ FeatureByName 登记 IPartDoc（IModelDoc2 下无此成员；放样是零件特征）。"
+   }
+  },
+  {
+   "tool": "solidworks_mass_property_object",
+   "impl": "scripts/sw_mass_property.py:mass_property_object",
+   "claim": "Read the mass property object of the active document for item-by-item density, volume and inertia reads.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/CreateMassProperty2.md",
+    "anchor": "Creates a mass properties object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "CreateMassProperty2",
+     "path": "C:/swapi/types/IModelDocExtension/CreateMassProperty2.md",
+     "anchor": "Creates a mass properties object."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "CreateMassProperty",
+     "path": "C:/swapi/types/IModelDocExtension/CreateMassProperty.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::CreateMassProperty2]]."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/CreateMassProperty2（Description『Creates a mass properties object.』、Returns = IMassProperty2、Remarks 说明零件/装配不同的选体语义）。首句『Read the mass property object … for item-by-item density, volume and inertia reads』= 取对象（后三个字段由调用方逐项读）。旧的 CreateMassProperty 已废弃，实现按『新入口优先、旧入口兜底』调，两者都登记。"
+   }
+  },
+  {
+   "tool": "solidworks_mold_evidence",
+   "impl": "scripts/sw_mold.py:mold_evidence",
+   "claim": "Read the mold state of the active part, which this machine cannot actually read.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_mold.py",
+    "anchor": "\"readable\": (not _all_none),"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetPartingLinesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingLinesCount.md；该成员真身在 IPartingLineFeatureData（该页 Description『Gets the number of edges used as parting lines.』）。实现从 FeatureManager 上读，真机 AttributeError"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetPartingSurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetCavitySurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCavitySurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetCoreSurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCoreSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "PartingType",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 PartingType.md；该成员真身在 IPartingSurfaceFeatureData（Beyond『Gets or sets the type of parting surface.』）"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "CoreCavitySplit",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 CoreCavitySplit.md；真身在 IPartingLineFeatureData（『Gets or sets the core/cavity split option for a parting line.』）"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "首句『…which this machine cannot actually read』是本仓真机结论 ⇒ claim_evidence 用 impl，锚点抄实现里算 readable 那行。六个成员在实现所调的接口上**都没有官方页**（铁律 5：不编页），按 documented:false + gap 逐条记账，并在 gap 里写明真身接口；实现自己的 docstring（轮 172 探针）也记着这些成员不在 IFeatureManager / IModelDoc2 上。"
+   }
+  },
+  {
+   "tool": "solidworks_motion_create_study",
+   "impl": "scripts/sw_motion.py:create_motion_study",
+   "claim": "Create a Motion Study on the active assembly and return it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IMotionStudyManager/CreateMotionStudy.md",
+    "anchor": "Creates a new motion study."
+   },
+   "members": [
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetMotionStudyManager",
+     "path": "C:/swapi/types/IModelDocExtension/GetMotionStudyManager.md",
+     "anchor": "Gets the SOLIDWORKS motion study's MotionManager."
+    },
+    {
+     "interface": "IMotionStudyManager",
+     "member": "CreateMotionStudy",
+     "path": "C:/swapi/types/IMotionStudyManager/CreateMotionStudy.md",
+     "anchor": "Creates a new motion study."
+    },
+    {
+     "interface": "IMotionStudy",
+     "member": "Name",
+     "path": "C:/swapi/types/IMotionStudy/Name.md",
+     "anchor": "Gets or sets the name of a motion study."
+    },
+    {
+     "interface": "IMotionStudy",
+     "member": "StudyType",
+     "path": "C:/swapi/types/IMotionStudy/StudyType.md",
+     "anchor": "Gets or sets the type of this study."
+    },
+    {
+     "interface": "IMotionStudy",
+     "member": "Activate",
+     "path": "C:/swapi/types/IMotionStudy/Activate.md",
+     "anchor": "Activates this motion study."
+    },
+    {
+     "interface": "IMotionStudy",
+     "member": "SetDuration",
+     "path": "C:/swapi/types/IMotionStudy/SetDuration.md",
+     "anchor": "Sets the duration, in seconds, of this motion study."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/GetMotionStudyManager（『Gets the SOLIDWORKS motion study's MotionManager.』）、IMotionStudyManager/CreateMotionStudy（Returns = Motion study）、IMotionStudy 的 Name/StudyType/Activate/SetDuration（SetDuration = 秒）。草稿只登记了取管理器那一个 ⇒ 创建/命名/激活/设时长四个补登。实现用 motion_member 兼容『属性/方法双态』，成员名不变。"
+   }
+  },
+  {
+   "tool": "solidworks_pack_and_go",
+   "impl": "mcp-server/server.py:solidworks_pack_and_go_tool",
+   "claim": "Run the native Pack and Go API into a protected output directory.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDocExtension/GetPackAndGo.md",
+    "anchor": "Gets a Pack and Go object."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetTitle",
+     "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetDependencies",
+     "path": "C:/swapi/types/IModelDocExtension/GetDependencies.md",
+     "anchor": "Gets all of this model's dependencies."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "GetComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/GetComponents.md",
+     "anchor": "Gets all of the components in the active configuration of this assembly."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IComponent2/GetPathName.md",
+     "anchor": "Gets the full path name for this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "GetModelDoc2",
+     "path": "C:/swapi/types/IComponent2/GetModelDoc2.md",
+     "anchor": "Gets the model document for this component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "Name2",
+     "path": "C:/swapi/types/IComponent2/Name2.md",
+     "anchor": "Gets or sets the name of the selected component."
+    },
+    {
+     "interface": "IComponent2",
+     "member": "ReferencedConfiguration",
+     "path": "C:/swapi/types/IComponent2/ReferencedConfiguration.md",
+     "anchor": "Gets or sets the active configuration used by this component."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "GetPackAndGo",
+     "path": "C:/swapi/types/IModelDocExtension/GetPackAndGo.md",
+     "anchor": "Gets a Pack and Go object."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "GetDocumentNamesCount",
+     "path": "C:/swapi/types/IPackAndGo/GetDocumentNamesCount.md",
+     "anchor": "Gets the number of documents comprising the model for Pack and Go."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "SetSaveToName2",
+     "path": "C:/swapi/types/IPackAndGo/SetSaveToName2.md",
+     "anchor": "Overrides the paths and filenames of the documents set by [[IPackAndGo::SetDocumentSaveToNames]] or [[IPackAndGo::ISetDocumentSaveToNames]] with the specified path or the path and name of the Zip file."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "IncludeDrawings",
+     "path": "C:/swapi/types/IPackAndGo/IncludeDrawings.md",
+     "anchor": "Gets or sets whether to add the model's drawing documents to Pack and Go."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "IncludeSimulationResults",
+     "path": "C:/swapi/types/IPackAndGo/IncludeSimulationResults.md",
+     "anchor": "Gets or sets whether to add the model's SOLIDWORKS Simulation results to Pack and Go."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "IncludeToolboxComponents",
+     "path": "C:/swapi/types/IPackAndGo/IncludeToolboxComponents.md",
+     "anchor": "Gets or sets whether to include SOLIDWORKS Toolbox components in Pack and Go."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "IncludeSuppressed",
+     "path": "C:/swapi/types/IPackAndGo/IncludeSuppressed.md",
+     "anchor": "Gets or sets whether to included suppressed components in Pack and Go."
+    },
+    {
+     "interface": "IPackAndGo",
+     "member": "FlattenToSingleFolder",
+     "path": "C:/swapi/types/IPackAndGo/FlattenToSingleFolder.md",
+     "anchor": "Gets or sets whether to save all files to the root directory of the Pack and Go destination folder."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SavePackAndGo",
+     "path": "C:/swapi/types/IModelDocExtension/SavePackAndGo.md",
+     "anchor": "Saves the files designated for [[Pack and Go]] to either a folder or Zip file."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "OpenDoc6",
+     "path": "C:/swapi/types/ISldWorks/OpenDoc6.md",
+     "anchor": "Opens an existing document and returns a pointer to the document object."
+    },
+    {
+     "interface": "IAssemblyDoc",
+     "member": "ResolveAllLightWeightComponents",
+     "path": "C:/swapi/types/IAssemblyDoc/ResolveAllLightWeightComponents.md",
+     "anchor": "Resolves the lightweight components in this assembly."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ForceRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/ForceRebuild3.md",
+     "anchor": "Forces a rebuild of all features in the active configuration in the model."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "CloseDoc",
+     "path": "C:/swapi/types/ISldWorks/CloseDoc.md",
+     "anchor": "Closes the specified document."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "ExitApp",
+     "path": "C:/swapi/types/ISldWorks/ExitApp.md",
+     "anchor": "Shuts down SOLIDWORKS Design."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "读了 IModelDocExtension/GetPackAndGo（Returns = IPackAndGo）、IPackAndGo/SetSaveToName2（Remarks 说明它替代已废弃的 SetSaveToName、支持最小文件夹）、Include* / FlattenToSingleFolder / GetDocumentNamesCount、IModelDocExtension/SavePackAndGo、GetDependencies（替代已废弃的 IModelDoc2.GetDependencies2）。★ 草稿只登记了 _model_summary 三员 —— 原生 Pack and Go 链在 pack_and_go → _pywin32_pack_and_go / _comtypes_pack_and_go 里（比提取器的一层更深）⇒ 人工补登。comtypes 兜底后端另用 ISldWorks.OpenDoc6 / IAssemblyDoc.ResolveAllLightWeightComponents / IModelDoc2.ForceRebuild3 / ISldWorks.CloseDoc·ExitApp，一并登记。"
+   }
+  }
+ ]
+}

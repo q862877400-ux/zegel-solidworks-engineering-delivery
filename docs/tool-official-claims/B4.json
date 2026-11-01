@@ -22,64 +22,6 @@
    }
   },
   {
-   "tool": "solidworks_drawing_collect_view_evidence",
-   "impl": "scripts/sw_drawing_view.py:collect_view_evidence_report",
-   "claim": "Collect the per-view evidence that the capability layer records for every view on the drawing.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelView/EnableGraphicsUpdate.md",
-    "anchor": "Gets or sets whether or not to refresh the model view."
-   },
-   "members": [
-    {
-     "interface": "IModelView",
-     "member": "DisplayZebraStripes",
-     "path": "C:/swapi/types/IModelView/DisplayZebraStripes.md",
-     "anchor": "Gets or sets the zebra-line display state."
-    },
-    {
-     "interface": "IModelView",
-     "member": "EnableGraphicsUpdate",
-     "path": "C:/swapi/types/IModelView/EnableGraphicsUpdate.md",
-     "anchor": "Gets or sets whether or not to refresh the model view."
-    },
-    {
-     "interface": "IModelView",
-     "member": "HlrQuality",
-     "path": "C:/swapi/types/IModelView/HlrQuality.md",
-     "anchor": "Gets or sets the hidden-line removal quality property of this model view."
-    },
-    {
-     "interface": "IFillPatternFeatureData",
-     "member": "Rotation",
-     "path": "C:/swapi/types/IFillPatternFeatureData/Rotation.md",
-     "anchor": "Gets or sets the counterclockwise rotation of the seed instance of this fill pattern feature."
-    },
-    {
-     "interface": "",
-     "member": "Xform",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
-    },
-    {
-     "interface": "IModelView",
-     "member": "XorHighlight",
-     "path": "C:/swapi/types/IModelView/XorHighlight.md",
-     "anchor": "Gets or sets the Xor highlight state."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelView.EnableGraphicsUpdate 的官方 Description 与首句共享词干 view"
-   }
-  },
-  {
    "tool": "solidworks_drawing_create_auxiliary_view",
    "impl": "scripts/sw_drawing_create_missing.py:create_auxiliary_view",
    "claim": "Create an auxiliary drawing view from the edge that is already selected in a drawing view.",
@@ -93,13 +35,15 @@
      "interface": "IDrawingDoc",
      "member": "CreateAuxiliaryViewAt2",
      "path": "C:/swapi/types/IDrawingDoc/CreateAuxiliaryViewAt2.md",
-     "anchor": "Creates an auxiliary view based on a selected edge in a drawing view."
+     "anchor": "Creates an auxiliary view based on a selected edge in a drawing view.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -125,7 +69,8 @@
      "interface": "IView",
      "member": "InsertBreak3",
      "path": "C:/swapi/types/IView/InsertBreak3.md",
-     "anchor": "Inserts the specified type of break at the specified location in this drawing view."
+     "anchor": "Inserts the specified type of break at the specified location in this drawing view.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -227,31 +172,36 @@
      "interface": "IDrawingDoc",
      "member": "GetCurrentSheet",
      "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
-     "anchor": "Gets the currently active drawing sheet."
+     "anchor": "Gets the currently active drawing sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISheet",
      "member": "GetName",
-     "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "path": "C:/swapi/types/ISheet/GetName.md",
+     "anchor": "Gets the name of the sheet.",
+     "kind": "method"
     },
     {
      "interface": "ISheet",
      "member": "GetProperties2",
      "path": "C:/swapi/types/ISheet/GetProperties2.md",
-     "anchor": "Gets the properties for this sheet."
+     "anchor": "Gets the properties for this sheet.",
+     "kind": "method"
     },
     {
      "interface": "ISheet",
      "member": "GetSheetFormatName",
      "path": "C:/swapi/types/ISheet/GetSheetFormatName.md",
-     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree."
+     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -277,19 +227,22 @@
      "interface": "IDrawingDoc",
      "member": "GetCurrentSheet",
      "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
-     "anchor": "Gets the currently active drawing sheet."
+     "anchor": "Gets the currently active drawing sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISheet",
      "member": "GetName",
-     "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "path": "C:/swapi/types/ISheet/GetName.md",
+     "anchor": "Gets the name of the sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -315,31 +268,36 @@
      "interface": "IDrawingDoc",
      "member": "GetCurrentSheet",
      "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
-     "anchor": "Gets the currently active drawing sheet."
+     "anchor": "Gets the currently active drawing sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISheet",
      "member": "GetName",
-     "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "path": "C:/swapi/types/ISheet/GetName.md",
+     "anchor": "Gets the name of the sheet.",
+     "kind": "method"
     },
     {
      "interface": "ISheet",
      "member": "GetProperties2",
      "path": "C:/swapi/types/ISheet/GetProperties2.md",
-     "anchor": "Gets the properties for this sheet."
+     "anchor": "Gets the properties for this sheet.",
+     "kind": "method"
     },
     {
      "interface": "ISheet",
      "member": "GetSheetFormatName",
      "path": "C:/swapi/types/ISheet/GetSheetFormatName.md",
-     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree."
+     "anchor": "Gets the name of the sheet format of this drawing sheet, as displayed in the FeatureManager design tree.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -365,31 +323,36 @@
      "interface": "IDrawingDoc",
      "member": "AutoBalloon5",
      "path": "C:/swapi/types/IDrawingDoc/AutoBalloon5.md",
-     "anchor": "Automatically inserts BOM balloons in selected drawing views."
+     "anchor": "Automatically inserts BOM balloons in selected drawing views.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "CreateAutoBalloonOptions",
      "path": "C:/swapi/types/IDrawingDoc/CreateAutoBalloonOptions.md",
-     "anchor": "Creates an object that stores auto balloon options."
+     "anchor": "Creates an object that stores auto balloon options.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document.",
+     "kind": "property"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDocExtension",
      "member": "SelectByID2",
      "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
-     "anchor": "Selects the specified entity."
+     "anchor": "Selects the specified entity.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -406,9 +369,9 @@
    "impl": "scripts/sw_drawing_create_missing.py:insert_center_lines",
    "claim": "Skip this tool, NOT USABLE on this machine: a selected view entity produced no centre line.",
    "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
+    "kind": "runtime",
+    "path": "output/spec209-centerline.json",
+    "anchor": "\"any_centerline_built\": false,"
    },
    "members": [
     {
@@ -436,19 +399,25 @@
      "anchor": "Inserts a centerline on the selected entities."
     },
     {
-     "interface": "IComponent2",
+     "interface": "IEntity",
      "member": "Select4",
-     "path": "C:/swapi/types/IComponent2/Select4.md",
-     "anchor": "Selects this component."
+     "path": "C:/swapi/types/IEntity/Select4.md",
+     "anchor": "Selects an entity and marks it."
+    },
+    {
+     "interface": "IView",
+     "member": "GetCenterLineCount",
+     "path": "C:/swapi/types/IView/GetCenterLineCount.md",
+     "anchor": "Gets the number of centerlines on this drawing view."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g1",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IDrawingDoc/InsertCenterLine2（Description「Inserts a centerline on the selected entities.」零参）、IView/GetVisibleEntities2、IView/GetCenterLineCount（「Gets the number of centerlines on this drawing view.」）、IEntity/Select4、IModelDoc2/ClearSelection2、ISelectionMgr/GetSelectedObjectCount2。★ 首句是**真机结论**（本机不可用）⇒ `kind=runtime`，锚点抄 `output/spec209-centerline.json` 的 `\"any_centerline_built\": false`（四种实体类型逐条读数：edge/face 选中后 Δ=0、vertex/silhouette 不可见）。★ 草稿把 `Select4` 指到 **IComponent2.Select4**（选组件）——本案选的是视图里的实体 ⇒ 已订正 IEntity.Select4。★ 補登 IView.GetCenterLineCount：它是该工具判据的一环（`_sum_over_views(model, \"GetCenterLineCount\")`），提取器因成员名是变量而漏。"
    }
   },
   {
@@ -484,13 +453,15 @@
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "InsertDatumTag2",
      "path": "C:/swapi/types/IModelDoc2/InsertDatumTag2.md",
-     "anchor": "Inserts a datum tag symbol at a selected location."
+     "anchor": "Inserts a datum tag symbol at a selected location.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -516,37 +487,43 @@
      "interface": "IDrawingDoc",
      "member": "ActivateView",
      "path": "C:/swapi/types/IDrawingDoc/ActivateView.md",
-     "anchor": "Activates the specified drawing view."
+     "anchor": "Activates the specified drawing view.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document.",
+     "kind": "property"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "InsertModelAnnotations4",
      "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations4.md",
-     "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+     "anchor": "Inserts model annotations into this drawing document's currently selected drawing view.",
+     "kind": "method"
     },
     {
      "interface": "IModelDocExtension",
      "member": "SelectByID2",
      "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
-     "anchor": "Selects the specified entity."
+     "anchor": "Selects the specified entity.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -572,13 +549,15 @@
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDocExtension",
      "member": "InsertSurfaceFinishSymbol3",
      "path": "C:/swapi/types/IModelDocExtension/InsertSurfaceFinishSymbol3.md",
-     "anchor": "Creates a surface-finish symbol based on the last selection."
+     "anchor": "Creates a surface-finish symbol based on the last selection.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -604,31 +583,36 @@
      "interface": "IDrawingDoc",
      "member": "GetCurrentSheet",
      "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
-     "anchor": "Gets the currently active drawing sheet."
+     "anchor": "Gets the currently active drawing sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISheet",
      "member": "GetName",
-     "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "path": "C:/swapi/types/ISheet/GetName.md",
+     "anchor": "Gets the name of the sheet.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "GetSheetCount",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
-     "anchor": "Gets the number of drawing sheets in this drawing."
+     "anchor": "Gets the number of drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "GetSheetNames",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
-     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -654,31 +638,36 @@
      "interface": "IDrawingDoc",
      "member": "GetFirstView",
      "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
-     "anchor": "Gets the first drawing [[view]] on the current sheet."
+     "anchor": "Gets the first drawing [[view]] on the current sheet.",
+     "kind": "method"
     },
     {
      "interface": "IView",
      "member": "GetName2",
      "path": "C:/swapi/types/IView/GetName2.md",
-     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree.",
+     "kind": "method"
     },
     {
      "interface": "IView",
      "member": "GetNextView",
      "path": "C:/swapi/types/IView/GetNextView.md",
-     "anchor": "Gets the next drawing view in the drawing."
+     "anchor": "Gets the next drawing view in the drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
-     "interface": "IBodyFolder",
+     "interface": "IView",
      "member": "Type",
-     "path": "C:/swapi/types/IBodyFolder/Type.md",
-     "anchor": "Gets the type of body folder."
+     "path": "C:/swapi/types/IView/Type.md",
+     "anchor": "Gets the drawing view type.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -761,13 +750,15 @@
      "interface": "IDrawingDoc",
      "member": "GetSheetCount",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
-     "anchor": "Gets the number of drawing sheets in this drawing."
+     "anchor": "Gets the number of drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -793,13 +784,15 @@
      "interface": "IDrawingDoc",
      "member": "GetSheetNames",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
-     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -844,31 +837,36 @@
      "interface": "IDrawingDoc",
      "member": "GetCurrentSheet",
      "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
-     "anchor": "Gets the currently active drawing sheet."
+     "anchor": "Gets the currently active drawing sheet.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISheet",
      "member": "GetName",
-     "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "path": "C:/swapi/types/ISheet/GetName.md",
+     "anchor": "Gets the name of the sheet.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "GetSheetCount",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetCount.md",
-     "anchor": "Gets the number of drawing sheets in this drawing."
+     "anchor": "Gets the number of drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "GetSheetNames",
      "path": "C:/swapi/types/IDrawingDoc/GetSheetNames.md",
-     "anchor": "Gets a list of the names of the drawing sheets in this drawing."
+     "anchor": "Gets a list of the names of the drawing sheets in this drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -886,69 +884,79 @@
    "claim": "Read the annotations, display dimensions and arc counts of every view on the active drawing.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IView/GetName2.md",
-    "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+    "path": "C:/swapi/types/IView/GetDisplayDimensions.md",
+    "anchor": "Gets all of the display dimension on this drawing view."
    },
    "members": [
     {
-     "interface": "IModelDocExtension",
+     "interface": "IView",
      "member": "GetAnnotationCount",
-     "path": "C:/swapi/types/IModelDocExtension/GetAnnotationCount.md",
-     "anchor": "Gets the number of annotations on this part."
+     "path": "C:/swapi/types/IView/GetAnnotationCount.md",
+     "anchor": "Gets the number of annotations in this view.",
+     "kind": "method"
     },
     {
-     "interface": "IModelDocExtension",
+     "interface": "IView",
      "member": "GetAnnotations",
-     "path": "C:/swapi/types/IModelDocExtension/GetAnnotations.md",
-     "anchor": "Gets the annotations on this part."
+     "path": "C:/swapi/types/IView/GetAnnotations.md",
+     "anchor": "Gets the annotations in this view.",
+     "kind": "method"
     },
     {
-     "interface": "IDatumTag",
+     "interface": "IView",
      "member": "GetArcCount",
-     "path": "C:/swapi/types/IDatumTag/GetArcCount.md",
-     "anchor": "Gets the number of arc items in this datum tag."
+     "path": "C:/swapi/types/IView/GetArcCount.md",
+     "anchor": "Gets the number of arcs in this view.",
+     "kind": "method"
     },
     {
-     "interface": "IMacroFeatureData",
+     "interface": "IView",
      "member": "GetDisplayDimensions",
-     "path": "C:/swapi/types/IMacroFeatureData/GetDisplayDimensions.md",
-     "anchor": "Gets the display dimensions for this macro feature."
+     "path": "C:/swapi/types/IView/GetDisplayDimensions.md",
+     "anchor": "Gets all of the display dimension on this drawing view.",
+     "kind": "method"
     },
     {
      "interface": "IDrawingDoc",
      "member": "GetFirstView",
      "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
-     "anchor": "Gets the first drawing [[view]] on the current sheet."
+     "anchor": "Gets the first drawing [[view]] on the current sheet.",
+     "kind": "method"
     },
     {
      "interface": "IAnnotation",
      "member": "GetName",
      "path": "C:/swapi/types/IAnnotation/GetName.md",
-     "anchor": "Gets the name of this annotation."
+     "anchor": "Gets the name of this annotation.",
+     "kind": "method"
     },
     {
      "interface": "IView",
      "member": "GetName2",
      "path": "C:/swapi/types/IView/GetName2.md",
-     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree.",
+     "kind": "method"
     },
     {
      "interface": "IView",
      "member": "GetNextView",
      "path": "C:/swapi/types/IView/GetNextView.md",
-     "anchor": "Gets the next drawing view in the drawing."
+     "anchor": "Gets the next drawing view in the drawing.",
+     "kind": "method"
     },
     {
-     "interface": "IAnnotation",
+     "interface": "IModelDoc2",
      "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document.",
+     "kind": "method"
     },
     {
-     "interface": "IBodyFolder",
+     "interface": "IView",
      "member": "Type",
-     "path": "C:/swapi/types/IBodyFolder/Type.md",
-     "anchor": "Gets the type of body folder."
+     "path": "C:/swapi/types/IView/Type.md",
+     "anchor": "Gets the drawing view type.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -957,7 +965,7 @@
     "at": "2026-11-01",
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
-    "notes": "成员 IView.GetName2 的官方 Description 与首句共享词干 display/draw/view"
+    "notes": "成员 IView.GetDisplayDimensions 的官方 Description 与首句共享词干 dimension/display/draw/view"
    }
   },
   {
@@ -971,16 +979,18 @@
    },
    "members": [
     {
-     "interface": "IFaceHatch",
+     "interface": "IModelView",
      "member": "Scale",
-     "path": "C:/swapi/types/IFaceHatch/Scale.md",
-     "anchor": "Obsolete. Superseded by [[IFaceHatch::Scale2]]."
+     "path": "C:/swapi/types/IModelView/Scale.md",
+     "anchor": "Obsolete. Superseded by [[IModelView::Scale2]].",
+     "kind": "property"
     },
     {
      "interface": "IView",
      "member": "ScaleDecimal",
      "path": "C:/swapi/types/IView/ScaleDecimal.md",
-     "anchor": "Gets or sets the scale of the drawing view, returning the results in decimal format."
+     "anchor": "Gets or sets the scale of the drawing view, returning the results in decimal format.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1006,7 +1016,8 @@
      "interface": "IView",
      "member": "UseSheetScale",
      "path": "C:/swapi/types/IView/UseSheetScale.md",
-     "anchor": "Gets or sets whether the scale of the drawing view is the same as the scale of the drawing sheet on which this view is located."
+     "anchor": "Gets or sets whether the scale of the drawing view is the same as the scale of the drawing sheet on which this view is located.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1032,13 +1043,15 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertCenterOfMass",
      "path": "C:/swapi/types/IFeatureManager/InsertCenterOfMass.md",
-     "anchor": "Inserts a Center of Mass feature."
+     "anchor": "Inserts a Center of Mass feature.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1048,6 +1061,186 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IFeatureManager.InsertCenterOfMass 的官方 Description 与首句共享词干 feature/insert"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_hole_table",
+   "impl": "scripts/sw_drawing_expose.py:create_hole_table",
+   "claim": "Insert a hole table on a drawing view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/InsertHoleTable3.md",
+    "anchor": "Inserts a hole table in this drawing view."
+   },
+   "members": [
+    {
+     "interface": "IView",
+     "member": "InsertHoleTable3",
+     "path": "C:/swapi/types/IView/InsertHoleTable3.md",
+     "anchor": "Inserts a hole table in this drawing view."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetFirstView",
+     "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
+     "anchor": "Gets the first drawing [[view]] on the current sheet."
+    },
+    {
+     "interface": "IView",
+     "member": "GetName2",
+     "path": "C:/swapi/types/IView/GetName2.md",
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IView",
+     "member": "Name",
+     "path": "C:/swapi/types/IView/Name.md",
+     "anchor": "Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]."
+    },
+    {
+     "interface": "IView",
+     "member": "GetNextView",
+     "path": "C:/swapi/types/IView/GetNextView.md",
+     "anchor": "Gets the next drawing view in the drawing."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectType3",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectType3.md",
+     "anchor": "Gets the type of object selected."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IView/InsertHoleTable3.md（Description/Signature/Parameters/Remarks 全读）、IDrawingDoc/GetFirstView.md、IView/GetName2|Name|GetNextView.md、IModelDoc2/SelectionManager.md、ISelectionMgr/GetSelectedObjectCount2|GetSelectedObject6|GetSelectedObjectType3.md。① 首句与官方 Description 逐字同义（『Inserts a hole table in this drawing view.』），实现是 get_com_member(view, \"InsertHoleTable3\", …) 9 参，与官方 Signature 的 9 个参数逐一对位（UseAnchorPoint/X/Y/AnchorType/StartValue/Template/TagOrder/TagType/ManualTags，其中 ManualTags 传空 Dispatch，与官方 examples 的 Nothing 一致）。② 描述第二句的 mark 表与官方 Remarks 逐字对上（datum origin vertex=1、hole edges and faces=2、X/Y 轴参考=4/8），官方还要求调用前用 IModelDocExtension::SelectByID2 选好 ⇒ 『本工具不代选』与实现一致。③ 视图像按名找：_view_by_name 走 IDrawingDoc.GetFirstView → IView.GetName2（取不到再退已废弃的 IView.Name）→ IView.GetNextView。★ 实现缺陷（非首句，已上报、未改）：_selection_marks 用 `GetSelectedObjectType3` 的返回值当 mark 累加（sw_drawing_expose.py 内 `mark = c.get_com_member(mgr, \"GetSelectedObjectType3\", i, -1)`），它返回的是 swSelectType_e 对象类型、不是选择标记 ⇒ preconditions_held 实际在按类型判定；同函数里 GetSelectedObject6 取了却未用（`_ = m`）。按官方页，取选择标记应走 ISelectionMgr.GetSelectedObjectMark（见 GetSelectedObjectCount2 页 See Also）。"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_section_view",
+   "impl": "scripts/sw_drawing_expose.py:create_section_view",
+   "claim": "Insert a section view at the given position on the active drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/CreateSectionViewAt5.md",
+    "anchor": "Creates the specified section view."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "CreateSectionViewAt5",
+     "path": "C:/swapi/types/IDrawingDoc/CreateSectionViewAt5.md",
+     "anchor": "Creates the specified section view."
+    },
+    {
+     "interface": "IView",
+     "member": "GetSection",
+     "path": "C:/swapi/types/IView/GetSection.md",
+     "anchor": "Gets the section for this section view."
+    },
+    {
+     "interface": "IDrSection",
+     "member": "SetLabel2",
+     "path": "C:/swapi/types/IDrSection/SetLabel2.md",
+     "anchor": "Sets the label for this section view."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IDrawingDoc/CreateSectionViewAt5.md（Description/Parameters/Remarks）、IView/GetSection.md、IDrSection/SetLabel2.md、IModelDoc2/SelectionManager.md、ISelectionMgr/GetSelectedObjectCount2.md。① 首句『在给定位置插入剖视图』＝官方 Description『Creates the specified section view.』＋ Parameters 逐字『X: x position on the drawing sheet for the center of the section view』（Y/Z 同）；实现把形参 mm 经 _mm 换成米后传入，位置语义对得上（官方该参数按米）。② 描述第二句『剖面线必须先选中』有官方 Remarks 逐字支持：『Before calling this method, select the section line or lines to use as a section line.』③ 实现链路（`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_section_view`）：CreateSectionViewAt5 → IView.GetSection → IDrSection.SetLabel2（官方 Remarks 点名就是这条链），标签状态按 swSetSectionLabelStatus_e 的 <0/=0/>0 分档如实回报；▶ 注：scripts/sw_drawing.py 是转发壳，真实现在 subskills 里，故门禁的一层委托索引看不到这一层的成员 —— 本台账按源码补登。④ 前置计数走 IModelDoc2.SelectionManager → ISelectionMgr.GetSelectedObjectCount2(-1)，只算「有没有选」，与描述『reports preconditions_held so an empty selection is not read as a failure』一致。"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_collect_view_evidence",
+   "impl": "scripts/sw_drawing_view.py:collect_view_evidence_report",
+   "claim": "Collect the per-view evidence that the capability layer records for every view on the drawing.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_drawing_view.py",
+    "anchor": "def collect_view_evidence_report(model) -> dict:"
+   },
+   "members": [
+    {
+     "interface": "IModelView",
+     "member": "DisplayZebraStripes",
+     "path": "C:/swapi/types/IModelView/DisplayZebraStripes.md",
+     "anchor": "Gets or sets the zebra-line display state."
+    },
+    {
+     "interface": "IModelView",
+     "member": "EnableGraphicsUpdate",
+     "path": "C:/swapi/types/IModelView/EnableGraphicsUpdate.md",
+     "anchor": "Gets or sets whether or not to refresh the model view."
+    },
+    {
+     "interface": "IModelView",
+     "member": "HlrQuality",
+     "path": "C:/swapi/types/IModelView/HlrQuality.md",
+     "anchor": "Gets or sets the hidden-line removal quality property of this model view."
+    },
+    {
+     "interface": "IView3D",
+     "member": "Rotation",
+     "path": "C:/swapi/types/IView3D/Rotation.md",
+     "anchor": "Gets or sets the 3D View rotation with respect to the Front view."
+    },
+    {
+     "interface": "",
+     "member": "Xform",
+     "documented": false,
+     "gap": "`C:\\swapi\\types` 全树**没有** `Xform` 成员页（`by_member_name` 索引 0 命中；只有 `ApplyTransform` 等把 Xform 当**形参名**的页面）⇒ 按铁律 5 记账，不编页。"
+    },
+    {
+     "interface": "IModelView",
+     "member": "XorHighlight",
+     "path": "C:/swapi/types/IModelView/XorHighlight.md",
+     "anchor": "Gets or sets the Xor highlight state."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelView/DisplayZebraStripes、EnableGraphicsUpdate、HlrQuality、XorHighlight、IView3D/Rotation 五张页。★ 首句说的是**本仓能力层记了什么**（「the capability layer records」）⇒ 按 spec D4 记 `kind=impl`，锚点抄实现的 `def collect_view_evidence_report(`。★ 成员表里 DisplayZebraStripes / EnableGraphicsUpdate / HlrQuality / XorHighlight 来自**另一个同名函数**`sw_view.py::collect_view_evidence`（门禁提取器按函数名跨文件收集）——它们是真 COM 成员、页真，一并登记以保证覆盖；本案实现 `sw_drawing_view.collect_view_evidence` 只取 Rotation / Xform 与几个包装读数。★ 另记：官方 `Rotation` 只在 **IView3D** 上有页，而实现是对 `IView` 对象取 `Rotation`（未真机验证），如实留在这里供复核。"
    }
   }
  ]

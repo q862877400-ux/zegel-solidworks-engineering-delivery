@@ -16,19 +16,22 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertMoldCoreCavitySolids",
      "path": "C:/swapi/types/IFeatureManager/InsertMoldCoreCavitySolids.md",
-     "anchor": "Creates a core/cavity solid feature."
+     "anchor": "Creates a core/cavity solid feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -54,7 +57,8 @@
      "interface": "IModelDoc2",
      "member": "MoldDraftAnalysis",
      "path": "C:/swapi/types/IModelDoc2/MoldDraftAnalysis.md",
-     "anchor": "Performs a mold draft analysis."
+     "anchor": "Performs a mold draft analysis.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -64,32 +68,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IModelDoc2.MoldDraftAnalysis 的官方 Description 与首句共享词干 analysi/draft/mold"
-   }
-  },
-  {
-   "tool": "solidworks_mold_evidence",
-   "impl": "scripts/sw_mold.py:mold_evidence",
-   "claim": "Read the mold state of the active part, which this machine cannot actually read.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-    "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "FeatureManager",
-     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.FeatureManager 的官方 Description 与首句共享词干 which"
    }
   },
   {
@@ -106,19 +84,22 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertMoldPartingLine",
      "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingLine.md",
-     "anchor": "Inserts a mold parting line feature."
+     "anchor": "Inserts a mold parting line feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -144,19 +125,22 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertMoldPartingSurface",
      "path": "C:/swapi/types/IFeatureManager/InsertMoldPartingSurface.md",
-     "anchor": "Inserts a mold parting surface feature."
+     "anchor": "Inserts a mold parting surface feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -182,19 +166,22 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertMoldShutOffSurface",
      "path": "C:/swapi/types/IFeatureManager/InsertMoldShutOffSurface.md",
-     "anchor": "Inserts the mold shut-off surface feature."
+     "anchor": "Inserts the mold shut-off surface feature.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -220,13 +207,15 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "MoldUndercutDetect2",
      "path": "C:/swapi/types/IFeatureManager/MoldUndercutDetect2.md",
-     "anchor": "Detects trapped, also called undercut, areas in a model that cannot be ejected from the mold."
+     "anchor": "Detects trapped, also called undercut, areas in a model that cannot be ejected from the mold.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -252,43 +241,50 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "CreateCustomBendAllowance",
      "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
-     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
+     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "CreateDefinition",
      "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
-     "anchor": "Creates a feature data object of the specified type."
+     "anchor": "Creates a feature data object of the specified type.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "CreateFeature",
      "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
-     "anchor": "Creates the specified feature."
+     "anchor": "Creates the specified feature.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeature",
      "member": "GetErrorCode",
      "path": "C:/swapi/types/IFeature/GetErrorCode.md",
-     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]].",
+     "kind": "method"
     },
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "Initialize",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/Initialize.md",
-     "anchor": "Initializes a newly created sheet metal base flange feature with the specified data."
+     "anchor": "Initializes a newly created sheet metal base flange feature with the specified data.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -325,11 +321,11 @@
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g3",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeatureManager.InsertMultiFaceDraft 的官方 Description 与首句共享词干 draft"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertMultiFaceDraft.md：Signature 六参 `(Angle, FlipDir, EdgeDraft, PropType, IsStepDraft, IsBodyDraft)`，Angle「Draft angle in radians」、FlipDir 参数说明里逐字给了 mark 分工（方向项 mark=1 / 待拔模面 mark=2 / 拔模边 mark=4）、Remarks「Make the selections using IModelDocExtension::SelectByID2 before calling this method.」。实现 `math.radians(angle)` + 六参对位 + 首句「on one selected face」与「The selection must already hold the face to draft, and a datum plane supplies the pull direction」都落在页的 mark 说明里。★ 首句「untested on this machine」与模块内 `SHEET_METAL_RUNTIME_STATUS` 的 `create_draft` 记 (None, …)（未测）一致 ⇒ 该免责句有实现依据。"
    }
   },
   {
@@ -346,7 +342,8 @@
      "interface": "IModelDoc2",
      "member": "InsertSheetMetalFold",
      "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalFold.md",
-     "anchor": "Inserts a fold feature at the selected objects."
+     "anchor": "Inserts a fold feature at the selected objects.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -372,25 +369,29 @@
      "interface": "IFeatureManager",
      "member": "CreateDefinition",
      "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
-     "anchor": "Creates a feature data object of the specified type."
+     "anchor": "Creates a feature data object of the specified type.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "CreateFeature",
      "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
-     "anchor": "Creates the specified feature."
+     "anchor": "Creates the specified feature.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeature",
      "member": "GetErrorCode",
      "path": "C:/swapi/types/IFeature/GetErrorCode.md",
-     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]].",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -407,17 +408,11 @@
    "impl": "scripts/sw_sheet_metal.py:create_hem",
    "claim": "Skip this tool, NOT USABLE on this machine: every hem shape returns nothing, so no hem is created.",
    "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
-    "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
+    "kind": "impl",
+    "path": "scripts/sw_sheet_metal.py",
+    "anchor": "本入口在本机实测失败"
    },
    "members": [
-    {
-     "interface": "IFeatureManager",
-     "member": "CreateCustomBendAllowance",
-     "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
-     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
-    },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
@@ -425,28 +420,10 @@
      "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
     },
     {
-     "interface": "IComponent2",
-     "member": "GetBodies2",
-     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
-    },
-    {
-     "interface": "IAttribute",
-     "member": "GetDefinition",
-     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
-     "anchor": "Gets the definition of this attribute."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetTypeName2",
-     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
+     "interface": "IFeatureManager",
+     "member": "CreateCustomBendAllowance",
+     "path": "C:/swapi/types/IFeatureManager/CreateCustomBendAllowance.md",
+     "anchor": "Creates a custom bend allowance to use when creating a sheet metal feature."
     },
     {
      "interface": "IFeatureManager",
@@ -455,31 +432,73 @@
      "anchor": "Inserts a hem of the specified relief type at the selected edges of the current sheet metal part."
     },
     {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    },
-    {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
      "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
     },
     {
-     "interface": "IBodyFolder",
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetDefinition",
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature."
+    },
+    {
+     "interface": "IHemFeatureData",
      "member": "Type",
-     "path": "C:/swapi/types/IBodyFolder/Type.md",
-     "anchor": "Gets the type of body folder."
+     "path": "C:/swapi/types/IHemFeatureData/Type.md",
+     "anchor": "Gets or sets the hem type."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g3",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeatureManager.CreateCustomBendAllowance 的官方 Description 与首句共享词干 creat"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertSheetMetalHem2.md（「Inserts a hem of the specified relief type at the selected edges of the current sheet metal part.」）、CreateCustomBendAllowance.md（「Creates a custom bend allowance to use when creating a sheet metal feature.」）与 IBody2/GetBodyBox.md。★ 首句是「Skip this tool, NOT USABLE on this machine: every hem shape returns nothing, so no hem is created」—— 这是**本机实测结论**，官方页不可能有此句 ⇒ claim_evidence 用 impl 档指实现/docstring 里的「本入口在本机实测失败」；支撑证据是 `SHEET_METAL_RUNTIME_STATUS['create_hem']` 记的五种形态全回 `None`，与 `require_verified('create_hem')` 默认先抛一致。★ 回读段 `get_com_member(definition, \"Type\")` 是**折边类型**读回，属 IHemFeatureData.Type（官方页「Gets or sets the hem type.」，Returns 「Hem type as defined in swHemTypes_e」）；草稿把它写成 `IBodyFolder.Type`（**指错接口**，BodyFolder 是实体文件夹），已订正。`IComponent2.GetBodies2` 亦无调用（包围盒走 IPartDoc.GetBodies2 → IBody2.GetBodyBox），一并订正。"
    }
   },
   {
@@ -487,9 +506,9 @@
    "impl": "scripts/sw_sheet_metal.py:create_one_bend",
    "claim": "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved.",
    "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-    "anchor": "Clears the selection list."
+    "kind": "runtime",
+    "path": "scripts/sw_sheet_metal.py",
+    "anchor": "⚠ **仍缺**「选中折弯线 / 固定面」这一步 ⇒ 仍标不可用，但**原因已具体化**"
    },
    "members": [
     {
@@ -497,6 +516,12 @@
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
      "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
     },
     {
      "interface": "IFeatureManager",
@@ -511,25 +536,19 @@
      "anchor": "Creates the specified feature."
     },
     {
-     "interface": "IModelDoc2",
-     "member": "FeatureManager",
-     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-    },
-    {
      "interface": "IFeature",
      "member": "GetErrorCode",
      "path": "C:/swapi/types/IFeature/GetErrorCode.md",
-     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+     "anchor": "Feature error code as defined in [[swFeatureError_e]]"
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g4",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.ClearSelection2 的官方 Description 与首句共享词干 selection"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/CreateDefinition.md（Parameters 段逐条 35 个常量）与 CreateFeature.md、IFeatureManager.md、ClearSelection2.md。① 首句是**本仓真机裁定**，不是官方语义：SHEET_METAL_RUNTIME_STATUS 该条记 Failure 与卡点，故 claim_evidence 用 runtime 档；② 官方页支持描述**第二句的前半**：CreateDefinition 的 Parameters 段逐字列 `swFmSketchBend (sheet metal sketched bend)`⇒ `CreateDefinition(35)` 属官方接受的 35 个常量之一（draft 的 CreateDefinition 锚点正确）；③ 官方页支持不了「本机不可用」这个结论（任何官方页都不会写本机状态）——按 D4 用 runtime 档如实分档；④ ⚠ 描述第二句后半『the call never gets as far as writing』与实现不严格一致：`_create_from_definition` **会**调 CreateFeature（失败才抛），不是「到不了写」；结论（不改零件）成立，但机理表述建议下一批改描述时收紧 —— 本批按纪律不改 doc；⑤ 草稿登记的 5 个成员页全部存在且 type/member 对得上；选区走 sw_part 的更深一层助手（_ensure_sketch_selected），按规格 353 D5「只跨一层」不在此展开。⑥ 真机卡点的官方侧对照（不在 members 里，因为**实现根本没调它**）：C:/swapi/types/ISketchedBendFeatureData/AccessSelections.md 存在，官方语义是「取得描述该特征的选区」；SHEET_METAL_RUNTIME_STATUS 记的是拿它取选区时对本机空 Dispatch 报 -2147417851（0x80010105）。这与工具实际走的路（靠预选草图、直接 CreateFeature）是两件事 —— 记下来供下一批判断入口是否该改走 AccessSelections。"
    }
   },
   {
@@ -546,7 +565,8 @@
      "interface": "IModelDoc2",
      "member": "InsertSheetMetalUnfold",
      "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalUnfold.md",
-     "anchor": "Inserts an unfold feature at the selected objects."
+     "anchor": "Inserts an unfold feature at the selected objects.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -564,81 +584,93 @@
    "claim": "Read the sheet-metal evidence of the active part: feature list, base flange parameters and per-body flags.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IBaseFlangeFeatureData/D1EndConditionDistance.md",
-    "anchor": "Gets or sets the Direction 1 end condition distance for this base flange feature."
+    "path": "C:/swapi/types/IBaseFlangeFeatureData/GetCustomBendAllowance.md",
+    "anchor": "Gets the custom bend allowance object associated with this sheet metal base flange feature."
    },
    "members": [
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "BendRadius",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/BendRadius.md",
-     "anchor": "Gets or sets the bend radius of this bend flange feature."
+     "anchor": "Gets or sets the bend radius of this bend flange feature.",
+     "kind": "property"
     },
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "D1EndConditionDistance",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/D1EndConditionDistance.md",
-     "anchor": "Gets or sets the Direction 1 end condition distance for this base flange feature."
+     "anchor": "Gets or sets the Direction 1 end condition distance for this base flange feature.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "GetCustomBendAllowance",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/GetCustomBendAllowance.md",
-     "anchor": "Gets the custom bend allowance object associated with this sheet metal base flange feature."
+     "anchor": "Gets the custom bend allowance object associated with this sheet metal base flange feature.",
+     "kind": "method"
     },
     {
-     "interface": "IAttribute",
+     "interface": "IFeature",
      "member": "GetDefinition",
-     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
-     "anchor": "Gets the definition of this attribute."
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetTypeName2",
      "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
+     "anchor": "Gets the type of feature.",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "IsSheetMetal",
      "path": "C:/swapi/types/IBody2/IsSheetMetal.md",
-     "anchor": "Gets whether this body was created by a sheet metal feature."
+     "anchor": "Gets whether this body was created by a sheet metal feature.",
+     "kind": "method"
     },
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "KFactor",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/KFactor.md",
-     "anchor": "Gets or sets the K-factor for this base-flange feature."
+     "anchor": "Gets or sets the K-factor for this base-flange feature.",
+     "kind": "property"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IBaseFlangeFeatureData",
      "member": "Thickness",
      "path": "C:/swapi/types/IBaseFlangeFeatureData/Thickness.md",
-     "anchor": "Gets or sets the thickness for this base flange feature."
+     "anchor": "Gets or sets the thickness for this base flange feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -647,7 +679,7 @@
     "at": "2026-11-01",
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
-    "notes": "成员 IBaseFlangeFeatureData.D1EndConditionDistance 的官方 Description 与首句共享词干 base/feature/flange"
+    "notes": "成员 IBaseFlangeFeatureData.GetCustomBendAllowance 的官方 Description 与首句共享词干 base/feature/flange"
    }
   },
   {
@@ -664,31 +696,36 @@
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "GetFaces",
      "path": "C:/swapi/types/IBody2/GetFaces.md",
-     "anchor": "Gets all of the faces on the body."
+     "anchor": "Gets all of the faces on the body.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "InsertSheetMetalClosedCorner",
      "path": "C:/swapi/types/IModelDoc2/InsertSheetMetalClosedCorner.md",
-     "anchor": "Inserts a sheet metal closed corner into this model document."
+     "anchor": "Inserts a sheet metal closed corner into this model document.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -714,43 +751,50 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "GetFaces",
      "path": "C:/swapi/types/IBody2/GetFaces.md",
-     "anchor": "Gets all of the faces on the body."
+     "anchor": "Gets all of the faces on the body.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertSheetMetalMiterFlange",
      "path": "C:/swapi/types/IFeatureManager/InsertSheetMetalMiterFlange.md",
-     "anchor": "Inserts a meter flange in a sheet metal part."
+     "anchor": "Inserts a meter flange in a sheet metal part.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -773,16 +817,18 @@
    },
    "members": [
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -800,8 +846,8 @@
    "claim": "Create a surface extrude feature from an existing sketch of the active part.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-    "anchor": "Gets the next feature in the part."
+    "path": "C:/swapi/types/IFeatureManager/FeatureExtruRefSurface3.md",
+    "anchor": "Inserts an extruded surface."
    },
    "members": [
     {
@@ -817,10 +863,10 @@
      "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
     },
     {
      "interface": "IFeature",
@@ -829,25 +875,31 @@
      "anchor": "Gets the next feature in the part."
     },
     {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
      "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 feature/part"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/FeatureExtruRefSurface3.md：Description「Inserts an extruded surface.」（Returns void），与首句「surface extrude feature」同一件事；实现按 12 参逐个传（StartCond/T1/T2/D1…，长度在边界换算）。成功判据用特征树前后差集（FirstFeature + GetNextFeature + IFeature.Name），与实现一致。"
    }
   },
   {
@@ -864,61 +916,71 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertCutSurface",
      "path": "C:/swapi/types/IFeatureManager/InsertCutSurface.md",
-     "anchor": "Inserts a surface-cut feature using the preselected surface or plane."
+     "anchor": "Inserts a surface-cut feature using the preselected surface or plane.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDocExtension",
      "member": "SelectByID2",
      "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
-     "anchor": "Selects the specified entity."
+     "anchor": "Selects the specified entity.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -944,31 +1006,36 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "InsertExtendSurface",
      "path": "C:/swapi/types/IModelDoc2/InsertExtendSurface.md",
-     "anchor": "Extends a surface along the selected faces or edges."
+     "anchor": "Extends a surface along the selected faces or edges.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -981,15 +1048,21 @@
    }
   },
   {
-   "tool": "solidworks_surface_fill",
-   "impl": "scripts/sw_surface_features.py:insert_fill_surface_report",
-   "claim": "Create a surface patch over a closed boundary of the active part.",
+   "tool": "solidworks_surface_flatten",
+   "impl": "scripts/sw_feature_entry_ops.py:create_flatten_surface",
+   "claim": "Flatten a surface body into a flat surface feature.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-    "anchor": "Gets the next feature in the part."
+    "path": "C:/swapi/types/IFeatureManager/InsertFlattenSurface2.md",
+    "anchor": "Inserts a surface-flatten feature in the model."
    },
    "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFlattenSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertFlattenSurface2.md",
+     "anchor": "Inserts a surface-flatten feature in the model."
+    },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
@@ -998,39 +1071,15 @@
     },
     {
      "interface": "IModelDoc2",
-     "member": "Extension",
-     "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
-    },
-    {
-     "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
      "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IComponent2",
-     "member": "GetBodies2",
-     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
-    },
-    {
-     "interface": "IBody2",
-     "member": "GetEdges",
-     "path": "C:/swapi/types/IBody2/GetEdges.md",
-     "anchor": "Gets the edges for this body."
-    },
-    {
-     "interface": "IEdge",
-     "member": "GetEndVertex",
-     "path": "C:/swapi/types/IEdge/GetEndVertex.md",
-     "anchor": "Gets the ending vertex for this edge."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
     },
     {
      "interface": "IFeature",
@@ -1039,96 +1088,16 @@
      "anchor": "Gets the next feature in the part."
     },
     {
-     "interface": "IVertex",
-     "member": "GetPoint",
-     "path": "C:/swapi/types/IVertex/GetPoint.md",
-     "anchor": "Gets the point corresponding to this vertex."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IEdge",
-     "member": "GetStartVertex",
-     "path": "C:/swapi/types/IEdge/GetStartVertex.md",
-     "anchor": "Gets the starting vertex for this edge."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "InsertFillSurface2",
-     "path": "C:/swapi/types/IFeatureManager/InsertFillSurface2.md",
-     "anchor": "Inserts a fill-surface feature in the model."
-    },
-    {
-     "interface": "IBody2",
+     "interface": "IFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
     },
     {
-     "interface": "IModelDocExtension",
-     "member": "SelectByID2",
-     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
-     "anchor": "Selects the specified entity."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 part"
-   }
-  },
-  {
-   "tool": "solidworks_surface_flatten",
-   "impl": "scripts/sw_feature_entry_ops.py:create_flatten_surface",
-   "claim": "Flatten a surface body into a flat surface feature.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-    "anchor": "Gets the first feature in this component."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "ClearSelection2",
-     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "FeatureManager",
-     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-    },
-    {
-     "interface": "IComponent2",
-     "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IComponent2",
+     "interface": "IPartDoc",
      "member": "GetBodies2",
-     "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
-    },
-    {
-     "interface": "IBody2",
-     "member": "GetEdges",
-     "path": "C:/swapi/types/IBody2/GetEdges.md",
-     "anchor": "Gets the edges for this body."
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
     },
     {
      "interface": "IBody2",
@@ -1137,31 +1106,19 @@
      "anchor": "Gets all of the faces on the body."
     },
     {
-     "interface": "IFeature",
-     "member": "GetNextFeature",
-     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "InsertFlattenSurface2",
-     "path": "C:/swapi/types/IFeatureManager/InsertFlattenSurface2.md",
-     "anchor": "Inserts a surface-flatten feature in the model."
-    },
-    {
      "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "member": "GetEdges",
+     "path": "C:/swapi/types/IBody2/GetEdges.md",
+     "anchor": "Gets the edges for this body."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertFlattenSurface2.md：`(AccuracyFactor, ShouldUseTears)` 两参，Returns Feature ——「surface-flatten feature」与首句同一件事；实现先取曲面体/实体体的面并按 mark 选中，再调本成员，判据用特征树新增。★ GetBodies2 走 **IPartDoc**（两参）。"
    }
   },
   {
@@ -1178,37 +1135,43 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertSewRefSurface",
      "path": "C:/swapi/types/IFeatureManager/InsertSewRefSurface.md",
-     "anchor": "Creates a surface by knitting the selected surfaces together."
+     "anchor": "Creates a surface by knitting the selected surfaces together.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1234,7 +1197,8 @@
      "interface": "IModelDoc2",
      "member": "InsertOffsetSurface",
      "path": "C:/swapi/types/IModelDoc2/InsertOffsetSurface.md",
-     "anchor": "Inserts an offset surface."
+     "anchor": "Inserts an offset surface.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1260,7 +1224,8 @@
      "interface": "IModelDoc2",
      "member": "InsertPlanarRefSurface",
      "path": "C:/swapi/types/IModelDoc2/InsertPlanarRefSurface.md",
-     "anchor": "Inserts a planar reference surface."
+     "anchor": "Inserts a planar reference surface.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1286,7 +1251,8 @@
      "interface": "IModelDoc2",
      "member": "InsertFeatureReplaceFace",
      "path": "C:/swapi/types/IModelDoc2/InsertFeatureReplaceFace.md",
-     "anchor": "Creates a Replace Face feature."
+     "anchor": "Creates a Replace Face feature.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1312,13 +1278,15 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertRevolvedRefSurface",
      "path": "C:/swapi/types/IFeatureManager/InsertRevolvedRefSurface.md",
-     "anchor": "Creates a revolved reference surface by revolving a profile around a centerline."
+     "anchor": "Creates a revolved reference surface by revolving a profile around a centerline.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1350,89 +1318,21 @@
    }
   },
   {
-   "tool": "solidworks_surface_sweep",
-   "impl": "scripts/sw_sweep.py:create_sweep_surface_report",
-   "claim": "Skip this tool, NOT USABLE on this machine: every entry point returns nothing and the tree stays unchanged.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-    "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-   },
-   "members": [
-    {
-     "interface": "IAdvancedHoleFeatureData",
-     "member": "AccessSelections",
-     "path": "C:/swapi/types/IAdvancedHoleFeatureData/AccessSelections.md",
-     "anchor": "Gains access to the selections used to define the Advanced Hole feature."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "CreateDefinition",
-     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
-     "anchor": "Creates a feature data object of the specified type."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "CreateFeature",
-     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
-     "anchor": "Creates the specified feature."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "FeatureManager",
-     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
-    },
-    {
-     "interface": "IComponent2",
-     "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
-    },
-    {
-     "interface": "IFeature",
-     "member": "GetNextFeature",
-     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.FeatureManager 的官方 Description 与首句共享词干 tree"
-   }
-  },
-  {
    "tool": "solidworks_surface_untrim",
    "impl": "scripts/sw_surface_features.py:untrim_surface_report",
    "claim": "Untrim a surface so the trimmed-away part of the face grows back.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-    "anchor": "Gets the next feature in the part."
+    "path": "C:/swapi/types/IFeatureManager/InsertUntrimSurface2.md",
+    "anchor": "Extends a surface along its natural boundaries or fills interior surface holes, optionally trimming outside these boundaries or holes."
    },
    "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertUntrimSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertUntrimSurface2.md",
+     "anchor": "Extends a surface along its natural boundaries or fills interior surface holes, optionally trimming outside these boundaries or holes."
+    },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
@@ -1446,10 +1346,10 @@
      "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
     },
     {
      "interface": "IFeature",
@@ -1458,31 +1358,25 @@
      "anchor": "Gets the next feature in the part."
     },
     {
-     "interface": "IAnnotation",
-     "member": "GetType",
-     "path": "C:/swapi/types/IAnnotation/GetType.md",
-     "anchor": "Gets the type of the annotation."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "InsertUntrimSurface2",
-     "path": "C:/swapi/types/IFeatureManager/InsertUntrimSurface2.md",
-     "anchor": "Extends a surface along its natural boundaries or fills interior surface holes, optionally trimming outside these boundaries or holes."
-    },
-    {
-     "interface": "IBody2",
+     "interface": "IFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "GetType",
+     "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeature.GetNextFeature 的官方 Description 与首句共享词干 part"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertUntrimSurface2.md：Description 逐字「Extends a surface along its natural boundaries or fills interior surface holes, optionally trimming outside these boundaries or holes.」—— 即「被裁掉的那部分长回来」；首句是它的通俗表述，同一件事。实现先 ClearSelection2、取 FeatureManager 调本成员、用特征树差集判新增，并在 doc_type 里记录 GetType。"
    }
   },
   {
@@ -1499,25 +1393,29 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertFilletBeadFeature2",
      "path": "C:/swapi/types/IFeatureManager/InsertFilletBeadFeature2.md",
-     "anchor": "Inserts a fillet weld bead feature and also fills the gap between the pre-selected part bodies, if any."
+     "anchor": "Inserts a fillet weld bead feature and also fills the gap between the pre-selected part bodies, if any.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1543,25 +1441,29 @@
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "InsertWeldSymbol3",
      "path": "C:/swapi/types/IModelDoc2/InsertWeldSymbol3.md",
-     "anchor": "Inserts a weld symbol into the model."
+     "anchor": "Inserts a weld symbol into the model.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     },
     {
      "interface": "IDatumTag",
      "member": "SetText",
      "path": "C:/swapi/types/IDatumTag/SetText.md",
-     "anchor": "Sets the text of this datum tag."
+     "anchor": "Sets the text of this datum tag.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1578,11 +1480,17 @@
    "impl": "scripts/sw_weldment.py:create_cut_list",
    "claim": "Skip this tool, NOT USABLE on this machine: the cut-list insert member resolves to None on this backend.",
    "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
-    "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    "kind": "impl",
+    "path": "scripts/sw_weldment.py",
+    "anchor": "本函数在当前后端（pywin32 迟到绑定）上跑不通"
    },
    "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentCutList2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
@@ -1591,30 +1499,24 @@
     },
     {
      "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
      "member": "GetTypeName2",
      "path": "C:/swapi/types/IFeature/GetTypeName2.md",
      "anchor": "Gets the type of feature."
-    },
-    {
-     "interface": "IFeatureManager",
-     "member": "InsertWeldmentCutList2",
-     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
-     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
-    },
-    {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IFeatureManager.InsertWeldmentCutList2 的官方 Description 与首句共享词干 insert"
+    "method": "read official page",
+    "level": "human",
+    "notes": "首句是**停用告知**（triage A4 写给已知不可用工具），claim_evidence 取实现里同一结论的原文（docstring 逐字「本函数在当前后端（pywin32 迟到绑定）上跑不通」+ 判空后抛 RuntimeError 的注释）。读了 IFeatureManager/InsertWeldmentCutList2.md：成员**确实存在**（`Feature InsertWeldmentCutList2(object Bodies)`，「Inserts a cut-list-item folder feature containing the specified weldment bodies.」）⇒ 首句说的「resolves to None」是**本机迟到绑定取不到**的问题，不是「官方没这个成员」。"
    }
   },
   {
@@ -1650,79 +1552,92 @@
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "CreateStructuralMemberGroup",
      "path": "C:/swapi/types/IFeatureManager/CreateStructuralMemberGroup.md",
-     "anchor": "Creates a weldment structural-member group."
+     "anchor": "Creates a weldment structural-member group.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "EditRebuild3",
      "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
-     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model.",
+     "kind": "method"
     },
     {
      "interface": "IAssemblyDoc",
      "member": "FeatureByName",
      "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
-     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetNextFeature",
      "path": "C:/swapi/types/IFeature/GetNextFeature.md",
-     "anchor": "Gets the next feature in the part."
+     "anchor": "Gets the next feature in the part.",
+     "kind": "method"
     },
     {
      "interface": "ISketch",
      "member": "GetSketchSegments",
      "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetSpecificFeature2",
      "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
-     "anchor": "Gets the more specific interface to a selected feature."
+     "anchor": "Gets the more specific interface to a selected feature.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetTypeName2",
      "path": "C:/swapi/types/IFeature/GetTypeName2.md",
-     "anchor": "Gets the type of feature."
+     "anchor": "Gets the type of feature.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertStructuralWeldment5",
      "path": "C:/swapi/types/IFeatureManager/InsertStructuralWeldment5.md",
-     "anchor": "Inserts a structural weldment feature."
+     "anchor": "Inserts a structural weldment feature.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertWeldmentFeature",
      "path": "C:/swapi/types/IFeatureManager/InsertWeldmentFeature.md",
-     "anchor": "Inserts a weldment feature."
+     "anchor": "Inserts a weldment feature.",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "Name",
      "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "anchor": "Gets or sets the name of the selected body.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1748,13 +1663,15 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertSubWeldFolder2",
      "path": "C:/swapi/types/IFeatureManager/InsertSubWeldFolder2.md",
-     "anchor": "Creates a sub weld folder feature containing the specified weldment bodies."
+     "anchor": "Creates a sub weld folder feature containing the specified weldment bodies.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1772,10 +1689,46 @@
    "claim": "Create a weldment profile file from a declaratively selected sketch and save it as .sldlfp.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IBody2/Name.md",
-    "anchor": "Gets or sets the name of the selected body."
+    "path": "C:/swapi/types/IModelDoc2/Save3.md",
+    "anchor": "Saves the current document."
    },
    "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "Save3",
+     "path": "C:/swapi/types/IModelDoc2/Save3.md",
+     "anchor": "Saves the current document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SaveAs",
+     "path": "C:/swapi/types/IModelDocExtension/SaveAs.md",
+     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SaveAs2]]."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ConfigurationManager",
+     "path": "C:/swapi/types/IModelDoc2/ConfigurationManager.md",
+     "anchor": "Gets the [[IConfigurationManager]] object, which allows access to a configuration in a model."
+    },
     {
      "interface": "IConfigurationManager",
      "member": "ActiveConfiguration",
@@ -1789,10 +1742,150 @@
      "anchor": "Adds a custom property to a configuration or model document."
     },
     {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    },
+    {
      "interface": "IModelDoc2",
-     "member": "ClearSelection2",
-     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "member": "GetPathName",
+     "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g5",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/Save3.md（「Saves the current document.」，save_document 走它/Extension.SaveAs）、IConfigurationManager/ActiveConfiguration.md（配置名用于写配置级属性）、ICustomPropertyManager/Add3.md 与 Get6.md（写属性并回读）、IModelDocExtension/SelectByID2.md（按名字选草图）。首句三件事逐条对上实现：① 声明式选中草图（_ensure_sketch_selected + SelectByID2）② 存成 .sldlfp（严格后缀校验 + save_document）③ 产物非空校验（0 字节或未生成即抛，并排除 ~$ 锁文件）。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_evidence",
+   "impl": "scripts/sw_weldment.py:weldment_evidence",
+   "claim": "Read back the weldment state: features, cut-list folders and their properties.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IConfiguration/GetCutListItems.md",
+    "anchor": "Gets the cut list folders in this active or non-active configuration."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "CustomPropertyManager",
+     "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."
+    },
+    {
+     "interface": "ICutListItem",
+     "member": "CustomPropertyManager",
+     "path": "C:/swapi/types/ICutListItem/CustomPropertyManager.md",
+     "anchor": "Gets the custom property manager for this configuration-specific cut list."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "GetNames",
+     "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "GetBodyCount",
+     "path": "C:/swapi/types/IBodyFolder/GetBodyCount.md",
+     "anchor": "Gets the number of bodies in the folder."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "UpdateCutList",
+     "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+     "anchor": "Updates an automatically generated cut list."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentCutList2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
     },
     {
      "interface": "IModelDoc2",
@@ -1801,37 +1894,31 @@
      "anchor": "Gets the [[IConfigurationManager]] object, which allows access to a configuration in a model."
     },
     {
-     "interface": "IComponent2",
-     "member": "GetPathName",
-     "path": "C:/swapi/types/IComponent2/GetPathName.md",
-     "anchor": "Gets the full path name for this component."
+     "interface": "IConfigurationManager",
+     "member": "ActiveConfiguration",
+     "path": "C:/swapi/types/IConfigurationManager/ActiveConfiguration.md",
+     "anchor": "Gets the active configuration."
     },
     {
-     "interface": "IBody2",
+     "interface": "IConfiguration",
+     "member": "GetCutListItems",
+     "path": "C:/swapi/types/IConfiguration/GetCutListItems.md",
+     "anchor": "Gets the cut list folders in this active or non-active configuration."
+    },
+    {
+     "interface": "IConfiguration",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "Save3",
-     "path": "C:/swapi/types/IModelDoc2/Save3.md",
-     "anchor": "Saves the current document."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SaveAs",
-     "path": "C:/swapi/types/IModelDoc2/SaveAs.md",
-     "anchor": "Obsolete. Superseded by [[IModelDocExtension::SaveAs]]."
+     "path": "C:/swapi/types/IConfiguration/Name.md",
+     "anchor": "Gets or sets the configuration name."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-r2",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IBody2.Name 的官方 Description 与首句共享词干 select"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IConfiguration/GetCutListItems、ICutListItem/CustomPropertyManager、IFeature/CustomPropertyManager（『Gets the custom property information for weldment and cut-list item features only.』）、IBodyFolder/GetBodyCount、ICustomPropertyManager/GetNames+Get6、IConfigurationManager/ActiveConfiguration、IConfiguration/Name、IFeature 遍历族、IPartDoc/GetBodies2 ⇒ 首句『回读 features / cut-list folders / 其属性』三样都有官方页，且都是读成员。与首句第二句的『只在 create_missing_cut_list / update_cut_list_too 要求时才写模型』一致：写操作只有 IBodyFolder.UpdateCutList（官方『Updates an automatically generated cut list.』）与 ensure_cut_list 那条（InsertWeldmentCutList2 + EditRebuild3），只读路径走 _read_cut_list_folders 不调它们；这两条的成员也据此一并登记（create_missing_cut_list=True 时确实会走到）。草稿把 GetBodies2 指到 IComponent2、把 Name 指到 IBomFeature，均已按接收者改正。"
    }
   },
   {
@@ -1867,43 +1954,50 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "GetFaces",
      "path": "C:/swapi/types/IBody2/GetFaces.md",
-     "anchor": "Gets all of the faces on the body."
+     "anchor": "Gets all of the faces on the body.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertGussetFeature3",
      "path": "C:/swapi/types/IFeatureManager/InsertGussetFeature3.md",
-     "anchor": "Inserts a gusset feature for pre-selected faces of a weldment."
+     "anchor": "Inserts a gusset feature for pre-selected faces of a weldment.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1929,49 +2023,57 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
      "interface": "IComponent2",
      "member": "GetBodies2",
      "path": "C:/swapi/types/IComponent2/GetBodies2.md",
-     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]]."
+     "anchor": "Obsolete. Superseded by [[IComponent2::GetBodies3]].",
+     "kind": "method"
     },
     {
-     "interface": "IAttribute",
+     "interface": "IFeature",
      "member": "GetDefinition",
-     "path": "C:/swapi/types/IAttribute/GetDefinition.md",
-     "anchor": "Gets the definition of this attribute."
+     "path": "C:/swapi/types/IFeature/GetDefinition.md",
+     "anchor": "Gets the feature data object for a feature, such as an advanced mate, extrusion, loft, fillet, chamfer, etc., in order to access the parameters that control the definition of this feature.",
+     "kind": "method"
     },
     {
      "interface": "IBody2",
      "member": "GetFaces",
      "path": "C:/swapi/types/IBody2/GetFaces.md",
-     "anchor": "Gets all of the faces on the body."
+     "anchor": "Gets all of the faces on the body.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertEndCapFeature3",
      "path": "C:/swapi/types/IFeatureManager/InsertEndCapFeature3.md",
-     "anchor": "Inserts an end cap feature for one or more pre-selected open ends of a structural member."
+     "anchor": "Inserts an end cap feature for one or more pre-selected open ends of a structural member.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1989,62 +2091,42 @@
    "claim": "Walk the weldment feature folders and list the cut list folders with their sub-features.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-    "anchor": "Gets the first feature in this component."
+    "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+    "anchor": "Gets the first sub-feature that belongs to this feature."
    },
    "members": [
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
     },
     {
      "interface": "IFeature",
      "member": "GetFirstSubFeature",
      "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
      "anchor": "Gets the first sub-feature that belongs to this feature."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IComponent2.FirstFeature 的官方 Description 与首句共享词干 feature"
-   }
-  },
-  {
-   "tool": "solidworks_weldment_read_property_manager",
-   "impl": "scripts/sw_weldment.py:read_property_manager",
-   "claim": "Read the manufacturing properties of the active PropertyManager page as a dict.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
-    "anchor": "Gets the names of the custom properties."
-   },
-   "members": [
-    {
-     "interface": "ICustomPropertyManager",
-     "member": "Get6",
-     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
-     "anchor": "Gets the value and the evaluated value of the specified custom property."
     },
     {
-     "interface": "ICustomPropertyManager",
-     "member": "GetNames",
-     "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
-     "anchor": "Gets the names of the custom properties."
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ICustomPropertyManager.GetNames 的官方 Description 与首句共享词干 properti"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeature/GetFirstSubFeature.md（「Gets the first sub-feature that belongs to this feature.」）与 GetNextSubFeature.md（「Gets the next sub-feature from the owner of this sub-feature.」）—— 这两条正是「递归下钻」的官方接口；实现 walk() 内部正是 GetFirstSubFeature + _iter_feature_chain(…, \"GetNextSubFeature\")，顶层用 FirstFeature/GetNextFeature。★ 精确说明（复核者应知道）：实现**不做**「只认焊件文件夹/CutListFolder」的过滤 —— 它从 model.FirstFeature 起递归整棵树（焊件零件里这棵树就是焊件特征树），首句的「weldment feature folders」是模块语境而非代码里的过滤条件。"
    }
   },
   {
@@ -2061,43 +2143,50 @@
      "interface": "IModelDoc2",
      "member": "FeatureManager",
      "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
-     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree.",
+     "kind": "property"
     },
     {
-     "interface": "IComponent2",
+     "interface": "IModelDoc2",
      "member": "FirstFeature",
-     "path": "C:/swapi/types/IComponent2/FirstFeature.md",
-     "anchor": "Gets the first feature in this component."
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document.",
+     "kind": "method"
     },
     {
      "interface": "IFeature",
      "member": "GetFirstSubFeature",
      "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
-     "anchor": "Gets the first sub-feature that belongs to this feature."
+     "anchor": "Gets the first sub-feature that belongs to this feature.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IFeatureManager",
      "member": "InsertWeldmentTrimFeature2",
      "path": "C:/swapi/types/IFeatureManager/InsertWeldmentTrimFeature2.md",
-     "anchor": "Inserts a weldment trim feature for the specified weldment bodies or faces."
+     "anchor": "Inserts a weldment trim feature for the specified weldment bodies or faces.",
+     "kind": "method"
     },
     {
-     "interface": "IBody2",
+     "interface": "IBomFeature",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/IBomFeature/Name.md",
+     "anchor": "Gets the name of this BOM table feature.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -2107,6 +2196,754 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IFeatureManager.InsertWeldmentTrimFeature2 的官方 Description 与首句共享词干 bodi/feature/weldment"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_update_cut_list",
+   "impl": "scripts/sw_weldment.py:update_cut_list",
+   "claim": "Refresh every native cut-list folder and return folder-level geometry evidence.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+    "anchor": "Updates an automatically generated cut list."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "UpdateCutList",
+     "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+     "anchor": "Updates an automatically generated cut list."
+    },
+    {
+     "interface": "IBodyFolder",
+     "member": "GetBodyCount",
+     "path": "C:/swapi/types/IBodyFolder/GetBodyCount.md",
+     "anchor": "Gets the number of bodies in the folder."
+    },
+    {
+     "interface": "IFeature",
+     "member": "CustomPropertyManager",
+     "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "GetNames",
+     "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IBodyFolder/UpdateCutList 全页：Description『Updates an automatically generated cut list.』、Returns『True if the automatically generated cut list is successfully updated…』、Remarks『You must specify when to update an automatically generated cut list in a part document.』⇒ 与首句『Refresh every native cut-list folder』同一件事，且证实它是**写**操作（首句第二句已明说『Modifies the cut list』，与官方一致）。『folder-level geometry evidence』侧读了 IFeature/GetSpecificFeature2（→ IBodyFolder）、IBodyFolder/GetBodyCount、ICustomPropertyManager/GetNames+Get6。草稿把 Name 指到 IBomFeature，接收者其实是 IFeature，已改。"
+   }
+  },
+  {
+   "tool": "solidworks_sheet_metal_create_swept_flange",
+   "impl": "scripts/sw_sheet_metal.py:create_swept_flange",
+   "claim": "Create a native swept flange along a path selection, untested on this machine.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISweptFlangeFeatureData/_overview.md",
+    "anchor": "Allows access to a sheet metal swept flange feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetErrorCode",
+     "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "Path",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/Path.md",
+     "anchor": "Gets or sets the sweep path of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "Profile",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/Profile.md",
+     "anchor": "Gets or sets the sweep profile of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "StartOffset",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/StartOffset.md",
+     "anchor": "Gets or sets the start offset of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "EndOffset",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/EndOffset.md",
+     "anchor": "Gets or sets the end offset of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "FlangePosition",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/FlangePosition.md",
+     "anchor": "Gets or sets the flange position of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "FlattenAlongPath",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/FlattenAlongPath.md",
+     "anchor": "Gets or sets whether to flatten the flange profile along the sweep path of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "TrimSideBends",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/TrimSideBends.md",
+     "anchor": "Gets or sets whether to remove extra material in neighboring bends of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "ReverseDirection",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/ReverseDirection.md",
+     "anchor": "Gets or sets whether to reverse the direction of sheet metal thickness of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "UseDefaultRadius",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultRadius.md",
+     "anchor": "Gets or sets whether to use the bend radius from the original sheet metal feature in this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "BendRadius",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/BendRadius.md",
+     "anchor": "Gets or sets the bend radius of this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "UseDefaultBendAllowance",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultBendAllowance.md",
+     "anchor": "Gets or sets whether to use the bend allowance from the original sheet metal feature in this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "UseDefaultBendRelief",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultBendRelief.md",
+     "anchor": "Gets or sets whether to use the bend relief from the original sheet metal feature in this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "UseGaugeTable",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/UseGaugeTable.md",
+     "anchor": "Gets or sets whether to use an Excel gauge table for this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "UseMaterialSheetMetalParameters",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/UseMaterialSheetMetalParameters.md",
+     "anchor": "Gets or sets whether to use the material sheet metal parameters in this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "OverrideDefaultSheetMetalParameters",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/OverrideDefaultSheetMetalParameters.md",
+     "anchor": "Gets or sets whether to override the default sheet metal parameters for this swept flange feature."
+    },
+    {
+     "interface": "ISweptFlangeFeatureData",
+     "member": "Thickness",
+     "path": "C:/swapi/types/ISweptFlangeFeatureData/Thickness.md",
+     "anchor": "Gets or sets the sheet metal thickness of this swept flange feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/CreateDefinition（Type 清单含『swFmSweptFlange (sheet metal swept flange)』）、IFeatureManager/CreateFeature、ISweptFlangeFeatureData/_overview（『Allows access to a sheet metal swept flange feature.』）与本次实际设的 16 个属性页（Path/Profile/StartOffset/EndOffset/FlangePosition/FlattenAlongPath/TrimSideBends/ReverseDirection/UseDefaultRadius/BendRadius/UseDefaultBendAllowance/UseDefaultBendRelief/UseGaugeTable/UseMaterialSheetMetalParameters/OverrideDefaultSheetMetalParameters/Thickness），另对照官方示例 C:/swapi/examples/Create_Swept_Flange_Example_VBNET.md：示例顺序与实现一致（先有基体法兰 → CreateDefinition(swFmSweptFlange) → 逐条设属性（含 Path/Profile）→ CreateFeature），示例也确实不调 AccessSelections/ReleaseSelectionAccess，与实现的『不调』一致。首句的『untested on this machine』是验证状态说明，不是 API 语义断言，官方页无从引用也不构成矛盾。草稿漏掉的 16 个 ISweptFlangeFeatureData 属性已补登（它们在嵌套 _apply(data) 里，提取器识别不了 data 是 COM 对象）。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_evidence",
+   "impl": "scripts/sw_surface.py:collect_surface_evidence",
+   "claim": "Read the surface evidence: whether the Modeler object is reachable and which surface creation methods are registered.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/GetModeler.md",
+    "anchor": "Gets the [[IModeler]] interface."
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetModeler",
+     "path": "C:/swapi/types/ISldWorks/GetModeler.md",
+     "anchor": "Gets the [[IModeler]] interface."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISldWorks/GetModeler（『Gets the [[IModeler]] interface.』，Signature『System.object GetModeler()』）与 IModeler/_overview（『Provides an interface to temporary body objects.』，method_count 123）。实现只调用一个 COM 成员 get_modeler(sw_app)→ISldWorks.GetModeler，据此回 has_modeler；首句后半『which surface creation methods are registered』说的是**本模块自己的登记表** SURFACE_CREATION_METHODS（scripts/sw_surface.py），表里的键全是 IModeler 的官方成员名（CreatePlanarSurface/CreateCylindricalSurface/… 共 19 个非指针 Create*Surface），不是一句官方语义句——这一点在此如实登记，供复核人判断该半句的依据层级。返回里的 pointer_variants_available=False 是后端结论（见缺陷报告/已知事实），官方页只说明 19 个非 I 前缀成员可用，不含该结论。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_midsurface_create",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:create_midsurface",
+   "claim": "Create surface midsurfaces for one body of the active part and report the new sheet bodies.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMidSurface.md",
+    "anchor": "Inserts a midsurface feature."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertMidSurface",
+     "path": "C:/swapi/types/IFeatureManager/InsertMidSurface.md",
+     "anchor": "Inserts a midsurface feature."
+    },
+    {
+     "interface": "",
+     "member": "GetSurfaceBodies",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi（无 IModelView/IPartDoc 同名页）。按铁律 5 记缺口、不编页 —— 实现里它是 **试名探测**（scripts/sw_sheet_metal_weld_entry.py::_surface_body_count 的循环，两源均查不到，取不到就降级返回 None）。"
+    },
+    {
+     "interface": "",
+     "member": "GetSurfaceBodyCount",
+     "path": "",
+     "anchor": "",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi。同上：实现是 _surface_body_count 里的第二个试名，取不到就降级，不静默成 0。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertMidSurface 全页（Description/Parameters/Remarks）：Remarks『A midsurface feature is calculated from the solid body in your part document… Each reference surface is considered a sheet body.』⇒ 首句『one body of the active part… new sheet bodies』与之同一件事。★ 两处须复核人注意：① 草稿把 GetBodies2 登记成 IComponent2（1 参版），实现是 get_com_member(model,'GetBodies2',0,False) 两个实参、接收者是零件文档 ⇒ 按接收者改登 IPartDoc.GetBodies2（已改）；② 官方该页 Parameters 与 Remarks 互相矛盾——Parameters 写 PBodyIn/PPartDocIn『in the context of an assembly; otherwise, null or Nothing』，Remarks 写 pPartDocIn 是『the component's model document』、pBody 是该组件的体；实现传了真实 body+model（与 Remarks 一致、与 Parameters 相左）。本批不裁对错，只记录（同 docs/recon-206/pre-code-conflict-lookup 的 precondition_diff 一类）。另外 _surface_body_count 试的两个成员名两源都查不到，已按铁律 5 记 documented:false。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_ensure_cut_list",
+   "impl": "scripts/sw_weldment.py:ensure_cut_list",
+   "claim": "Create native cut-list folders for a weldment that has none, grouping bodies by their longest bounding-box edge.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+    "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentCutList2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertWeldmentCutList2（『Inserts a cut-list-item folder feature containing the specified weldment bodies.』，Signature『Feature InsertWeldmentCutList2( System.object Bodies )』，Parameters『Array of [[Body2]] objects』）、IBody2/GetBodyBox、IPartDoc/GetBodies2、IFeature 的遍历四件（FirstFeature/GetNextFeature/GetFirstSubFeature/GetNextSubFeature/GetTypeName2/Name）、IModelDoc2/EditRebuild3 ⇒ 首句『按包围盒最长边分组 + 建原生清单文件夹』两半都有官方页。★ 草稿漏登 InsertWeldmentCutList2：实现是 getattr(manager,'InsertWeldmentCutList2') 动态取 + 失败时走 _oleobj_.Invoke(174, DISPATCH_METHOD)，静态提取看不到，已补登（Receipt 同 sw_weldment.py::create_cut_list）。草稿还把 feature.Name 指到 IBomFeature.Name，接收者其实是 IFeature，已改。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_set_cut_list_properties",
+   "impl": "scripts/sw_weldment.py:set_cut_list_properties",
+   "claim": "Set cut-list properties on every cut-list item and return the read-back list.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/Add3.md",
+    "anchor": "Adds a custom property to a configuration or model document."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "CustomPropertyManager",
+     "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Add3",
+     "path": "C:/swapi/types/ICustomPropertyManager/Add3.md",
+     "anchor": "Adds a custom property to a configuration or model document."
+    },
+    {
+     "interface": "ICustomPropertyManager",
+     "member": "Get6",
+     "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetBodyBox",
+     "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertWeldmentCutList2",
+     "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "EditRebuild3",
+     "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ICustomPropertyManager/Add3（Signature 4 参 FieldName/FieldType/FieldValue/OverwriteExisting，实现 manager.Add3(name,30,value,2) 参数个数与顺序一致；30=swCustomInfoText）、Get6（6 参，出参用 VARIANT(VT_BYREF|…) 包，与 implementation 一致）、IFeature/CustomPropertyManager、IBodyFolder 一族 ⇒ 首句『写每个清单项属性 + 回读』两半都有官方页。清单项由 ensure_cut_list 保证存在（实现第一句就是 ensure_cut_list(model)），故把该路径的成员（InsertWeldmentCutList2/GetBodyBox/EditRebuild3）一并登记。草稿把 Name 指到 IBomFeature、GetBodies2 指到 IComponent2，已按接收者改正。"
+   }
+  },
+  {
+   "tool": "solidworks_mold_evidence",
+   "impl": "scripts/sw_mold.py:mold_evidence",
+   "claim": "Read the mold state of the active part, which this machine cannot actually read.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_mold.py",
+    "anchor": "\"readable\": (not _all_none),"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetPartingLinesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingLinesCount.md；该成员真身在 IPartingLineFeatureData（该页 Description『Gets the number of edges used as parting lines.』）。实现从 FeatureManager 上读，真机 AttributeError"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetPartingSurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetCavitySurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCavitySurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "GetCoreSurfacesCount",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCoreSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "PartingType",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 PartingType.md；该成员真身在 IPartingSurfaceFeatureData（Beyond『Gets or sets the type of parting surface.』）"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "CoreCavitySplit",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 CoreCavitySplit.md；真身在 IPartingLineFeatureData（『Gets or sets the core/cavity split option for a parting line.』）"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g2",
+    "at": "2026-11-01",
+    "level": "human",
+    "method": "read official page (C:\\swapi\\types Description/Parameters/Remarks) + cross-check impl source",
+    "notes": "首句『…which this machine cannot actually read』是本仓真机结论 ⇒ claim_evidence 用 impl，锚点抄实现里算 readable 那行。六个成员在实现所调的接口上**都没有官方页**（铁律 5：不编页），按 documented:false + gap 逐条记账，并在 gap 里写明真身接口；实现自己的 docstring（轮 172 探针）也记着这些成员不在 IFeatureManager / IModelDoc2 上。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_fill",
+   "impl": "scripts/sw_surface_features.py:insert_fill_surface_report",
+   "claim": "Create a surface patch over a closed boundary of the active part.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertFillSurface2.md",
+    "anchor": "Inserts a fill-surface feature in the model."
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "InsertFillSurface2",
+     "path": "C:/swapi/types/IFeatureManager/InsertFillSurface2.md",
+     "anchor": "Inserts a fill-surface feature in the model."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IPartDoc",
+     "member": "GetBodies2",
+     "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."
+    },
+    {
+     "interface": "IBody2",
+     "member": "GetEdges",
+     "path": "C:/swapi/types/IBody2/GetEdges.md",
+     "anchor": "Gets the edges for this body."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetStartVertex",
+     "path": "C:/swapi/types/IEdge/GetStartVertex.md",
+     "anchor": "Gets the starting vertex for this edge."
+    },
+    {
+     "interface": "IEdge",
+     "member": "GetEndVertex",
+     "path": "C:/swapi/types/IEdge/GetEndVertex.md",
+     "anchor": "Gets the ending vertex for this edge."
+    },
+    {
+     "interface": "IVertex",
+     "member": "GetPoint",
+     "path": "C:/swapi/types/IVertex/GetPoint.md",
+     "anchor": "Gets the point corresponding to this vertex."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g5",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertFillSurface2.md（`(Resolutions, Options, VPatchBoundaries, VCurvatureControlType…)`，Returns IFeature）——「fill-surface」正对首句 surface patch；边界由实现从体上取首条闭环（GetBodies2 → GetEdges → GetStartVertex/GetEndVertex → GetPoint）拼出并 SelectByID2 选中，闭/开边界判据见实现。★ GetBodies2 是 **IPartDoc** 的（2 参 `BodyType, BVisibleOnly`），实现正是两参调用。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_sweep",
+   "impl": "scripts/sw_sweep.py:create_sweep_surface_report",
+   "claim": "Skip this tool, NOT USABLE on this machine: every entry point returns nothing and the tree stays unchanged.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_sweep.py",
+    "anchor": "本函数**尚未建成**"
+   },
+   "members": [
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "ISweepFeatureData",
+     "member": "AccessSelections",
+     "path": "C:/swapi/types/ISweepFeatureData/AccessSelections.md",
+     "anchor": "Accesses the selections that define this sweep feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g5",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "首句是**停用告知**（triage A4 给不可用工具写的 skip 通知），不是能力描述；claim_evidence 取实现里同一结论的原文（docstring「本函数**尚未建成**」，真机证据 output/sweep-surface-evidence.json）。读了 IFeatureManager/CreateDefinition.md（「Creates a feature data object of the specified type.」，注释里的 62 = swFmRefSurface 在该页合法常量表中）与 ISweepFeatureData/AccessSelections.md（「Accesses the selections that define this sweep feature.」）—— 实现走的正是 CreateDefinition(62) → AccessSelections → CreateFeature 这条链，卡在选区 mark 上（实现注释逐字记录三个真因）。★ 首句说「every entry point returns nothing」，实测层面即「建不出特征、树不变」，与本记录登记的成员调用一致。"
    }
   }
  ]

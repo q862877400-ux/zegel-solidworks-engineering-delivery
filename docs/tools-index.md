@@ -3,7 +3,7 @@
 > ★ **本文件由 `tools/gen_tools_index.py` 生成，不要手改。**
 > 重生成：`python tools/gen_tools_index.py`
 
-**为什么有这份索引**：`tools/` 有 697 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
+**为什么有这份索引**：`tools/` 有 699 个脚本，此前没有任何索引 —— 「你不知道有，所以你没找」是可发现性问题，已有门禁 `check_probe_reuse.py` 只拦「明明有你还重写」，拦不住这个。
 
 **怎么用**：先按「我想干什么」找到分类，再在分类里按文件名扫一眼。★ 每条的第一句就是它的用途（**lean 口径：结论在 120 字内，模型才看得见**）。
 
@@ -37,7 +37,7 @@
 | 统计判定结果 | **计票** | 2 | `tally_*` |
 | 弹窗处置相关（配 sw_guard 用） | **弹窗** | 2 | `modal_*` |
 | 直接连 SolidWorks 的执行器/护栏 | **真机运行器** | 7 | `sw_*` |
-| （未归入上面任何一类） | 其他 | 90 | — |
+| （未归入上面任何一类） | 其他 | 92 | — |
 
 ## 探针（282 个）
 
@@ -821,7 +821,7 @@
 |---|---|
 | `t2_intersect_past_errors.py` | ★ T2-4 的交集法：把「102 条可机检前置」与「本仓自己的过去错误笔记」交叉，挑出下一批该写断言的 |
 
-## 其他（90 个）
+## 其他（92 个）
 
 > 用途：未按前缀归类的脚本
 
@@ -885,6 +885,7 @@
 | `make_union_workload_349.py` | ★ 编全 349 条的工作量清单（tier-aware）：①档只验证，②③档深调 |
 | `map_tools_to_members.py` | ★ **筛选器**：把 277 个工具映射到「它真正调的 COM 成员」⇒ 再投影到官方结构上 |
 | `mcp_tools_list.py` | ★ 一次**真 MCP 握手**取 `tools/list` —— 那是宿主**真正看得见**的那一份工具面 |
+| `merge_claim_reviews.py` | 把「人工复核档」合并回批次台账（`B1…B8.json`） |
 | `metric_scope.py` | ★ 指标的「口径」注册表 —— 口径必须落成可复现代码，不能只写在散文里 |
 | `migrate_pilot_to_five_levels.py` | @brief `pilot` → 五级迁移（`docs/capabilities-schema-proposal.md` §1.2，裁断走选项 A） |
 | `migrate_tool_evidence.py` | ★ 把每条 `ToolSpec.doc` 的**原文**搬进新字段 `evidence=`（★ 只搬运、不改写 doc） |
@@ -902,6 +903,7 @@
 | `session_verdict.py` | ★ 会话裁决：**一个裁决、两条探路** —— 会话干不干净、有没有未保存改动 |
 | `set_subagent_default_model.py` | ★ 把子代理的默认模型改成 bunny（写活配置 `profiles/web/cordis.patch.yml`，先备份） |
 | `setup_mate_demo.py` | 摆好「人工做一个配合」的现场：装配里放两块板（第二块抬高 50mm），**保持打开** |
+| `show_tool_claim_context.py` | 打印一个工具的「核验上下文」：模型可见描述 + 实现 + 草稿成员 + 官方页原文 |
 | `spec211_manual_verdicts.py` | ★ 规格 211 · B0 的**人工终判表**（★ 每条注明依据 |
 | `splice_section.py` | ★ 把一段 .md 文本拼接进目标文件（★ 结构性绕开"长中文串 + 引号嵌套"这个反复踩的坑） |
 | `split_rag_sample_for_fanout.py` | ★ 把抽样切成 60 份（每份 2 个工具），给 60 路 Bunny 各读一份 —— ★ 避免在提示里内联 105 条记录 |

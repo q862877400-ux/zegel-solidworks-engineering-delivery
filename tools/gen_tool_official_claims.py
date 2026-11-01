@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -51,6 +52,7 @@ from check_tool_official_claims import (  # noqa: E402 - 复用门禁的提取�
     first_sentence,
     impl_members,
     member_index,
+    page_front_matter,
     read_page,
     resolve_impl,
 )
@@ -76,6 +78,36 @@ def official_description(text: str, iface: str, member: str) -> str:
     return ""
 
 
+def html_description(text: str) -> str:
+    """⇒ cosworks 帮助页（HTML）里的**第一句可当锚点的描述**；没有就返回空串。
+
+    ★ 那些页是 CHM 解包：正文在 `<body>` 里，带 `&nbsp;` 实体与内联标签。
+      这里只做「去脚本/去标签/还原实体/压空白」，**不改词** —— 锚点必须能被门禁
+      逐字命中，改写就等于编。
+
+    :param text: 页面的原始 HTML。
+    """
+    body = re.sub(r"<script.*?</script>|<style.*?</style>|<xml.*?</xml>", " ", text, flags=re.S | re.I)
+    body = re.sub(r"<[^>]+>", "\n", body)
+    body = (
+        body.replace("&nbsp;", " ")
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+    )
+    for raw in body.splitlines():
+        line = re.sub(r"\s+", " ", raw).strip()
+        if len(line) < 20 or " " not in line:
+            continue
+        low = line.lower()
+        if low.startswith(("property (", "method (", "event (", "syntax", "see also", "example")):
+            continue
+        if line.endswith(".") and not line.endswith(".."):
+            return line
+    return ""
+
+
 def _legacy_impl_names() -> dict[str, str]:
     """⇒ `{手写工具名: "mcp-server/server.py:<工具名>"}`（45 个装饰器工具）。
 
@@ -91,10 +123,18 @@ def _legacy_impl_names() -> dict[str, str]:
     except (OSError, SyntaxError):
         return out
     for node in tree.body:
-        if isinstance(node, ast.FunctionDef) and any(
-            isinstance(d, ast.Call) and getattr(d.func, "attr", "") == "tool" for d in node.decorator_list
-        ):
-            out[node.name] = "mcp-server/server.py:%s" % node.name
+        if not isinstance(node, ast.FunctionDef):
+            continue
+        for dec in node.decorator_list:
+            if not (isinstance(dec, ast.Call) and getattr(dec.func, "attr", "") == "tool"):
+                continue
+            #: ★ 手写工具的函数名**不一定**等于工具名（实测 `solidworks_pack_and_go`
+            #:   的函数叫 `solidworks_pack_and_go_tool`）⇒ 以装饰器里的 `name=` 为准 ✓
+            tool_name = node.name
+            for kw in dec.keywords:
+                if kw.arg == "name" and isinstance(kw.value, ast.Constant):
+                    tool_name = str(kw.value.value)
+            out[tool_name] = "mcp-server/server.py:%s" % node.name
     return out
 
 
@@ -141,7 +181,8 @@ def build_records(tools: list[str] | None) -> tuple[list[dict], list[str], list[
         members = []
         for member in sorted(found["members"]):
             cands = idx.get(member) or []
-            usable = [(i, sig) for i, sig in cands if (SWAPI_TYPES / i / (member + ".md")).is_file()]
+            #: ★ 两个官方源都算：`C:\swapi\types`（markdown）与 `C:\cworks_en\api`（cosworks HTML）
+            usable = [(i, p) for i, p in cands if Path(p).is_file()]
             if not usable:
                 #: ★ 铁律 5 的合法出口：**查不到页就记账，不许编页**。
                 #:   这些成员集中在 Simulation / Topology / Costing 三个 add-in
@@ -161,14 +202,27 @@ def build_records(tools: list[str] | None) -> tuple[list[dict], list[str], list[
                     }
                 )
                 continue
-            iface = usable[0][0]
-            text = read_page(SWAPI_TYPES / iface / (member + ".md")) or ""
+            #: ★ 用**接收者提示**把成员归到对的接口页：`model.SketchManager.InsertSketch`
+            #:   ⇒ 优先 `ISketchManager`，而不是同名但已废弃的 `IModelDoc2.InsertSketch` ✓
+            hint = ((found.get("hints") or {}).get(member) or [""])[0]
+            hinted = [u for u in usable if hint and hint.lower() in u[0].lower()]
+            iface, page_path = (hinted or usable)[0]
+            text = read_page(Path(page_path)) or ""
+            if str(page_path).lower().endswith((".html", ".htm")):
+                #: ★ cosworks 帮助页没有 markdown front-matter ⇒ kind 从页标题推
+                kind = "property" if "property (" in text[:4000].lower() else "method"
+                anchor = html_description(text)
+            else:
+                fm = page_front_matter(text)
+                kind = fm.get("kind", "")
+                anchor = official_description(text, iface, member)
             members.append(
                 {
                     "interface": iface,
                     "member": member,
-                    "path": "C:/swapi/types/%s/%s.md" % (iface, member),
-                    "anchor": official_description(text, iface, member),
+                    "path": str(page_path).replace("\\", "/"),
+                    "anchor": anchor,
+                    "kind": kind,
                 }
             )
         records.append(

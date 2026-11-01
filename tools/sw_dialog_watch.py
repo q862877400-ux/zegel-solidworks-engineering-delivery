@@ -171,11 +171,23 @@ def enforce_doc_cap(
 
     out: dict = {"enabled": True}
     try:
-        import sw_connect as _sc
         from sw_connect import get_com_member as _gcm
+        #: ★ 只为了后面脏文档落盘用的 `save_document`；**导入模块不会启动 SolidWorks**
+        #:   （会启动的是 `connect_solidworks()`，本函数已经不用它了）✓
+        import sw_connect as _sc
 
-        conn = _sc.connect_solidworks(wait_seconds=8)
-        sw = conn[0] if isinstance(conn, tuple) else conn
+        #: ★★★ 只**附着**，绝不**启动**（★ 2026-11-01 修）。
+        #:   本函数只负责「文档数上限」这一件事，**不该**因为 SolidWorks 没开就把它拉起来 ——
+        #:   常驻循环每 `--interval`（默认 1 s）调一次，于是「用户手动关掉 SW」会在 1 s 内
+        #:   被 `Dispatch` 重新拉起并 `Visible=True`，表现为窗口自己弹回来。
+        #:   ⇒ 用 `GetActiveObject`：没在跑就**如实跳过**，等下次用户自己开。
+        #:   ⚠ 不要换回 `connect_solidworks()` —— 它的语义是「attach **or starts one**」。
+        import win32com.client as _win32com
+
+        try:
+            sw = _win32com.GetActiveObject("SldWorks.Application")
+        except Exception:
+            return {"enabled": True, "skipped": "SolidWorks 没在跑（本函数不主动启动）"}
         if sw is None:
             return {"enabled": True, "skipped": "连不上 SolidWorks"}
     except Exception as exc:  # noqa: BLE001

@@ -1,0 +1,703 @@
+{
+  "batch": "review-r3",
+  "note": "规格 353 · 批次 review-r3（13 个人读工具，集中在 Simulation / Topology 两个 add-in）。★ 每个成员页都是打开读过 Description / Parameters / Remarks 后登记的锚点；C:\\swapi\\types 无 ICW* 接口，add-in 页取自本机解包的 SolidWorks Simulation interop 帮助 C:\\cworks_en\\api（与仓库 _raw/cosworks_pages 同源：后者是 cosworks SWhelp 抽取物，仅覆盖 ICWLoadsAndRestraintsManager）。",
+  "defects": [
+    {
+      "tool": "solidworks_topology_constraints_report",
+      "why": "首句承诺「one entry per constraint with its parameters」（逐条约束 + 参数），但实现与 solidworks_topology_list_constraints 指向同一个函数 sw_topology.py:topology_constraints_report，返回的是 _kinds_summary 的布尔清单 + 计数（kinds/taken_count/total/errors），没有任何逐条参数；描述里「the list variant reports booleans instead」这句对照因此也不成立（两者回的是同一形状）。",
+      "evidence": "mcp-server 注册表：两个 ToolSpec 都是 module=sw_topology / function=topology_constraints_report（python -B tools/show_tool_claim_context.py --tool 两个工具，摘录的第②段实现逐字相同）；scripts/sw_topology.py 的 topology_constraints_report（`return {\"ok\": True, \"study_name\": ..., **_kinds_summary(study), ...}`）与 _kinds_summary（`kinds` 为 {kind: bool}、`taken_count`、`total`、`errors`）；ICWTopologyStudyManager.Get* 官方页只给单个约束对象（Gets the specified mass constraint for this topology study），逐条读参数需另调约束对象成员，本函数并未调用。"
+    }
+  ],
+  "records": [
+    {
+      "tool": "solidworks_mesh_configure_import_preferences",
+      "impl": "scripts/sw_import_mesh_reference.py:configure_mesh_import_preferences",
+      "claim": "Set the SolidWorks preferences used when importing OBJ, STL or VRML mesh files.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/swapi/docs/swconst/FileOpenOptionsSTLVRML.md",
+        "anchor": "# System Options > Import > STL/OBJ/OFF/PLY/PLY2"
+      },
+      "members": [
+        {
+          "interface": "ISldWorks",
+          "member": "SetUserPreferenceIntegerValue",
+          "path": "C:/swapi/types/ISldWorks/SetUserPreferenceIntegerValue.md",
+          "anchor": "Sets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "SetUserPreferenceToggle",
+          "path": "C:/swapi/types/ISldWorks/SetUserPreferenceToggle.md",
+          "anchor": "Sets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "GetUserPreferenceIntegerValue",
+          "path": "C:/swapi/types/ISldWorks/GetUserPreferenceIntegerValue.md",
+          "anchor": "Gets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "GetUserPreferenceToggle",
+          "path": "C:/swapi/types/ISldWorks/GetUserPreferenceToggle.md",
+          "anchor": "Gets document default user preference values."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：C:\\swapi\\docs\\swconst\\FileOpenOptionsSTLVRML.md（System Options > Import > STL/OBJ/OFF/PLY/PLY2，逐行给出每个导入设置的 Get/Set 方法与枚举）、FileOpenOptionsVRML.md（同一族导入设置 + Import texture information）、FileOpenOptionsGeneral.md（swImportUnitPreference 的「File specified unit / Document template specified unit」）、enums\\swUserPreferenceIntegerValue_e.md 与 swUserPreferenceToggle_e.md。六个常量逐条对上官方枚举名（数值取自 _raw/enum_values_sldworks.txt）：208 swImportStlVrmlModelType（0/1/2 = Graphics/Surface/Solid，见 enums\\swImportStlVrmlModelType_e.md）· 210 swImportStlVrmlUnits · 205 swImportUnitPreference · 303 swImportStlVrmlTextureInformation · 679 swVrmlStlImportAsPSMesh · 682 swVrmlStlImportSegmented ⇒ 首句「six user preferences…OBJ/STL/VRML」与官方语义是同一件事。★ 修正草稿：草稿把这四条成员登记成 IModelDoc2 上的同名成员（那两页首句是 Obsolete. Superseded by…），而实现里的 sw 是 connect_solidworks 返回的应用对象（ISldWorks），偏好读写走 ISldWorks 那一对，故改登 ISldWorks 页。"
+      }
+    },
+    {
+      "tool": "solidworks_mesh_restore_import_preferences",
+      "impl": "scripts/sw_import_mesh_reference.py:restore_mesh_import_preferences",
+      "claim": "Reset the mesh import preferences changed by the configure tool, then read them back to prove the restore.",
+      "claim_evidence": {
+        "kind": "impl",
+        "path": "scripts/sw_import_mesh_reference.py",
+        "anchor": "def restore_mesh_import_preferences(sw, report: dict[str, Any]) -> dict[str, Any]:"
+      },
+      "members": [
+        {
+          "interface": "ISldWorks",
+          "member": "SetUserPreferenceIntegerValue",
+          "path": "C:/swapi/types/ISldWorks/SetUserPreferenceIntegerValue.md",
+          "anchor": "Sets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "SetUserPreferenceToggle",
+          "path": "C:/swapi/types/ISldWorks/SetUserPreferenceToggle.md",
+          "anchor": "Sets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "GetUserPreferenceIntegerValue",
+          "path": "C:/swapi/types/ISldWorks/GetUserPreferenceIntegerValue.md",
+          "anchor": "Gets system default user preference values."
+        },
+        {
+          "interface": "ISldWorks",
+          "member": "GetUserPreferenceToggle",
+          "path": "C:/swapi/types/ISldWorks/GetUserPreferenceToggle.md",
+          "anchor": "Gets document default user preference values."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "首句的语义是「写回旧值 + 再读一遍证明还原」，官方页只定义「设/读系统默认偏好」，还原这个动作是本仓行为 ⇒ claim_evidence 取实现（函数定义行）。成员仍是 ISldWorks 的两对读写（读页：SetUserPreferenceIntegerValue / SetUserPreferenceToggle / GetUserPreferenceIntegerValue / GetUserPreferenceToggle，四页都只描述「set/get system default user preference values」，等价于界面的系统选项——与导入偏好这一用途一致）。实现口径已读：old is None 的条目跳过不写回（避免写错），写成后 read_preference 回读并与旧值比较给出 match。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_apply_fixed_restraint",
+      "impl": "scripts/sw_simulation.py:apply_fixed_restraint",
+      "claim": "Apply a fixed restraint to the faces of a static study.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRestraint.html",
+        "anchor": "Creates a restraint."
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "LoadsAndRestraintsManager",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~LoadsAndRestraintsManager.html",
+          "anchor": "Gets the loads and restraints manager."
+        },
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "AddRestraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRestraint.html",
+          "anchor": "Creates a restraint."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "SelectionManager",
+          "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+          "anchor": "which makes the currently selected object available."
+        },
+        {
+          "interface": "ISelectionMgr",
+          "member": "GetSelectedObject6",
+          "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+          "anchor": "Gets the selected object."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "Extension",
+          "path": "C:/swapi/types/IModelDoc2/Extension.md",
+          "anchor": "which also allows access to the model document."
+        },
+        {
+          "interface": "IModelDocExtension",
+          "member": "SelectByID2",
+          "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+          "anchor": "Selects the specified entity."
+        },
+        {
+          "interface": "ISelectionMgr",
+          "member": "GetSelectedObjectCount2",
+          "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+          "anchor": "Gets the number of selected objects."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：ICWLoadsAndRestraintsManager~AddRestraint.html（Creates a restraint；Parameters 逐字 NRestraintType = Type of restraint as defined in swsRestraintType_e、DispArray = Array of entities to which to apply the restraint、RefGeom = Reference geometry entity for direction、ErrorCode = Error as defined in swsRestraintError_e）、ICWStudy~LoadsAndRestraintsManager.html、swsRestraintType_e 枚举页（swsRestraintTypeFixed 0 = Fixed (set translations and rotations to zero)，与实现默认 restraint_type = SWS_RESTRAINT_TYPES[\"fixed\"] = 0 一致）。选择路径按实现读：face_selector 走 IModelDocExtension.SelectByID2(FACE, 点) → ISelectionMgr.GetSelectedObjectCount2(-1) 回读计数，再走 IModelDoc2.SelectionManager + ISelectionMgr.GetSelectedObject6(1..n) 装 DispArray；空选区由 _require_nonempty_selection 拒绝（不是静默传空数组）。⇒ 首句的「fixed」「faces」「static study」三要素都有官方页或枚举页支撑。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_apply_link_connector",
+      "impl": "scripts/sw_simulation_loads.py:add_link_connector_report",
+      "claim": "Add a link connector between two vertices of a simulation study and return a read-back report.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddLinkConnector.html",
+        "anchor": "Adds a link connector."
+      },
+      "members": [
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "AddLinkConnector",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddLinkConnector.html",
+          "anchor": "Adds a link connector."
+        },
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "Count",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+          "anchor": "Gets the number of loads and restraints&nbsp;defined in the active study."
+        },
+        {
+          "interface": "IPartDoc",
+          "member": "GetBodies2",
+          "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+          "anchor": "Gets the bodies in this part."
+        },
+        {
+          "interface": "IBody2",
+          "member": "GetVertices",
+          "path": "C:/swapi/types/IBody2/GetVertices.md",
+          "anchor": "Gets the vertices in this body."
+        },
+        {
+          "interface": "IEntity",
+          "member": "Select4",
+          "path": "C:/swapi/types/IEntity/Select4.md",
+          "anchor": "Selects an entity and marks it."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "SelectionManager",
+          "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+          "anchor": "which makes the currently selected object available."
+        },
+        {
+          "interface": "ISelectionMgr",
+          "member": "GetSelectedObjectCount2",
+          "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+          "anchor": "Gets the number of selected objects."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：AddLinkConnector.html（Adds a link connector；Parameters 逐字 VertexPointforFirstLocation / VertexPointforSecondLocation / ErrorCode）⇒ 官方就是「两个顶点之间」的连接件，与首句一致。Count.html（Gets the number of loads and restraints defined in the active study）⇒ 「Count +1」这个回读判据对应的就是官方计数属性。实现读：kind 固定 VERTEX，两个选择器经 sw_selection_spec.resolve_entity → entities_on_body(IPartDoc.GetBodies2 + IBody2.GetVertices) → select_object(IEntity.Select4) → ISelectionMgr.GetSelectedObjectCount2 回读；随后 _check(manager, \"AddLinkConnector\", 2, va, vb) 补 by-ref ErrorCode 发起调用，前后各读一次 Count。★ 锚点里的 &nbsp; 是官方帮助页原文自带的实体（该句原文写作 restraints&nbsp;defined），逐字照抄、未改一个词 —— 门禁归一化只压空白，不吞实体。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_apply_normal_force",
+      "impl": "scripts/sw_simulation.py:apply_normal_force",
+      "claim": "Apply a normal force to the faces of a static study.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddForce.html",
+        "anchor": "Array of entities (faces, edges, vertices, or points) to which to apply force"
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "LoadsAndRestraintsManager",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~LoadsAndRestraintsManager.html",
+          "anchor": "Gets the loads and restraints manager."
+        },
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "AddForce",
+          "path": "_raw/cosworks_pages/ICWLoadsAndRestraintsManager~AddForce.txt",
+          "anchor": "Obsolete. Superseded by ICWLoadsAndRestraintsManager::AddForce2 ."
+        },
+        {
+          "interface": "ICWForce",
+          "member": "ForceBeginEdit",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWForce~ForceBeginEdit.html",
+          "anchor": "Starts editing a force."
+        },
+        {
+          "interface": "ICWForce",
+          "member": "ForceEndEdit",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWForce~ForceEndEdit.html",
+          "anchor": "Ends editing a force."
+        },
+        {
+          "interface": "ICWForce",
+          "member": "ForceType",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWForce~ForceType.html",
+          "anchor": "Gets or sets the force type."
+        },
+        {
+          "interface": "ICWForce",
+          "member": "Unit",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWForce~Unit.html",
+          "anchor": "Gets or sets the units of force."
+        },
+        {
+          "interface": "ICWForce",
+          "member": "NormalForceOrTorqueValue",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWForce~NormalForceOrTorqueValue.html",
+          "anchor": "Gets or sets the normal or torque value of this force."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "SelectionManager",
+          "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+          "anchor": "which makes the currently selected object available."
+        },
+        {
+          "interface": "ISelectionMgr",
+          "member": "GetSelectedObject6",
+          "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+          "anchor": "Gets the selected object."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "Extension",
+          "path": "C:/swapi/types/IModelDoc2/Extension.md",
+          "anchor": "which also allows access to the model document."
+        },
+        {
+          "interface": "IModelDocExtension",
+          "member": "SelectByID2",
+          "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+          "anchor": "Selects the specified entity."
+        },
+        {
+          "interface": "ISelectionMgr",
+          "member": "GetSelectedObjectCount2",
+          "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+          "anchor": "Gets the number of selected objects."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：AddForce.html（Parameters 逐字 NForceType = Type of force as defined in swsForceType_e、DispArray = Array of entities (faces, edges, vertices, or points) to which to apply force、RefGeom、ErrorCode；Remarks：Pass null in RefGeom if reference geometry is not used）· swsForceType_e 枚举页（swsForceTypeNormal 1 = Normal force，与实现默认 force_type = SWS_FORCE_TYPES[\"normal\"] = 1 一致）· ForceBeginEdit / ForceEndEdit（官方 Remarks 明写必须先 Begin、后 End 才落地，实现正是 try/finally 包住三个 setter）· NormalForceOrTorqueValue（大小在返回对象上回填，不是 AddForce 入参）。★ 发现（已核对但未判缺陷）：AddForce 官方页首句是「Obsolete. Superseded by ICWLoadsAndRestraintsManager::AddForce2 .」，而 AddForce2 页又是「Obsolete. Superseded by ICWloadsAndRestraintsManager::AddForce3 .」⇒ 实现用的是两级废弃的 4 参入口；签名（NForceType, DispArray, RefGeom, ErrorCode）与实现实参一致，工具首句语义仍与官方一致，故只记观察，不写进 defects（改实现不属本规格）。★ AddForce 成员的锚点改取自仓库既有抽取物 _raw/cosworks_pages/ICWLoadsAndRestraintsManager~AddForce.txt：cworks_en 的 HTML 里这句中间夹着 <A> 链接标签，跨标签无法逐字命中；抽取物里是同一句纯文本，逐字照抄。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_apply_rigid_connector",
+      "impl": "scripts/sw_simulation_loads.py:apply_rigid_connector_by_objects_report",
+      "claim": "Add a rigid connector between two bodies of a simulation study, building both entity arrays itself.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRigidConnector.html",
+        "anchor": "Adds a rigid connector."
+      },
+      "members": [
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "AddRigidConnector",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRigidConnector.html",
+          "anchor": "Adds a rigid connector."
+        },
+        {
+          "interface": "ICWLoadsAndRestraintsManager",
+          "member": "Count",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+          "anchor": "Gets the number of loads and restraints&nbsp;defined in the active study."
+        },
+        {
+          "interface": "IModelDoc2",
+          "member": "ClearSelection2",
+          "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+          "anchor": "Clears the selection list."
+        },
+        {
+          "interface": "IPartDoc",
+          "member": "GetBodies2",
+          "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+          "anchor": "Gets the bodies in this part."
+        },
+        {
+          "interface": "IBody2",
+          "member": "GetFaces",
+          "path": "C:/swapi/types/IBody2/GetFaces.md",
+          "anchor": "Gets all of the faces on the body."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：AddRigidConnector.html（Adds a rigid connector；Parameters 逐字 PersistIDFaceArray / PersistIDTargetArray / ErrorCode ⇒ 官方吃的是两组实体数组，不是「两个体对象」）· Count.html（Gets the number of loads and restraints defined in the active study）· IBody2.GetFaces / IPartDoc.GetBodies2。首句用「between two bodies」表达的是用户建模视角：实现按 source_indices/target_indices + source_body_index/target_body_index 从两个体上取面（entities_as_array → entities_on_body 走 IPartDoc.GetBodies2 + IBody2.GetFaces），自己装出 PersistIDFaceArray / PersistIDTargetArray 两组数组 —— 「building both entity arrays itself」与实现逐字对应；「between two bodies」与官方「两组实体」在语义上相容（那两个数组来自两个体），故不判缺陷。判据是 Count 前后 +1，不看返回对象。★ Count 的锚点带 &nbsp; 是官方帮助页原文自带的实体（restraints&nbsp;defined），逐字照抄、未改词。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_check_mesh_size",
+      "impl": "scripts/sw_simulation.py:check_mesh_size_sane",
+      "claim": "Check whether a global element size in millimetres is sane for the active part before meshing.",
+      "claim_evidence": {
+        "kind": "impl",
+        "path": "scripts/sw_simulation.py",
+        "anchor": "def check_mesh_size_sane("
+      },
+      "members": [
+        {
+          "interface": "IPartDoc",
+          "member": "GetBodies2",
+          "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+          "anchor": "Gets the bodies in this part."
+        },
+        {
+          "interface": "IBody2",
+          "member": "GetBodyBox",
+          "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+          "anchor": "Gets the bounding box for this body."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "首句是本仓的一道前置判据（官方没有任何「sane element size」成员）⇒ claim_evidence 取实现函数定义。成员读页：IBody2.GetBodyBox（Gets the bounding box for this body；Remarks 逐字说明返回 6 个 double 是包围盒的上下对角点，且「近似」、重建后可能变化）、IPartDoc.GetBodies2（Gets the bodies in this part）。实现只用 GetBodyBox 的 size 与给定 element_size 比较：大于零件最大边判「网格必然退化」，按包围盒体积估单元数与内存判「太小 ⇒ 吃光内存」。★ 首句里的 millimetres 不是官方页给的：GetBodyBox 页未写单位，实现依据是本仓真机实测（80×60×50 mm 盒子返回 80.0/60.0/50.0，见 sw_part.get_bounding_box 的 docstring）⇒ 这一半属 runtime 证据，已在成员页之外单列说明，不冒充官方。"
+      }
+    },
+    {
+      "tool": "solidworks_simulation_run_analysis",
+      "impl": "scripts/sw_simulation.py:run_analysis_report",
+      "claim": "Run the solver for a simulation study and report the read-back result.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis.html",
+        "anchor": "Runs this study."
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "RunAnalysis",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis.html",
+          "anchor": "Runs this study."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "Results",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Results.html",
+          "anchor": "Gets the results of this study."
+        },
+        {
+          "interface": "ICWResults",
+          "member": "GetPlotCount",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWResults~GetPlotCount.html",
+          "anchor": "Gets the number of plots in this study."
+        },
+        {
+          "interface": "ICWResults",
+          "member": "GetPlotNames",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWResults~GetPlotNames.html",
+          "anchor": "Gets the names of the plots&nbsp;for these results."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：ICWStudy~RunAnalysis.html（Runs this study；零参，Return Value = Error as defined in swsRunAnalysisError_e）· ICWStudy~Results.html（Gets the results of this study）· ICWResults~GetPlotCount.html（Gets the number of plots in this study）· ICWResults~GetPlotNames.html（Gets the names of the plots for these results）。⇒ 首句「run the solver」对上官方 RunAnalysis；「report the read-back result」对上 Results + 图数/图名回读（实现 ok 判的是 results 非 None 且 GetPlotCount > 0，不看 RunAnalysis 返回码——本仓真机记录称夹具/载荷未定义时返回 0 仍失败）。★ GetPlotNames 的锚点带 &nbsp; 是官方帮助页原文自带的实体（plots&nbsp;for），逐字照抄、未改词。"
+      }
+    },
+    {
+      "tool": "solidworks_topology_list_constraints",
+      "impl": "scripts/sw_topology.py:topology_constraints_report",
+      "claim": "Report which constraints and controls already exist on a topology study, as booleans plus a count.",
+      "claim_evidence": {
+        "kind": "impl",
+        "path": "scripts/sw_topology.py",
+        "anchor": "def topology_constraints_report(study) -> dict[str, Any]:"
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "Name",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+          "anchor": "Gets the name of this study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetMassConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetMassConstraint.html",
+          "anchor": "Gets the specified mass constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetStressConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetStressConstraint.html",
+          "anchor": "Gets the specified stress constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetFactorOfSafetyConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetFactorOfSafetyConstraint.html",
+          "anchor": "Gets the specified Factor Of Safety constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetDisplacementConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetDisplacementConstraint.html",
+          "anchor": "Gets the specified displacement constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetFrequencyConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetFrequencyConstraint.html",
+          "anchor": "Gets the specified frequency constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetPreservedRegionControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetPreservedRegionControl.html",
+          "anchor": "Gets the specified preserved region manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetSymmetryControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetSymmetryControl.html",
+          "anchor": "Gets the specified symmetry manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetDemoldControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetDemoldControl.html",
+          "anchor": "Gets the specified demold manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetThicknessControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetThicknessControl.html",
+          "anchor": "Gets the specified thickness manufacturing control for this topology study."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "首句的「booleans plus a count」是本仓返回形状（_kinds_summary：kinds={kind: bool}、taken_count、total、errors）⇒ claim_evidence 取实现函数定义；成员逐条读官方页：ICWStudy.Name（Gets the name of this study）+ 九个 ICWTopologyStudyManager.Get*（每个页面的 Description 都是 Gets the specified <某类> constraint/control for this topology study，签名统一为 (SConstraintName/SControlName, out ErrorCode)）。实现按默认名试探、出参用 out_i4()，只保留非 None 的布尔，不返回 COM 对象 ⇒ 与首句一致。★ 读页时确认：这些 Get* 只按名字取单个对象，取「参数」还得再调约束对象自身的成员，本函数没做——这正是姊妹工具 solidworks_topology_constraints_report 首句说过头的对照点（那条已写进 defects）。"
+      }
+    },
+    {
+      "tool": "solidworks_topology_manager_report",
+      "impl": "scripts/sw_topology.py:topology_manager_report",
+      "claim": "Report whether the topology study manager exists, what object type it is and which constraint kinds are retrievable.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~TopologyStudyManager.html",
+        "anchor": "Gets the&nbsp;manager of this&nbsp;topology study's&nbsp;goals, constraints, and manufacturing controls."
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "TopologyStudyManager",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~TopologyStudyManager.html",
+          "anchor": "Gets the&nbsp;manager of this&nbsp;topology study's&nbsp;goals, constraints, and manufacturing controls."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "Name",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+          "anchor": "Gets the name of this study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetMassConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetMassConstraint.html",
+          "anchor": "Gets the specified mass constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetStressConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetStressConstraint.html",
+          "anchor": "Gets the specified stress constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetFactorOfSafetyConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetFactorOfSafetyConstraint.html",
+          "anchor": "Gets the specified Factor Of Safety constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetDisplacementConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetDisplacementConstraint.html",
+          "anchor": "Gets the specified displacement constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetFrequencyConstraint",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetFrequencyConstraint.html",
+          "anchor": "Gets the specified frequency constraint for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetPreservedRegionControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetPreservedRegionControl.html",
+          "anchor": "Gets the specified preserved region manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetSymmetryControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetSymmetryControl.html",
+          "anchor": "Gets the specified symmetry manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetDemoldControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetDemoldControl.html",
+          "anchor": "Gets the specified demold manufacturing control for this topology study."
+        },
+        {
+          "interface": "ICWTopologyStudyManager",
+          "member": "GetThicknessControl",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWTopologyStudyManager~GetThicknessControl.html",
+          "anchor": "Gets the specified thickness manufacturing control for this topology study."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：ICWStudy~TopologyStudyManager.html（Gets the manager of this topology study's goals, constraints, and manufacturing controls；Property Value = ICWTopologyStudyManager）· ICWStudy~Name.html · 九个 ICWTopologyStudyManager.Get*（Gets the specified … for this topology study）。⇒ 首句三要素：管理器存在性（TopologyStudyManager 非 None）、对象类型（返回对象的类型名）、哪些约束类可取（九个 Get* 非 None）都对得上官方语义。★ 行为细节（不判缺陷，记录备查）：管理器为 None 时 get_topology_study_manager 直接抛 RuntimeError，工具层把它变成错误返回，所以成功返回体里的 ok 恒为 True —— 「不存在」是用异常表达的，不是 ok=False。★ TopologyStudyManager 的锚点带三处 &nbsp;，是官方帮助页原文自带的实体（the&nbsp;manager / this&nbsp;topology / study's&nbsp;goals），逐字照抄、未改词。"
+      }
+    },
+    {
+      "tool": "solidworks_topology_options_report",
+      "impl": "scripts/sw_topology.py:topology_options_report",
+      "claim": "Report whether the topology study options object exists and what type it is.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~TopologyStudyOptions.html",
+        "anchor": "Gets&nbsp;this topology study's options."
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "TopologyStudyOptions",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~TopologyStudyOptions.html",
+          "anchor": "Gets&nbsp;this topology study's options."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "Name",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+          "anchor": "Gets the name of this study."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：ICWStudy~TopologyStudyOptions.html（Gets this topology study's options；Property Value = ICWTopologyStudyOptions）· ICWStudy~Name.html。实现只取该属性、报 ok/object_type/study_name，不读任一选项值（选项值由 set_topology_iteration_options 一类 setter 的前后对照体现）⇒ 与首句「whether the options object exists and what type it is」同一件事。同样地：属性为 None 时 get_topology_study_options 抛 RuntimeError，所以成功返回体的 ok 恒 True（「不存在」以异常表达）。★ TopologyStudyOptions 的锚点带 &nbsp;，是官方帮助页原文自带的实体（Gets&nbsp;this），逐字照抄、未改词。"
+      }
+    },
+    {
+      "tool": "solidworks_topology_run",
+      "impl": "scripts/sw_topology.py:run_topology_study",
+      "claim": "Run the mesh and the solve of one topology study and report whether results exist.",
+      "claim_evidence": {
+        "kind": "official",
+        "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~MeshAndRun.html",
+        "anchor": "Meshes the model and analyzes the study."
+      },
+      "members": [
+        {
+          "interface": "ICWStudy",
+          "member": "MeshAndRun",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~MeshAndRun.html",
+          "anchor": "Meshes the model and analyzes the study."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "CreateMesh",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~CreateMesh.html",
+          "anchor": "Creates the mesh."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "RunAnalysis",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis.html",
+          "anchor": "Runs this study."
+        },
+        {
+          "interface": "ICWStudy",
+          "member": "Results",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Results.html",
+          "anchor": "Gets the results of this study."
+        },
+        {
+          "interface": "ICWResults",
+          "member": "GetPlotCount",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWResults~GetPlotCount.html",
+          "anchor": "Gets the number of plots in this study."
+        },
+        {
+          "interface": "ICWResults",
+          "member": "GetPlotNames",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWResults~GetPlotNames.html",
+          "anchor": "Gets the names of the plots&nbsp;for these results."
+        },
+        {
+          "interface": "ICWResults",
+          "member": "GetMaximumAvailableSteps",
+          "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWResults~GetMaximumAvailableSteps.html",
+          "anchor": "Gets the maximum solution step number for which results exist."
+        }
+      ],
+      "allowed_non_com": [],
+      "verified": {
+        "by": "review-r3",
+        "at": "2026-11-01",
+        "method": "read official page",
+        "level": "human",
+        "notes": "读的页：ICWStudy~MeshAndRun.html（Meshes the model and analyzes the study；声明是 Sub MeshAndRun() 无返回、零参）· ICWStudy~CreateMesh.html（Creates the mesh；签名逐字 CreateMesh(NUnits, DElementSize, DTolerance) 三参，正是回退路径的实参顺序）· ICWStudy~RunAnalysis.html · ICWStudy~Results.html（ReadOnly Property Results；官方 Remarks/示例指向 Analyze Part 例）· ICWResults~GetPlotCount / GetPlotNames / GetMaximumAvailableSteps（Gets the maximum solution step number for which results exist）。⇒ 首句「run the mesh and the solve」对上 MeshAndRun（回退 CreateMesh+RunAnalysis）；「report whether results exist」对上 Results + GetPlotCount > 0，不看返回码。★ GetPlotNames 的锚点带 &nbsp; 是官方帮助页原文自带的实体（plots&nbsp;for），逐字照抄、未改词。"
+      }
+    }
+  ]
+}

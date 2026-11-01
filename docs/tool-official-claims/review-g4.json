@@ -1,0 +1,1373 @@
+{
+ "batch": "G4",
+ "note": "G4 组 29 个工具（钣金 2 · 仿真载荷 12 · 仿真研究 4 · 草图 11）的人工复核。写者 review-g4；口径见 README.md 与 specs/353 §二。落 27 条记录，3 条 defects（其中 solidworks_sketch_add_tangent_arc 的记录只担保首句与成员，描述第三句的冲突见 defects）。",
+ "defects": [
+  {
+   "tool": "solidworks_sketch_add_parallelogram",
+   "why": "首句把三个点的语义写成「一个角 + 两条邻边的端点」，官方拿不出依据：C:/swapi/types/ISketchManager/CreateParallelogram.md 的 Parameters 只写 point 1 / point 2 / point 3（「X coordinate for point 1」…），Remarks 段整页没有；CHM 的 sldworksapivb6/SldWorks~SketchManager~CreateParallelogram.html 只有 VB 声明、无任何文字说明；C:/swapi/examples 与 CHM 里都没有平行四边形示例（已按名字搜过）。⇒ 「一角 + 两邻边端点」是本仓自己的推断（与实现 docstring 同句），按铁律 5 不能当官方语义。本批不落台账（记录会等于给这句无出处的话背书）。建议改法（不由本批执行）：首句降为「Create a parallelogram from three points」，把三点含义写进第二句并标为未核实，或补实测后再写。",
+   "evidence": "C:/swapi/types/ISketchManager/CreateParallelogram.md：『Creates a parallelogram.』·『- **X1**: X coordinate for point 1』·『- **X2**: X coordinate for point 2』·『- **X3**: X coordinate for point 3』（三组参数都只写 point N，全页无几何含义说明）·『Array of [[sketch segments]] for the parallelogram』；AI Solidworks/官方文档/SWhelp/sldworksapivb6/SldWorks~SketchManager~CreateParallelogram.html 全文 431 字符，只有标题与 VBA 签名；scripts/sw_sketch_primitives.py:sketch_parallelogram 的 docstring 逐字『★ 平行四边形：`CreateParallelogram`（三点：一角 + 两条邻边的端点）』——即该说法只存在于本仓。"
+  },
+  {
+   "tool": "solidworks_sheet_metal_iter_features",
+   "why": "首句说「List the sheet-metal features」，实现回的是**整棵特征树**、没有任何钣金属性过滤：工具直挂 scripts/sw_sheet_metal.py:iter_features（mcp-server/tool_specs_batch105.py 的 SPECS_BATCH105 里 name=\"solidworks_sheet_metal_iter_features\" 那条：module=sw_sheet_metal / function=iter_features，无 post/render 钩子），该生成器只做 FirstFeature → GetNextFeature 的链式遍历并逐个 yield，全程不调 GetTypeName2、不按 SheetMetalFolder 过滤（同文件的 sheet_metal_evidence 才用 _feature_type 判断）。⇒ 模型会以为拿到的是钣金子集，实际拿到零件全部特征（含草图、基准面、圆角…）；与描述第二句「焊件是另一族，要用另一个工具」的对照也不成立。",
+   "evidence": "scripts/sw_sheet_metal.py:iter_features 函数体全文（`feature = get_com_member(model, \"FirstFeature\")` … `while feature is not None and count < 4096: yield feature`），无 _feature_type/GetTypeName2 调用；mcp-server/tool_specs_batch105.py 的 SPECS_BATCH105 里 该 ToolSpec（function=\"iter_features\"，无 post/render）；对照 mcp-server/tool_registry.py 里 `getattr(mod, spec.function)(**kwargs)` 直接把生成器交给 run_locked，无中间过滤。"
+  },
+  {
+   "tool": "solidworks_sketch_add_tangent_arc",
+   "why": "★ 首句已核过（见 records 里该条），但**描述第三句与官方相反**：「arc_type is an integer whose value table no available source documents」。官方 CreateTangentArc 页的 ArcType 参数写「Type of tangent arc as defined in swTangentArcTypes_e」，而 C:/swapi/enums/swTangentArcTypes_e.md **就在离线树里**且有取值表（swForward=1 / swLeft=2 / swBack=3 / swRight=4）。实现 docstring 也写着「取值表在 C:\\swapi 里我没查到」——同一个误判。本批不落「已修」：按纪律不改 doc，只把冲突登记在此。建议改法（不由本批执行）：第三句改为「arc_type is swTangentArcTypes_e (1=swForward, 2=swLeft, 3=swBack, 4=swRight)」。",
+   "evidence": "C:/swapi/types/ISketchManager/CreateTangentArc.md：『- **ArcType**: Type of tangent arc as defined in [[swTangentArcTypes_e]]』；C:/swapi/enums/swTangentArcTypes_e.md：『## Description』『Tangent arc types.』+ 成员表 swBack 3 / swForward 1 / swLeft 2 / swRight 4；scripts/sw_sketch_primitives.py:sketch_tangent_arc 的 docstring：『取值表在 `C:\\\\swapi` 里我没查到』。"
+  }
+ ],
+ "records": [
+  {
+   "tool": "solidworks_sheet_metal_create_one_bend",
+   "impl": "scripts/sw_sheet_metal.py:create_one_bend",
+   "claim": "Skip this tool, NOT USABLE on this machine: bend-line and fixed-face selection is still unsolved.",
+   "claim_evidence": {
+    "kind": "runtime",
+    "path": "scripts/sw_sheet_metal.py",
+    "anchor": "⚠ **仍缺**「选中折弯线 / 固定面」这一步 ⇒ 仍标不可用，但**原因已具体化**"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "FeatureManager",
+     "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateDefinition",
+     "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."
+    },
+    {
+     "interface": "IFeatureManager",
+     "member": "CreateFeature",
+     "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetErrorCode",
+     "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Feature error code as defined in [[swFeatureError_e]]"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/CreateDefinition.md（Parameters 段逐条 35 个常量）与 CreateFeature.md、IFeatureManager.md、ClearSelection2.md。① 首句是**本仓真机裁定**，不是官方语义：SHEET_METAL_RUNTIME_STATUS 该条记 Failure 与卡点，故 claim_evidence 用 runtime 档；② 官方页支持描述**第二句的前半**：CreateDefinition 的 Parameters 段逐字列 `swFmSketchBend (sheet metal sketched bend)`⇒ `CreateDefinition(35)` 属官方接受的 35 个常量之一（draft 的 CreateDefinition 锚点正确）；③ 官方页支持不了「本机不可用」这个结论（任何官方页都不会写本机状态）——按 D4 用 runtime 档如实分档；④ ⚠ 描述第二句后半『the call never gets as far as writing』与实现不严格一致：`_create_from_definition` **会**调 CreateFeature（失败才抛），不是「到不了写」；结论（不改零件）成立，但机理表述建议下一批改描述时收紧 —— 本批按纪律不改 doc；⑤ 草稿登记的 5 个成员页全部存在且 type/member 对得上；选区走 sw_part 的更深一层助手（_ensure_sketch_selected），按规格 353 D5「只跨一层」不在此展开。⑥ 真机卡点的官方侧对照（不在 members 里，因为**实现根本没调它**）：C:/swapi/types/ISketchedBendFeatureData/AccessSelections.md 存在，官方语义是「取得描述该特征的选区」；SHEET_METAL_RUNTIME_STATUS 记的是拿它取选区时对本机空 Dispatch 报 -2147417851（0x80010105）。这与工具实际走的路（靠预选草图、直接 CreateFeature）是两件事 —— 记下来供下一批判断入口是否该改走 AccessSelections。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_centrifugal_force",
+   "impl": "scripts/sw_simulation_loads.py:apply_centrifugal_force_report",
+   "claim": "Apply a centrifugal force to the selected entity of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加离心力**并回**回读报告**。⚠ 官方参数是**单实体** ⇒ 取选区第一个。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddCentrifugalForce",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddCentrifugalForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddCentrifugalForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方参数是**单实体**（DispEntity），实现取选区第一个 ⇒ 与描述一致。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddCentrifugalForce.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 官方参数是**单实体**（DispEntity），实现取选区第一个 ⇒ 与描述一致。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_convection",
+   "impl": "scripts/sw_simulation_loads.py:apply_convection_report",
+   "claim": "Apply a convection load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加对流**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddConvection",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddConvection` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddConvection.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷，描述要求 thermal 研究是真机/项目规则（第二句已写明 static 计数不变）。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddConvection.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 热载荷，描述要求 thermal 研究是真机/项目规则（第二句已写明 static 计数不变）。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_distributed_mass",
+   "impl": "scripts/sw_simulation_loads.py:apply_distributed_mass_report",
+   "claim": "Add a distributed mass load to the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加分布质量**并回**回读报告**（★ 与 `apply_pressure_report` 同一套机器）。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddDistributedMass",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddDistributedMass` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddDistributedMass.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现传 (entities, units, mass) 三参，与来源块抄的官方 4 参（+ByRef ErrorCode）一致。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddDistributedMass.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 实现传 (entities, units, mass) 三参，与来源块抄的官方 4 参（+ByRef ErrorCode）一致。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_elastic_connector",
+   "impl": "scripts/sw_simulation_loads.py:apply_elastic_connector_report",
+   "claim": "Add an elastic connector between the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加弹性连接**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddElasticConnector",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddElasticConnector` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddElasticConnector.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现冻结的一参调用；描述「static 研究」是项目规则（第二句已写明）。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddElasticConnector.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 实现冻结的一参调用；描述「static 研究」是项目规则（第二句已写明）。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_force",
+   "impl": "scripts/sw_simulation_loads.py:apply_force_report",
+   "claim": "Add a force or moment load to the selected faces of a static simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加力/力矩**并回**回读报告**（★ `force_type` 是官方的种类枚举）。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddForce",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　force_type 直接进 AddForce 的第一参（1=法向、2=力矩），SWS_FORCE_TYPES 有表。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddForce.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ force_type 直接进 AddForce 的第一参（1=法向、2=力矩），SWS_FORCE_TYPES 有表。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_gravity",
+   "impl": "scripts/sw_simulation_loads.py:apply_gravity_report",
+   "claim": "Apply a gravity load to the selected entity of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加重力**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddGravity",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddGravity` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddGravity.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方参数是单实体 ⇒ 实现取选区第一个实体，与描述「only the first selected entity」一致。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddGravity.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 官方参数是单实体 ⇒ 实现取选区第一个实体，与描述「only the first selected entity」一致。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_heat_flux",
+   "impl": "scripts/sw_simulation_loads.py:apply_heat_flux_report",
+   "claim": "Apply a heat flux load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加热流**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddHeatFlux",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddHeatFlux` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddHeatFlux.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddHeatFlux.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 热载荷；描述要求 thermal 研究是项目规则。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_heat_power",
+   "impl": "scripts/sw_simulation_loads.py:apply_heat_power_report",
+   "claim": "Apply a heat power load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加热功率**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddHeatPower",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddHeatPower` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddHeatPower.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddHeatPower.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 热载荷；描述要求 thermal 研究是项目规则。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_pressure",
+   "impl": "scripts/sw_simulation_loads.py:apply_pressure_report",
+   "claim": "Apply a pressure load to the selected faces of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加压力**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddPressure",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddPressure` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddPressure.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现来源块抄的官方 VB 声明里第 3 参写作 RegGeom（非 RefGeom）；实现用空 Dispatch 参数包代替裸 None（真机 -2147352571 类型不匹配）。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddPressure.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 实现来源块抄的官方 VB 声明里第 3 参写作 RegGeom（非 RefGeom）；实现用空 Dispatch 参数包代替裸 None（真机 -2147352571 类型不匹配）。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_radiation",
+   "impl": "scripts/sw_simulation_loads.py:apply_radiation_report",
+   "claim": "Apply a radiation load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加热辐射**并回**回读报告**（★ 唯一带一个 int 参数的那个）。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddRadiation",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddRadiation` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddRadiation.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　两参调用（radiation_type + entities），与来源块抄的官方签名一致。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddRadiation.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 两参调用（radiation_type + entities），与来源块抄的官方签名一致。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_remote_load",
+   "impl": "scripts/sw_simulation_loads.py:apply_remote_load_report",
+   "claim": "Add a remote load with a location, a direction and a magnitude to the selected faces of a static study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加远程载荷**（位置 + 方向 + 幅值）并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddRemoteLoad",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddRemoteLoad` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddRemoteLoad.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　描述里的「location / direction / magnitude」是本仓对 DX/DY/DZ 的读法：官方参数名是 DXValue/DYValue/DZValue，枚举值表本仓注明反射 dump 未收录 ⇒ 只做 int 透传。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddRemoteLoad.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 描述里的「location / direction / magnitude」是本仓对 DX/DY/DZ 的读法：官方参数名是 DXValue/DYValue/DZValue，枚举值表本仓注明反射 dump 未收录 ⇒ 只做 int 透传。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_temperature",
+   "impl": "scripts/sw_simulation_loads.py:apply_temperature_report",
+   "claim": "Apply a temperature load to the selected faces of a thermal simulation study.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加温度**并回**回读报告**。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddTemperature",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddTemperature` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddTemperature.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddTemperature.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ 热载荷；描述要求 thermal 研究是项目规则。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_apply_torque",
+   "impl": "scripts/sw_simulation_loads.py:apply_torque_report",
+   "claim": "Apply a torque load to the selected faces of a static study and report the load count before and after.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation_loads.py",
+    "anchor": "**加力矩**并回**回读报告**（★ 同 `apply_pressure_report`，`model` 用来装 `DispArray`）。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "AddForce",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　★ 力矩不是独立方法：add_torque 走 AddForce 且第一参传 SWS_FORCE_TYPES['torque']=2 ⇒ 成员登记为 AddForce（不是 AddTorque）。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 本条的官方语义源头是 **cosworks CHM**（ICWLoadsAndRestraintsManager~AddForce.html 的 VB 声明与参数说明；实现来源块自称逐字抄自该页；我核到该页确实落盘，参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处），但该页的自然语言句子是 JSON 转义嵌入的、不落盘 ⇒ 取不到整句锚点，按本门禁判据只能把 claim_evidence 记成 impl（本仓实现那一行），CW 成员按铁律 5 记 documented:false + gap。① swapi 侧三个成员（SelectionManager / GetSelectedObject6 / ClearSelection2）页与锚点逐字核对通过；② 实现链：apply_*_report → _selected_dispatch_array（装 DispArray）+ _report（清选区、回读 Count）+ add_*（真正 Add*）；③ ★ 力矩不是独立方法：add_torque 走 AddForce 且第一参传 SWS_FORCE_TYPES['torque']=2 ⇒ 成员登记为 AddForce（不是 AddTorque）。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_get_study_manager",
+   "impl": "scripts/sw_simulation.py:get_study_manager",
+   "claim": "Get the Simulation study manager of the active document as a COM object.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "取 CWStudyManager。"
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetAddInObject",
+     "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+     "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "LoadAddIn",
+     "path": "C:/swapi/types/ISldWorks/LoadAddIn.md",
+     "anchor": "Loads the specified add-in in SOLIDWORKS."
+    },
+    {
+     "interface": "ICwAddincallback",
+     "member": "CosmosWorks",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+    },
+    {
+     "interface": "ICosmosWorks",
+     "member": "ActiveDoc",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+    },
+    {
+     "interface": "ICWModelDoc",
+     "member": "StudyManager",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了两页 swapi 官方页（ISldWorks/GetAddInObject.md、LoadAddIn.md，签名与锚点逐字核对）。★ 草稿把 ISldWorks.ActiveDoc 登记成本工具的成员 —— **那是错页**：实现取的是 cosmos.ActiveDoc（ICosmosWorks 上的成员，被 Simulation 程序集文档化），不是 sldworks 侧的 ISldWorks.ActiveDoc；本台账改记为 documented:false 的 ICosmosWorks.ActiveDoc。★ 首句「Get the Simulation study manager of the active document as a COM object」的实现依据是get_study_manager 的 docstring（impl 档）：swapi 侧只证明「取加载项对象 / 装加载项」这两步，Simulation 的 StudyManager 属性页不在离线树里。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_create_study",
+   "impl": "scripts/sw_simulation.py:create_study_report",
+   "claim": "Create a static simulation study with a given name and report which entry point ran.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "**新建静力学研究**并回**可 JSON 化**的报告。"
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetAddInObject",
+     "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+     "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "LoadAddIn",
+     "path": "C:/swapi/types/ISldWorks/LoadAddIn.md",
+     "anchor": "Loads the specified add-in in SOLIDWORKS."
+    },
+    {
+     "interface": "ICwAddincallback",
+     "member": "CosmosWorks",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+    },
+    {
+     "interface": "ICosmosWorks",
+     "member": "ActiveDoc",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+    },
+    {
+     "interface": "ICWModelDoc",
+     "member": "StudyManager",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "CreateNewStudy3",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy3` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　官方签名 CreateNewStudy3(Name, StudyType, MeshType, &ErrorCode) 逐字抄自实现来源块（反射 dump）。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "CreateNewStudy2",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy2` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　降级入口 1：(Name, StudyType, &ErrorCode)。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "CreateNewStudy",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　降级入口 2：官方 4 参 (Name, StudyType, MeshType, &ErrorCode)。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　回读新建研究的实际名字。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 首句「Create a static simulation study with a given name and report which entry point ran」的 impl 依据：create_study_report 明写 entry_name 是「是否走降级入口」的唯一证据；三个入口按 3→2→1 降级，实现里逐条注释了每个入口的官方形参个数（初稿的 3 参调用曾被 tools/audit_call_arity.py 抓出）。⚠ 官方页（C:/swapi/types）里没有 ICWStudyManager 任何成员页 ⇒ 全部记缺口。swapi 侧只核到 GetAddInObject / LoadAddIn 两页。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_list_studies",
+   "impl": "scripts/sw_simulation.py:list_studies",
+   "claim": "List every simulation study in the active document as index and name pairs.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "**列出全部研究**（只回名字与序号，**不回 COM 对象**）。"
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetAddInObject",
+     "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+     "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "LoadAddIn",
+     "path": "C:/swapi/types/ISldWorks/LoadAddIn.md",
+     "anchor": "Loads the specified add-in in SOLIDWORKS."
+    },
+    {
+     "interface": "ICwAddincallback",
+     "member": "CosmosWorks",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+    },
+    {
+     "interface": "ICosmosWorks",
+     "member": "ActiveDoc",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+    },
+    {
+     "interface": "ICWModelDoc",
+     "member": "StudyManager",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "StudyCount",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性（不加括号调用）。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "GetStudy",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　方法，传下标。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取不到名字也照列（空名字），不跳过。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 首句「List every simulation study in the active document as index and name pairs」的 impl 依据：list_studies 把 iter_studies 的 (index, study) 翻成 [{index, name}] 并对名称读取失败单独兜底；官方 Side：StudyCount 是属性、GetStudy 是方法（实现来源块记了「迟到绑定下同一成员可能是属性也可能是方法」），但两者在 C:/swapi/types 里都没有页 ⇒ 记缺口。ISldWorks 两页逐字核对通过。"
+   }
+  },
+  {
+   "tool": "solidworks_simulation_collect_evidence",
+   "impl": "scripts/sw_simulation.py:collect_study_evidence",
+   "claim": "Read every simulation study in the active document into an audit summary.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_simulation.py",
+    "anchor": "回读研究、载荷夹具与求解状态，形成可审计证据。"
+   },
+   "members": [
+    {
+     "interface": "ISldWorks",
+     "member": "GetAddInObject",
+     "path": "C:/swapi/types/ISldWorks/GetAddInObject.md",
+     "anchor": "Gets an add-in object for the specified SOLIDWORKS add-in."
+    },
+    {
+     "interface": "ISldWorks",
+     "member": "LoadAddIn",
+     "path": "C:/swapi/types/ISldWorks/LoadAddIn.md",
+     "anchor": "Loads the specified add-in in SOLIDWORKS."
+    },
+    {
+     "interface": "ICwAddincallback",
+     "member": "CosmosWorks",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+    },
+    {
+     "interface": "ICosmosWorks",
+     "member": "ActiveDoc",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+    },
+    {
+     "interface": "ICWModelDoc",
+     "member": "StudyManager",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "ActiveStudy",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，活动研究下标。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "StudyCount",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性。"
+    },
+    {
+     "interface": "ICWStudyManager",
+     "member": "GetStudy",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　方法。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "LoadsAndRestraintsManager",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `LoadsAndRestraintsManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性（get_ 前缀），不是方法。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　研究名。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "AnalysisType",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AnalysisType` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　算例类型。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "MeshType",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `MeshType` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　网格类型。"
+    },
+    {
+     "interface": "ICWStudy",
+     "member": "ConfigurationName",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ConfigurationName` 命中 4 个接口（IDocumentSpecification / ILibraryFeatureData / IStructuralMemberFeatureData / IView3D），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　配置名。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "Count",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　载荷条数。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraintsManager",
+     "member": "GetLoadsAndRestraints",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetLoadsAndRestraints` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~GetLoadsAndRestraints.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方 2 参 (Index, &ErrorCode) —— 初稿曾按单参调用，已被反射清单纠正；实现现在传 out_i4()。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraints",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷名。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraints",
+     "member": "Type",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Type` 命中 36 个接口（IBodyFolder / ICalloutVariable / ICamera / IChamferFeatureData2 / IConfiguration / ICornerTreatmentGroupFolder …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷类型。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraints",
+     "member": "State",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `State` 命中 1 个接口（IPropertyManagerPageCheckbox），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷状态。"
+    },
+    {
+     "interface": "ICWLoadsAndRestraints",
+     "member": "EntityCount",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `EntityCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　★ 计数属性在管理器上叫 Count，EntityCount 属于**单条载荷对象**（实现来源块专门记了这次纠错）。"
+    },
+    {
+     "interface": "ICosmosWorks",
+     "member": "VersionNumber",
+     "documented": false,
+     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `VersionNumber` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　cosmos 版本号。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 首句「Read every simulation study in the active document into an audit summary」的 impl 依据：collect_study_evidence 的 docstring 与函数体逐字段吻合（name/analysis_type/mesh_type/configuration/is_active/loads_and_restraints + cosmos_version/study_count/active_study_index），且刻意不读结果数值（ICWResults 的应力/位移入口官方无签名）。★ 草稿把 Name/Count/State/Type/ConfigurationName 分别指到 IMotionStudy、IBalloonStack、IPropertyManagerPageCheckbox、IBodyFolder、IDocumentSpecification —— 那是成员名同名反查的误配（**指错页**），本台账全部改记为 CW 侧 documented:false。swapi 侧只有 ISldWorks 两页可锚。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_circle",
+   "impl": "scripts/sw_part.py:sketch_circle",
+   "claim": "Draw a circle in the open sketch from a centre and a radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCircleByRadius.md",
+    "anchor": "Creates a circle based on a center point and a specified radius."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCircleByRadius",
+     "path": "C:/swapi/types/ISketchManager/CreateCircleByRadius.md",
+     "anchor": "Creates a circle based on a center point and a specified radius."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCircleByRadius.md（Description / Parameters / Remarks 全读）。① 首句「Draw a circle in the open sketch from a centre and a radius」与官方 Description 同义，参数表逐字：XC/YC/Zc 中心、Radius 半径，**单位米** —— 实现 `_MM_TO_M` 换算，与官方单位一致；② ★ 草稿把成员指到 IModelDoc2/CreateCircleByRadius.md（Obsolete，签名是 (P1, Radius) 两参）——**指错接口**：实现是 `SketchManager.CreateCircleByRadius` 四参，本台账改记 ISketchManager 页；③ 官方 Remarks 还写「若无活动草图则新建一个」，而首句说 open sketch ⇒ 保守表述，不矛盾；④ 无更深一层委托。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_line",
+   "impl": "scripts/sw_part.py:sketch_line",
+   "claim": "Draw a straight line in the open sketch from one point to another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateLine.md",
+    "anchor": "Creates a sketch line in the currently active 2D or 3D sketch."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateLine",
+     "path": "C:/swapi/types/ISketchManager/CreateLine.md",
+     "anchor": "Creates a sketch line in the currently active 2D or 3D sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateLine.md。① 首句与官方 Description 同义；② 官方 Remarks 明写「若无活动草图，则不创建并返回 NULL」⇒ 首句「in the open sketch」成立且更严格；③ 草稿原指 IModelDoc2/CreateLine.md（Obsolete，签名 (P1, P2) 两参）——**指错接口**，已改记 ISketchManager/CreateLine（六参 X1..Z2），与实现六个实参逐一对应。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_arc",
+   "impl": "scripts/sw_part.py:sketch_arc",
+   "claim": "Draw an arc in the active sketch from a centre, a start point and an end point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateArc.md",
+    "anchor": "Creates an arc based on a center point, a start point, an end point, and a direction."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateArc",
+     "path": "C:/swapi/types/ISketchManager/CreateArc.md",
+     "anchor": "Creates an arc based on a center point, a start point, an end point, and a direction."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateArc.md。① 首句（圆心 + 起点 + 终点）与官方 Description 同义；参数表 Direction 逐字：+1 逆时针、-1 顺时针 —— 实现 `direction=1` 默认正与此一致；② 官方参数表明确 XC/YC/Zc/X1..Z2 **单位米** ⇒ 实现 `_MM_TO_M` 正确；③ 草稿原指 IModelDoc2/CreateArc.md（Obsolete，(P1,P2,P3,Dir)）——**指错接口**，已改记 ISketchManager 页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_centerline",
+   "impl": "scripts/sw_part.py:sketch_centerline",
+   "claim": "Draw a centreline in the active sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCenterLine.md",
+    "anchor": "Creates a center line between the specified points."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCenterLine",
+     "path": "C:/swapi/types/ISketchManager/CreateCenterLine.md",
+     "anchor": "Creates a center line between the specified points."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCenterLine.md。① 首句「Draw a centreline in the active sketch」与官方 Description 同义（两点之间建中心线）；② 参数表逐字写「in meters」⇒ 实现 `_MM_TO_M` 正确（该函数 2026-10-10 修过 1000× 单位 bug，真机读数 output/_probe_unit_verdict.json）；③ 草稿原指 IModelDoc2/CreateCenterLine.md（Obsolete，官方同页写 Superseded by ISketchManager::CreateCenterLine）——**指错接口**，已改记 ISketchManager 页；④ 描述第二句「可作旋转轴」不是官方页的话（官方 Remarks 只说也能用 CreateLine + ConstructionGeometry 造中心线构造线），属项目规则，本台账如实记在首句之外。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_ellipse",
+   "impl": "scripts/sw_part.py:sketch_ellipse",
+   "claim": "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateEllipse.md",
+    "anchor": "Creates an ellipse using the specified center, major-axis, and minor-axis points."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateEllipse",
+     "path": "C:/swapi/types/ISketchManager/CreateEllipse.md",
+     "anchor": "Creates an ellipse using the specified center, major-axis, and minor-axis points."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateEllipse.md。① 首句「full ellipse … centre, a major-axis point and a minor-axis point」与官方 Description **逐项吻合**，官方 Remarks 也明写「creates a full ellipse」（对应描述的 「never an elliptical arc」）；② 该页参数表**没写单位**（只说 coordinate），而同族 CreateCircleByRadius / CreateArc 的页逐字写「in meters」⇒ 家族口径是米，实现的 `_MM_TO_M` 与之一致（本条只把「米」记为家族口径，不冒充本页的字面）；③ 草稿原指 IModelDoc2/CreateEllipse.md（Obsolete，(Center, Major, Minor)）——**指错接口**，已改记 ISketchManager。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_parabola",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_parabola",
+   "claim": "Draw a parabola from its focus, its apex and two points that set its ends.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
+    "anchor": "Creates a parabola in the active sketch."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateParabola",
+     "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
+     "anchor": "Creates a parabola in the active sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateParabola.md。① 首句「Draw a parabola from its focus, its apex and two points that set its ends」与官方参数表逐项对应：XFocus/YFocus/ZFocus（焦点）、XApex/YApex/ZApex（顶点）、X1/Y1/Z1 起点、X2/Y2/Z2 终点 ⇒ 一致；② 页里没写单位的字面（只写 coordinate），实现按米送（与同族ISketchManager 方法一致）；③ 草稿的接口与页正确（ISketchManager），未改。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_tangent_arc",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_tangent_arc",
+   "claim": "Draw an arc tangent to the last sketch segment, through one point and ending at another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateTangentArc.md",
+    "anchor": "Creates a tangent arc."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateTangentArc",
+     "path": "C:/swapi/types/ISketchManager/CreateTangentArc.md",
+     "anchor": "Creates a tangent arc."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateTangentArc.md 与官方示例 examples/Create_Tangent_Arc_Example_VB.md。① 首句「Draw an arc tangent to the last sketch segment, through one point and ending at another」：官方页给「Creates a tangent arc」+ 起点/终点两参数 + ArcType；官方示例的正是在 CreateLine 之后以上一段的终点为首点调 CreateTangentArc ⇒ 首句成立（相切对象由示例给，不是页里的字面）；② 参数表 ArcType 写「Type of tangent arc as defined in swTangentArcTypes_e」；③ ★ **描述第三句 `arc_type is an integer whose value table no available source documents` 与官方相反**：C:/swapi/enums/swTangentArcTypes_e.md **有页**（swForward=1 / swLeft=2 / swBack=3 / swRight=4）⇒ 已写进 defects，本记录只担保首句与成员，请下一批改 doc；④ 草稿原指 IModelDoc2/CreateTangentArc.md（Obsolete，六参无 ArcType）——**指错接口**，已改记 ISketchManager 七参页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_by_name",
+   "impl": "scripts/sw_sketch.py:sketch_by_name",
+   "claim": "Get a sketch object from its sketch feature name.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+    "anchor": "Gets the named feature in the part."
+   },
+   "members": [
+    {
+     "interface": "IPartDoc",
+     "member": "FeatureByName",
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetSpecificFeature2",
+     "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了两页：IPartDoc/FeatureByName.md 与 IFeature/GetSpecificFeature2.md（后者 Remarks 列表逐条含 [[ISketch]]）。① 首句「Get a sketch object from its sketch feature name」= FeatureByName（按名取特征）+ GetSpecificFeature2（把特征转成具体接口，草图对应 [[ISketch]]）⇒ 两句官方语义拼起来成立；② ★ 草稿把 FeatureByName 指到 IAssemblyDoc 页 —— **指错接口**：IAssemblyDoc.FeatureByName 讲的是「named feature in the assembly」，而实现收的是 IModelDoc2（零件文档）。同名成员在 C:/swapi/index/by_member_name.md 里挂在 IAssemblyDoc / IComponent2 / IDrawingDoc / IPartDoc 四个接口，IModelDoc2 上**没有**这个成员 ⇒ 零件场景应记 IPartDoc；本工具不按文档类型分支，装配/工程图下走的是同名的另两个接口，已在 note 里如实标注；③ 描述第二句（草图关闭后唯一可靠路径）来自真机探针 tools/probe_sketch_object_routes.py，不是官方页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_circular_pattern",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_circular_pattern",
+   "claim": "Create a circular sketch pattern of the selected entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCircularSketchStepAndRepeat.md",
+    "anchor": "Creates circular sketch pattern."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCircularSketchStepAndRepeat",
+     "path": "C:/swapi/types/ISketchManager/CreateCircularSketchStepAndRepeat.md",
+     "anchor": "Creates circular sketch pattern."
+    },
+    {
+     "interface": "ISketchSegment",
+     "member": "Select4",
+     "path": "C:/swapi/types/ISketchSegment/Select4.md",
+     "anchor": "Selects this sketch segment and marks it."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCircularSketchStepAndRepeat.md（Parameters 九项全读）与官方示例 examples/Create_and_Edit_Circular_Sketch_Pattern_Example_VB.md。① 首句「Create a circular sketch pattern of the selected entities」与官方 Description 同义；「of the selected entities」由官方示例给：示例先 ClearSelection2(True) 再 CreateCornerRectangle，紧接着调 CreateCircularSketchStepAndRepeat 把该矩形阵列 ⇒ 阵列对象是**当前选区**；② 参数单位注意：官方 ArcAngle/PatternSpacing 未标单位，但 PatternSpacing 在 IModelDoc2 旧页逐字写 「in radians」，实现 `math.radians()` 转换两次 ⇒ 与官方弧度口径一致；③ 草稿原指 IModelDoc2/CreateCircularSketchStepAndRepeat.md（Obsolete 六参）——**指错接口**，实现走 ISketchManager 九参页；④ 补登了草稿漏的更深调用：_select_spec → select_sketch_segment （ISketchSegment.Select4 / ISketch.GetSketchSegments），这两页都在官方树里。"
+   }
+  }
+ ]
+}

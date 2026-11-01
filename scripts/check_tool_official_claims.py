@@ -90,6 +90,11 @@ from check_tool_contract import counts_by_code, first_sentence  # noqa: E402
 SWAPI_TYPES = Path(r"C:\swapi\types")
 SWAPI_INDEX = Path(r"C:\swapi\index\by_member_name.md")
 
+#: ★ 第二个官方源：**Simulation（cosworks）add-in 的 interop 帮助解包**。
+#:   实测 `C:\swapi\types` 里**没有任何 `ICW*` / `CW*` 接口**，而 Simulation/Topology
+#:   的工具全挂在那些接口上 ⇒ 只查一棵树会把「有页」的成员误记成「查不到」。
+CWORKS_API = Path(r"C:\cworks_en\api")
+
 #: 包装函数形态：这三个是本仓全部「显式点名成员」的入口（`scripts/check_member_names.py` 同表）
 WRAP_NAMES = {"get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw"}
 
@@ -121,6 +126,19 @@ def normalize(text: str) -> str:
     :returns: 小写、去强调符、空白压缩的文本。
     """
     s = str(text or "")
+    #: ★ 只去 **markdown 排版**。HTML 的标签剥除在 `read_page()` 里做 ——
+    #:   若在这里对**所有**文件跑 `<[^>]+>`，Python 源码里的 `list[str]`、`a < b`
+    #:   会被当成标签整段吞掉（实测：31 KB 的 .py 归一化后只剩 25 KB，
+    #:   于是 `def <函数名>(` 这种**实现锚点**永远判「找不到」）✓
+    #: ★ HTML 实体是**排版**不是词：`&nbsp;` 与空格等价（台账里照抄页面时两种写法都有）。
+    #:   不统一它们，同一句话会因为一个实体被判「找不到」——那是假红。
+    s = (
+        s.replace("&nbsp;", " ")
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&quot;", '"')
+    )
     s = re.sub(r"[*`#>]+", "", s)
     s = re.sub(r"(?m)^\s*[-–—]\s*", "", s)
     s = re.sub(r"\s+", " ", s)
@@ -136,12 +154,26 @@ from check_tool_contract import first_sentence  # noqa: E402 - 首句口径**只
 def read_page(path: Path) -> str | None:
     """⇒ 官方页正文；文件不存在返回 None。
 
-    :param path: `C:\\swapi\\types\\<接口>\\<成员>.md` 的完整路径。
+    ★ HTML 页（`C:\\cworks_en\\api` 的 cosworks 帮助）在这里**剥标签/还原实体**，
+      让锚点可以按纯文本逐字比对；markdown 页原样返回。
+
+    :param path: 官方页路径（`.md` / `.html`）。
     """
     try:
-        return path.read_text(encoding="utf-8", errors="replace")
+        text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return None
+    if path.suffix.lower() in {".html", ".htm"}:
+        text = re.sub(r"<script.*?</script>|<style.*?</style>|<xml.*?</xml>", " ", text, flags=re.S | re.I)
+        text = re.sub(r"<[^>]+>", "\n", text)
+        text = (
+            text.replace("&nbsp;", " ")
+            .replace("&amp;", "&")
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", '"')
+        )
+    return text
 
 
 def page_front_matter(text: str) -> dict:
@@ -162,20 +194,49 @@ def page_front_matter(text: str) -> dict:
     return out
 
 
-def member_index() -> dict[str, list[tuple[str, str]]] | None:
-    """⇒ `{成员名: [(接口, 签名)]}`；索引文件读不到时返回 None（判据跳过）。
+_CWORKS_PAGE = re.compile(
+    r"^SolidWorks\.Interop\.cosworks~SolidWorks\.Interop\.cosworks\.(?P<iface>[A-Za-z_]\w*)"
+    r"~(?P<member>[A-Za-z_]\w*)\.html?$"
+)
 
-    ★ 这是**成员名 → 接口**的唯一现成反查表（`C:\\swapi\\index\\by_member_name.md` 逐行）。
+
+def cworks_member_index(root: Path = CWORKS_API) -> dict[str, list[tuple[str, str]]]:
+    """⇒ `{成员名: [(接口, 页路径)]}`：Simulation add-in 帮助解包里的接口成员页。
+
+    ★ 文件名就是身份：`SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis.html`
+      ⇒ 接口 `ICWStudy`、成员 `RunAnalysis`。`_members` / `~I` 开头的聚合页不算成员页。
+    ★ 树不在（换机器）⇒ 返回空 dict，不抛。
     """
-    if not SWAPI_INDEX.is_file():
-        return None
-    idx: dict[str, list[tuple[str, str]]] = {}
-    for line in SWAPI_INDEX.read_text(encoding="utf-8", errors="replace").splitlines():
-        m = _INDEX_LINE.match(line.strip())
-        if not m:
+    out: dict[str, list[tuple[str, str]]] = {}
+    if not root.is_dir():
+        return out
+    for path in root.iterdir():
+        if path.suffix.lower() not in {".html", ".htm"}:
             continue
-        idx.setdefault(m.group("member"), []).append((m.group("iface"), line))
-    return idx
+        m = _CWORKS_PAGE.match(path.name)
+        if not m or m.group("member").endswith("_members") or m.group("member").startswith("I"):
+            continue
+        out.setdefault(m.group("member"), []).append((m.group("iface"), str(path)))
+    return out
+
+
+def member_index() -> dict[str, list[tuple[str, str]]] | None:
+    """⇒ `{成员名: [(接口, 页路径)]}`；两棵树都读不到时返回 None（页/锚点判据跳过）。
+
+    ★ 合并两个官方源：`C:\\swapi\\index\\by_member_name.md`（sldworks/swconst）
+      与 `C:\\cworks_en\\api`（cosworks add-in）。
+    """
+    idx: dict[str, list[tuple[str, str]]] = {}
+    if SWAPI_INDEX.is_file():
+        for line in SWAPI_INDEX.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = _INDEX_LINE.match(line.strip())
+            if not m:
+                continue
+            member, iface = m.group("member"), m.group("iface")
+            idx.setdefault(member, []).append((iface, str(SWAPI_TYPES / iface / (member + ".md"))))
+    for member, entries in cworks_member_index().items():
+        idx.setdefault(member, []).extend(entries)
+    return idx or None
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -267,16 +328,23 @@ class FunctionIndex:
         return out
 
 
-def _members_of_fn(node: ast.AST, known: set[str]) -> dict[str, list[int]]:
-    """⇒ 一个函数体**直接**调用的 COM 成员（不含它调用的其它函数）。
+def _members_of_fn(node: ast.AST, known: set[str]) -> tuple[dict[str, list[int]], dict[str, list[str]]]:
+    """⇒ `(成员 → 行号, 成员 → 接收者提示)`：一个函数体**直接**调用的 COM 成员。
+
+    ★ **接收者提示**（`model.SketchManager.InsertSketch` ⇒ `SketchManager`）用来把
+      成员归到**正确的接口页**：`InsertSketch` 同时存在于 `IModelDoc2`（已废弃）与
+      `ISketchManager`，只按名字取第一个会把「现在用的是哪个接口」指错。
 
     :param node: 函数 AST 节点。
     :param known: 官方成员名集合（直接属性调用只用它做保守过滤）。
     """
     members: dict[str, list[int]] = {}
+    hints: dict[str, list[str]] = {}
 
-    def add(name: str, line: int) -> None:
+    def add(name: str, line: int, hint: str = "") -> None:
         members.setdefault(name, []).append(int(line or 0))
+        if hint:
+            hints.setdefault(name, []).append(hint)
 
     for sub in ast.walk(node):
         if (
@@ -287,7 +355,12 @@ def _members_of_fn(node: ast.AST, known: set[str]) -> dict[str, list[int]]:
             and isinstance(sub.args[1], ast.Constant)
             and isinstance(sub.args[1].value, str)
         ):
-            add(sub.args[1].value, getattr(sub, "lineno", 0))
+            hint = _base_name(sub.args[0])
+            receiver = sub.args[0]
+            while isinstance(receiver, ast.Attribute):
+                hint = receiver.attr
+                break
+            add(sub.args[1].value, getattr(sub, "lineno", 0), hint if hint else "")
 
     com_objs = {
         a.arg
@@ -306,8 +379,9 @@ def _members_of_fn(node: ast.AST, known: set[str]) -> dict[str, list[int]]:
             if name in COM_INFRA or name in PY_BUILTINS:
                 continue
             if _base_name(sub.func.value) in com_objs and name in known:
-                add(name, getattr(sub, "lineno", 0))
-    return members
+                hint = getattr(sub.func.value, "attr", "")
+                add(name, getattr(sub, "lineno", 0), hint)
+    return members, hints
 
 
 def impl_members(impl_path: Path, func_name: str, known: set[str], index: FunctionIndex | None = None) -> dict:
@@ -338,7 +412,7 @@ def impl_members(impl_path: Path, func_name: str, known: set[str], index: Functi
     if fn is None:
         return {"found": False, "members": {}, "error": "函数 %r 不在 %s" % (func_name, impl_path.name)}
 
-    members = _members_of_fn(fn, known)
+    members, hints = _members_of_fn(fn, known)
     if index is not None:
         visited = {(impl_path, func_name)}
         for path, name in index.callees(fn):
@@ -348,9 +422,12 @@ def impl_members(impl_path: Path, func_name: str, known: set[str], index: Functi
             node = index.node(path, name)
             if node is None:
                 continue
-            for member, lines in _members_of_fn(node, known).items():
+            sub_members, sub_hints = _members_of_fn(node, known)
+            for member, lines in sub_members.items():
                 members.setdefault(member, lines)
-    return {"found": True, "members": members, "error": ""}
+            for member, hs in sub_hints.items():
+                hints.setdefault(member, hs)
+    return {"found": True, "members": members, "hints": hints, "error": ""}
 
 
 # ══════════════════════════════════════════════════════════════════════
@@ -369,6 +446,12 @@ def load_ledger(ledger_dir: Path) -> tuple[dict[str, dict], list[str]]:
         #: ★ 以 `_` 开头的是**草稿**（生成器产物），不进台账读音 ——
         #:   否则「机器抄来的锚点」会被当成「人核过的记录」（本门禁治的正是这件事）✓
         if path.name.startswith("_"):
+            continue
+        #: ★ `review-*.json` 是**复核暂存档**（由 `tools/merge_claim_reviews.py` 合并进
+        #:   `B*.json`）。它不进台账读音 —— 否则一份写了一半的复核档会被当成已核记录 ✓
+        #: ★ 只在**默认台账目录**里跳过复核暂存档；`--ledger <临时目录>` 时要读它们 ——
+        #:   否则复核人没法用门禁自检自己写的那份（实测踩过：拷进临时目录被判「有台账 0」）✓
+        if path.name.startswith("review-") and path.parent == LEDGER_DIR:
             continue
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
@@ -590,6 +673,11 @@ def main(argv=None) -> int:
     ap.add_argument("--json", default="", help="逐条读数写到这里")
     ap.add_argument("--baseline", default=str(BASELINE))
     ap.add_argument("--write-baseline", action="store_true", help="把当前违规写进基线（只许降）")
+    ap.add_argument(
+        "--reason",
+        default="",
+        help="★ 判据**收紧**导致的待核数上涨，必须写理由（写进基线文件，供复核）；判据放宽一律拒绝",
+    )
     ap.add_argument("--strict", action="store_true", help="忽略基线：所有违规都算（验收用）")
     ap.add_argument("--ledger", default=str(LEDGER_DIR), help="台账目录")
     args = ap.parse_args(argv)
@@ -618,15 +706,19 @@ def main(argv=None) -> int:
     if args.write_baseline:
         pending = sorted({r["tool"] for r in rows if r["code"] == "no-record"})
         prev = int(baseline.get("count", len(baseline.get("pending", []))))
-        if bp.exists() and len(pending) > prev:
+        if bp.exists() and len(pending) > prev and not args.reason.strip():
             print(
-                "✗ 拒绝写基线：待核工具 %d 个 > 既有基线 %d 个 —— **棘轮只许降不许升**"
-                "（新工具要进台账，不能进基线）" % (len(pending), prev)
+                "✗ 拒绝写基线：待核工具 %d 个 > 既有基线 %d 个 —— **棘轮只许降不许升**；"
+                "判据收紧导致上涨的，必须用 `--reason <为什么收紧>` 说明" % (len(pending), prev)
             )
             return 1
         bp.write_text(
-            json.dumps({"count": len(pending), "pending": pending},
-                       ensure_ascii=False, indent=1) + "\n",
+            json.dumps(
+                {"count": len(pending), "pending": pending,
+                 "reason": args.reason.strip(), "previous_count": prev},
+                ensure_ascii=False, indent=1,
+            )
+            + "\n",
             encoding="utf-8",
         )
         print("★ 已写基线：%s（待核 %d 个，上一版 %d 个）" % (bp.name, len(pending), prev))

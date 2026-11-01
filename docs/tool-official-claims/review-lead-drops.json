@@ -1,0 +1,26 @@
+{
+ "batch": "review-lead-drops",
+ "records": [],
+ "drop": [
+  {
+   "tool": "solidworks_revolve_params",
+   "why": "复核人判定首句与实现不符（实现无条件读 GetWallThickness；单位表述自相矛盾）—— 先删记录，等改描述/实现后再核"
+  },
+  {
+   "tool": "solidworks_part_loft",
+   "why": "首句承诺的 volume 在返回值里根本不存在（docstring 旧承诺）"
+  },
+  {
+   "tool": "solidworks_pdm_evidence_report",
+   "why": "首句承诺 configurations/references/custom properties，实现只回文档摘要 + 一个布尔"
+  },
+  {
+   "tool": "solidworks_resolve_entity",
+   "why": "首句说 Read-only，实现会改选择集（select_object）"
+  },
+  {
+   "tool": "solidworks_section_area_crosscheck",
+   "why": "官方 GetSectionProperties2 的 Remarks 逐字「clears the selection set」，与首句 Read-only 矛盾；同仓另一工具对同一成员标注 Not read-only"
+  }
+ ]
+}

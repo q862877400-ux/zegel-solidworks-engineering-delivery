@@ -16,7 +16,8 @@
      "interface": "ISketchPath",
      "member": "GetRelationsCount",
      "path": "C:/swapi/types/ISketchPath/GetRelationsCount.md",
-     "anchor": "Gets the number of sketch relations in this sketch path."
+     "anchor": "Gets the number of sketch relations in this sketch path.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -42,13 +43,15 @@
      "interface": "ISketchRelationManager",
      "member": "DeleteRelation",
      "path": "C:/swapi/types/ISketchRelationManager/DeleteRelation.md",
-     "anchor": "Deletes the specified logical sketch relation in sketch."
+     "anchor": "Deletes the specified logical sketch relation in sketch.",
+     "kind": "method"
     },
     {
      "interface": "ISketchPath",
      "member": "GetRelations",
      "path": "C:/swapi/types/ISketchPath/GetRelations.md",
-     "anchor": "Gets the sketch relations for this sketch path."
+     "anchor": "Gets the sketch relations for this sketch path.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -74,13 +77,15 @@
      "interface": "ISketchManager",
      "member": "Create3PointCenterRectangle",
      "path": "C:/swapi/types/ISketchManager/Create3PointCenterRectangle.md",
-     "anchor": "Creates a 3-point center rectangle at any angle."
+     "anchor": "Creates a 3-point center rectangle at any angle.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -106,13 +111,15 @@
      "interface": "ISketchManager",
      "member": "Create3PointCornerRectangle",
      "path": "C:/swapi/types/ISketchManager/Create3PointCornerRectangle.md",
-     "anchor": "Creates a 3-point corner rectangle at any angle."
+     "anchor": "Creates a 3-point corner rectangle at any angle.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -122,102 +129,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 ISketchManager.Create3PointCornerRectangle 的官方 Description 与首句共享词干 angle/corner/point/rectangle"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_add_arc",
-   "impl": "scripts/sw_part.py:sketch_arc",
-   "claim": "Draw an arc in the active sketch from a centre, a start point and an end point.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateArc",
-     "path": "C:/swapi/types/IModelDoc2/CreateArc.md",
-     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateArc2]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_add_centerline",
-   "impl": "scripts/sw_part.py:sketch_centerline",
-   "claim": "Draw a centreline in the active sketch.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateCenterLine",
-     "path": "C:/swapi/types/IModelDoc2/CreateCenterLine.md",
-     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateCenterLine]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_add_circle",
-   "impl": "scripts/sw_part.py:sketch_circle",
-   "claim": "Draw a circle in the open sketch from a centre and a radius.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateCircleByRadius",
-     "path": "C:/swapi/types/IModelDoc2/CreateCircleByRadius.md",
-     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateCircleByRadius2]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
    }
   },
   {
@@ -234,13 +145,15 @@
      "interface": "ISketchManager",
      "member": "CreateConic",
      "path": "C:/swapi/types/ISketchManager/CreateConic.md",
-     "anchor": "Creates a conic curve in the active sketch."
+     "anchor": "Creates a conic curve in the active sketch.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -250,70 +163,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 ISketchManager.CreateConic 的官方 Description 与首句共享词干 conic/curve"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_add_ellipse",
-   "impl": "scripts/sw_part.py:sketch_ellipse",
-   "claim": "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateEllipse",
-     "path": "C:/swapi/types/IModelDoc2/CreateEllipse.md",
-     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateEllipse2]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_add_line",
-   "impl": "scripts/sw_part.py:sketch_line",
-   "claim": "Draw a straight line in the open sketch from one point to another.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateLine",
-     "path": "C:/swapi/types/IModelDoc2/CreateLine.md",
-     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateLine2]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
    }
   },
   {
@@ -327,25 +176,25 @@
    },
    "members": [
     {
-     "interface": "ISketchManager",
-     "member": "CreateParabola",
-     "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
-     "anchor": "Creates a parabola in the active sketch."
-    },
-    {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
      "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateParabola",
+     "path": "C:/swapi/types/ISketchManager/CreateParabola.md",
+     "anchor": "Creates a parabola in the active sketch."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g4",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISketchManager.CreateParabola 的官方 Description 与首句共享词干 parabola"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateParabola.md。① 首句「Draw a parabola from its focus, its apex and two points that set its ends」与官方参数表逐项对应：XFocus/YFocus/ZFocus（焦点）、XApex/YApex/ZApex（顶点）、X1/Y1/Z1 起点、X2/Y2/Z2 终点 ⇒ 一致；② 页里没写单位的字面（只写 coordinate），实现按米送（与同族ISketchManager 方法一致）；③ 草稿的接口与页正确（ISketchManager），未改。"
    }
   },
   {
@@ -362,13 +211,15 @@
      "interface": "ISketchManager",
      "member": "CreateParallelogram",
      "path": "C:/swapi/types/ISketchManager/CreateParallelogram.md",
-     "anchor": "Creates a parallelogram."
+     "anchor": "Creates a parallelogram.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -394,13 +245,15 @@
      "interface": "ISketchManager",
      "member": "CreateEllipticalArc",
      "path": "C:/swapi/types/ISketchManager/CreateEllipticalArc.md",
-     "anchor": "Creates a partial ellipse given a center point, two points that specify the major and minor axis, and two points that define the elliptical start and end points."
+     "anchor": "Creates a partial ellipse given a center point, two points that specify the major and minor axis, and two points that define the elliptical start and end points.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -426,13 +279,15 @@
      "interface": "ISketchManager",
      "member": "PerimeterCircle",
      "path": "C:/swapi/types/ISketchManager/PerimeterCircle.md",
-     "anchor": "Draws a 3-point perimeter arc."
+     "anchor": "Draws a 3-point perimeter arc.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -458,13 +313,15 @@
      "interface": "ISketchManager",
      "member": "CreatePolygon",
      "path": "C:/swapi/types/ISketchManager/CreatePolygon.md",
-     "anchor": "Creates a polygon in the active sketch."
+     "anchor": "Creates a polygon in the active sketch.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -490,13 +347,15 @@
      "interface": "ISketchManager",
      "member": "CreateCornerRectangle",
      "path": "C:/swapi/types/ISketchManager/CreateCornerRectangle.md",
-     "anchor": "Creates a corner rectangle."
+     "anchor": "Creates a corner rectangle.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -522,13 +381,15 @@
      "interface": "ISketchManager",
      "member": "CreateSketchSlot",
      "path": "C:/swapi/types/ISketchManager/CreateSketchSlot.md",
-     "anchor": "Creates a sketch slot."
+     "anchor": "Creates a sketch slot.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -541,70 +402,42 @@
    }
   },
   {
-   "tool": "solidworks_sketch_add_tangent_arc",
-   "impl": "scripts/sw_sketch_primitives.py:sketch_tangent_arc",
-   "claim": "Draw an arc tangent to the last sketch segment, through one point and ending at another.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateTangentArc",
-     "path": "C:/swapi/types/IModelDoc2/CreateTangentArc.md",
-     "anchor": "Obsolete. Superseded by [[IModelDoc2::CreateTangentArc2]]."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
-   }
-  },
-  {
    "tool": "solidworks_sketch_apply_relations",
    "impl": "scripts/sw_sketch_relations.py:apply_sketch_relations",
    "claim": "Apply a list of sketch relations at once to the segments named by index.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/ISketch/RelationManager.md",
-    "anchor": "Gets the sketch relation manager."
+    "path": "C:/swapi/types/ISketchRelationManager/AddRelation.md",
+    "anchor": "Adds a relation to the specified entities in the active sketch."
    },
    "members": [
     {
-     "interface": "IModelDoc2",
+     "interface": "ISketchRelationManager",
      "member": "AddRelation",
-     "path": "C:/swapi/types/IModelDoc2/AddRelation.md",
-     "anchor": "Obsolete. Superseded by [[IEquationMgr::Add]]."
+     "path": "C:/swapi/types/ISketchRelationManager/AddRelation.md",
+     "anchor": "Adds a relation to the specified entities in the active sketch.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
      "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-     "anchor": "Clears the selection list."
+     "anchor": "Clears the selection list.",
+     "kind": "method"
     },
     {
      "interface": "ISketch",
      "member": "RelationManager",
      "path": "C:/swapi/types/ISketch/RelationManager.md",
-     "anchor": "Gets the sketch relation manager."
+     "anchor": "Gets the sketch relation manager.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchAddConstraints",
      "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
-     "anchor": "Adds the specified constraint to the selected entities."
+     "anchor": "Adds the specified constraint to the selected entities.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -613,7 +446,7 @@
     "at": "2026-11-01",
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
-    "notes": "成员 ISketch.RelationManager 的官方 Description 与首句共享词干 relation/sketch"
+    "notes": "成员 ISketchRelationManager.AddRelation 的官方 Description 与首句共享词干 relation/sketch"
    }
   },
   {
@@ -622,15 +455,15 @@
    "claim": "Get a sketch object from its sketch feature name.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
-    "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+    "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+    "anchor": "Gets the named feature in the part."
    },
    "members": [
     {
-     "interface": "IAssemblyDoc",
+     "interface": "IPartDoc",
      "member": "FeatureByName",
-     "path": "C:/swapi/types/IAssemblyDoc/FeatureByName.md",
-     "anchor": "Returns the [[IFeature]] object for the named feature in the assembly."
+     "path": "C:/swapi/types/IPartDoc/FeatureByName.md",
+     "anchor": "Gets the named feature in the part."
     },
     {
      "interface": "IFeature",
@@ -641,55 +474,11 @@
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g4",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IAssemblyDoc.FeatureByName 的官方 Description 与首句共享词干 feature/object"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_circular_pattern",
-   "impl": "scripts/sw_sketch_edit_ops.py:sketch_circular_pattern",
-   "claim": "Create a circular sketch pattern of the selected entities.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateCircularSketchStepAndRepeat",
-     "path": "C:/swapi/types/IModelDoc2/CreateCircularSketchStepAndRepeat.md",
-     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateCircularSketchStepAndRepeat]]."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了两页：IPartDoc/FeatureByName.md 与 IFeature/GetSpecificFeature2.md（后者 Remarks 列表逐条含 [[ISketch]]）。① 首句「Get a sketch object from its sketch feature name」= FeatureByName（按名取特征）+ GetSpecificFeature2（把特征转成具体接口，草图对应 [[ISketch]]）⇒ 两句官方语义拼起来成立；② ★ 草稿把 FeatureByName 指到 IAssemblyDoc 页 —— **指错接口**：IAssemblyDoc.FeatureByName 讲的是「named feature in the assembly」，而实现收的是 IModelDoc2（零件文档）。同名成员在 C:/swapi/index/by_member_name.md 里挂在 IAssemblyDoc / IComponent2 / IDrawingDoc / IPartDoc 四个接口，IModelDoc2 上**没有**这个成员 ⇒ 零件场景应记 IPartDoc；本工具不按文档类型分支，装配/工程图下走的是同名的另两个接口，已在 note 里如实标注；③ 描述第二句（草图关闭后唯一可靠路径）来自真机探针 tools/probe_sketch_object_routes.py，不是官方页。"
    }
   },
   {
@@ -706,19 +495,22 @@
      "interface": "ISketchManager",
      "member": "ActiveSketch",
      "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
-     "anchor": "Gets the active sketch."
+     "anchor": "Gets the active sketch.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     },
     {
      "interface": "ISketchManager",
      "member": "SketchUseEdge3",
      "path": "C:/swapi/types/ISketchManager/SketchUseEdge3.md",
-     "anchor": "Creates sketch entities on a sketch plane by projecting selected edges, loops, faces, curves, and external sketch contours."
+     "anchor": "Creates sketch entities on a sketch plane by projecting selected edges, loops, faces, curves, and external sketch contours.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -782,7 +574,8 @@
      "interface": "ISketch",
      "member": "GetSketchSegments",
      "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -808,31 +601,36 @@
      "interface": "ISketchManager",
      "member": "ActiveSketch",
      "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
-     "anchor": "Gets the active sketch."
+     "anchor": "Gets the active sketch.",
+     "kind": "property"
     },
     {
      "interface": "ISketchManager",
      "member": "CreateChamfer",
      "path": "C:/swapi/types/ISketchManager/CreateChamfer.md",
-     "anchor": "Creates a chamfer between two selected sketch entities."
+     "anchor": "Creates a chamfer between two selected sketch entities.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "GetActiveSketch2",
      "path": "C:/swapi/types/IModelDoc2/GetActiveSketch2.md",
-     "anchor": "Obsolete. Superseded by [[SketchManager::ActiveSketch]]."
+     "anchor": "Obsolete. Superseded by [[SketchManager::ActiveSketch]].",
+     "kind": "method"
     },
     {
      "interface": "ISketch",
      "member": "GetSketchSegments",
      "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -858,7 +656,8 @@
      "interface": "IModelDoc2",
      "member": "AddHorizontalDimension2",
      "path": "C:/swapi/types/IModelDoc2/AddHorizontalDimension2.md",
-     "anchor": "Creates a horizontal dimension for the currently selected entities at the specified location."
+     "anchor": "Creates a horizontal dimension for the currently selected entities at the specified location.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -884,7 +683,8 @@
      "interface": "IModelDoc2",
      "member": "AddVerticalDimension2",
      "path": "C:/swapi/types/IModelDoc2/AddVerticalDimension2.md",
-     "anchor": "Creates a vertical dimension for the currently selected entities at the specified location."
+     "anchor": "Creates a vertical dimension for the currently selected entities at the specified location.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -894,6 +694,74 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 IModelDoc2.AddVerticalDimension2 的官方 Description 与首句共享词干 dimension/vertical"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_end",
+   "impl": "scripts/sw_part.py:end_sketch",
+   "claim": "Leave the current sketch and return a sketch reference that feature tools can reuse.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+    "anchor": "True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not"
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "InsertSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+     "anchor": "True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchContours",
+     "path": "C:/swapi/types/ISketch/GetSketchContours.md",
+     "anchor": "Gets the sketch contours in this sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchRegions",
+     "path": "C:/swapi/types/ISketch/GetSketchRegions.md",
+     "anchor": "Gets the sketch regions in this sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "ISketch",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\ISketch 下无 Name.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 的 104 个成员**无 Name**（只有 IFeature/Name.md 等）；两份 CHM（AI Solidworks\\官方文档\\SWhelp\\sldworksapi 与 sldworksapiv6）都搜不到 *ISketch~Name*、*Sketch~Name* 页。实现 _capture_sketch_ref 用 _safe_com_member(sketch_obj, \"Name\", default=fallback) 取草图名，取不到时退成 fallback（\"Sketch1\"）—— 与 docs/known-facts.md 第 9 条的中文名问题同族。"
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetFeature",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\ISketch 下无 GetFeature.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 成员无 GetFeature（索引里 GetFeature 只出现在其它接口）；两份 CHM 也搜不到 *ISketch~GetFeature*、*Sketch~GetFeature* 页。实现 _capture_sketch_ref/_refresh_sketch_ref 用它取草图对应的 IFeature，取不到回 None（不抛）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/InsertSketch.md（Description/Parameters/Remarks）、IModelDoc2/SketchManager.md、ISketchManager/ActiveSketch.md、ISketch/GetSketchContours|GetSketchRegions|GetSketchSegments.md。① 首句『离开当前草图』的官方依据是 InsertSketch 的 UpdateEditRebuild 参数逐字『True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not』——本工具传 True（`sw_part.py::end_sketch` 里 `model.SketchManager.InsertSketch(True)`），语义同一件事；② 首句后半『返回可复用的草图引用』是本仓行为：_capture_sketch_ref 在退草图**前**取 SketchManager.ActiveSketch，再读 Name/GetFeature/GetSketchContours/GetSketchRegions/GetSketchSegments 缓存，退草图后 _refresh_sketch_ref 再刷一遍。★ 两条查不到页的成员（ISketch.Name / ISketch.GetFeature）按铁律 5 记 documented:false，不编页。"
    }
   },
   {
@@ -910,25 +778,29 @@
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     },
     {
      "interface": "ISketchManager",
      "member": "SketchExtend",
      "path": "C:/swapi/types/ISketchManager/SketchExtend.md",
-     "anchor": "Adds to the length of the selected sketch entity (i.e., line, centerline, or arc) to meet the nearest sketch entity."
+     "anchor": "Adds to the length of the selected sketch entity (i.e., line, centerline, or arc) to meet the nearest sketch entity.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -954,25 +826,29 @@
      "interface": "ISketchManager",
      "member": "CreateFillet",
      "path": "C:/swapi/types/ISketchManager/CreateFillet.md",
-     "anchor": "Creates a sketch fillet using the selected sketch entities."
+     "anchor": "Creates a sketch fillet using the selected sketch entities.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -995,16 +871,18 @@
    },
    "members": [
     {
-     "interface": "IBody2",
+     "interface": "ISketchBlockInstance",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/ISketchBlockInstance/Name.md",
+     "anchor": "Gets or sets the name of this block instance.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchModifyFlip",
      "path": "C:/swapi/types/IModelDoc2/SketchModifyFlip.md",
-     "anchor": "Flips the the active or selected sketch about the specified coordinate system axis."
+     "anchor": "Flips the the active or selected sketch about the specified coordinate system axis.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1030,19 +908,22 @@
      "interface": "IModelDoc2",
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
-     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document.",
+     "kind": "property"
     },
     {
      "interface": "ISketch",
      "member": "GetSketchSegments",
      "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities.",
+     "kind": "method"
     },
     {
      "interface": "IModelDocExtension",
      "member": "InsertChainDimensions",
      "path": "C:/swapi/types/IModelDocExtension/InsertChainDimensions.md",
-     "anchor": "Chains dimensions for the specified entities in this drawing or sketch."
+     "anchor": "Chains dimensions for the specified entities in this drawing or sketch.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1068,7 +949,8 @@
      "interface": "ISketch",
      "member": "Is3D",
      "path": "C:/swapi/types/ISketch/Is3D.md",
-     "anchor": "Gets whether this sketch is 2D or 3D."
+     "anchor": "Gets whether this sketch is 2D or 3D.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1078,50 +960,6 @@
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
     "notes": "成员 ISketch.Is3D 的官方 Description 与首句共享词干 sketch/whether"
-   }
-  },
-  {
-   "tool": "solidworks_sketch_linear_pattern",
-   "impl": "scripts/sw_sketch_edit_ops.py:sketch_linear_pattern",
-   "claim": "Create a linear sketch pattern of the selected entities.",
-   "claim_evidence": {
-    "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
-   },
-   "members": [
-    {
-     "interface": "IModelDoc2",
-     "member": "CreateLinearSketchStepAndRepeat",
-     "path": "C:/swapi/types/IModelDoc2/CreateLinearSketchStepAndRepeat.md",
-     "anchor": "Obsolete. Superseded by [[ISketchManager::CreateLinearSketchStepAndRepeat]]."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SketchManager",
-     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
-    }
-   ],
-   "allowed_non_com": [],
-   "verified": {
-    "by": "auto-pipeline",
-    "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
    }
   },
   {
@@ -1138,19 +976,22 @@
      "interface": "ISketchManager",
      "member": "ActiveSketch",
      "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
-     "anchor": "Gets the active sketch."
+     "anchor": "Gets the active sketch.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchMirror",
      "path": "C:/swapi/types/IModelDoc2/SketchMirror.md",
-     "anchor": "Creates new entities that are mirror images of the selected entities."
+     "anchor": "Creates new entities that are mirror images of the selected entities.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1173,16 +1014,18 @@
    },
    "members": [
     {
-     "interface": "IBody2",
+     "interface": "ISketchBlockInstance",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/ISketchBlockInstance/Name.md",
+     "anchor": "Gets or sets the name of this block instance.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchModifyTranslate",
      "path": "C:/swapi/types/IModelDoc2/SketchModifyTranslate.md",
-     "anchor": "Translates the coordinate system of the active or selected sketch."
+     "anchor": "Translates the coordinate system of the active or selected sketch.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1200,21 +1043,15 @@
    "claim": "Offset the selected sketch entities by a distance.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
+    "path": "C:/swapi/types/ISketchManager/SketchOffset2.md",
+    "anchor": "Offsets the selected sketch entities."
    },
    "members": [
     {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "interface": "ISketchManager",
+     "member": "SketchOffset2",
+     "path": "C:/swapi/types/ISketchManager/SketchOffset2.md",
+     "anchor": "Offsets the selected sketch entities."
     },
     {
      "interface": "IModelDoc2",
@@ -1224,18 +1061,24 @@
     },
     {
      "interface": "IModelDoc2",
-     "member": "SketchOffset2",
-     "path": "C:/swapi/types/IModelDoc2/SketchOffset2.md",
-     "anchor": "Obsolete. Superseded by [[ISketchManager::SketchOffset]]."
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/SketchOffset2.md：`(Offset, BothDirections, Chain, CapEnds, MakeConstruction, AddDimensions)` 六参，实现逐位一致（cap_ends / make_construction 走白名单枚举映射，未知值先抛），角度/长度无隐藏换算。官方 Description「Offsets the selected sketch entities.」与首句同一件事。"
    }
   },
   {
@@ -1249,16 +1092,18 @@
    },
    "members": [
     {
-     "interface": "IBody2",
+     "interface": "ISketchBlockInstance",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/ISketchBlockInstance/Name.md",
+     "anchor": "Gets or sets the name of this block instance.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchModifyRotate",
      "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
-     "anchor": "Rotates the coordinate system of the active or selected sketch."
+     "anchor": "Rotates the coordinate system of the active or selected sketch.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1281,16 +1126,18 @@
    },
    "members": [
     {
-     "interface": "IBody2",
+     "interface": "ISketchBlockInstance",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
+     "path": "C:/swapi/types/ISketchBlockInstance/Name.md",
+     "anchor": "Gets or sets the name of this block instance.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchModifyRotate",
      "path": "C:/swapi/types/IModelDoc2/SketchModifyRotate.md",
-     "anchor": "Rotates the coordinate system of the active or selected sketch."
+     "anchor": "Rotates the coordinate system of the active or selected sketch.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1316,7 +1163,8 @@
      "interface": "IModelDoc2",
      "member": "SketchModifyScale",
      "path": "C:/swapi/types/IModelDoc2/SketchModifyScale.md",
-     "anchor": "Scales the active or selected sketch."
+     "anchor": "Scales the active or selected sketch.",
+     "kind": "method"
     }
    ],
    "allowed_non_com": [],
@@ -1334,33 +1182,37 @@
    "claim": "Select one sketch segment by its position in the active sketch so later sketch commands act on it.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-    "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    "path": "C:/swapi/types/ISketchSegment/Select4.md",
+    "anchor": "Selects this sketch segment and marks it."
    },
    "members": [
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
      "interface": "ISketch",
      "member": "GetSketchSegments",
      "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
-     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities.",
+     "kind": "method"
     },
     {
-     "interface": "IComponent2",
+     "interface": "ISketchSegment",
      "member": "Select4",
-     "path": "C:/swapi/types/IComponent2/Select4.md",
-     "anchor": "Selects this component."
+     "path": "C:/swapi/types/ISketchSegment/Select4.md",
+     "anchor": "Selects this sketch segment and marks it.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1369,7 +1221,7 @@
     "at": "2026-11-01",
     "method": "official-page anchor + 词干重叠门槛",
     "level": "auto",
-    "notes": "成员 ISketch.GetSketchSegments 的官方 Description 与首句共享词干 segment/sketch"
+    "notes": "成员 ISketchSegment.Select4 的官方 Description 与首句共享词干 segment/select/sketch"
    }
   },
   {
@@ -1378,10 +1230,22 @@
    "claim": "Hide or show the sketches named by the current selection.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
-    "anchor": "Clears the selection list."
+    "path": "C:/swapi/types/IModelDoc2/BlankSketch.md",
+    "anchor": "Hides the selected sketches."
    },
    "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "BlankSketch",
+     "path": "C:/swapi/types/IModelDoc2/BlankSketch.md",
+     "anchor": "Hides the selected sketches."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "UnblankSketch",
+     "path": "C:/swapi/types/IModelDoc2/UnblankSketch.md",
+     "anchor": "Shows a hidden sketch."
+    },
     {
      "interface": "IModelDoc2",
      "member": "ClearSelection2",
@@ -1393,24 +1257,6 @@
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
      "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObject6",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
-     "anchor": "Gets the selected object."
-    },
-    {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IBody2",
-     "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
     },
     {
      "interface": "IModelDocExtension",
@@ -1425,19 +1271,37 @@
      "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
     },
     {
-     "interface": "IAnnotation",
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IFeature",
      "member": "Visible",
-     "path": "C:/swapi/types/IAnnotation/Visible.md",
-     "anchor": "Gets or sets the visibility state of this annotation."
+     "path": "C:/swapi/types/IFeature/Visible.md",
+     "anchor": "Gets the visibility state of this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.ClearSelection2 的官方 Description 与首句共享词干 selection"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/BlankSketch.md（`void BlankSketch()`，「Hides the selected sketches.」）与 UnblankSketch.md（`void UnblankSketch()`，「Shows a hidden sketch.」）—— 两页都写「selected」，正对首句「named by the current selection」；实现按名字用 SelectByID2 选 SKETCH、调完再用 IFeature.Visible 回读变化（void 成员只能回读，符合官方签名）。选不中时如实报「选区计数 0」而**不实现 hide-all**（官方无此语义）。"
    }
   },
   {
@@ -1454,43 +1318,50 @@
      "interface": "ISketchSegment",
      "member": "ConstructionGeometry",
      "path": "C:/swapi/types/ISketchSegment/ConstructionGeometry.md",
-     "anchor": "Gets or sets whether this sketch segment is construction geometry, for example, a centerline for a feature revolve operation."
+     "anchor": "Gets or sets whether this sketch segment is construction geometry, for example, a centerline for a feature revolve operation.",
+     "kind": "property"
     },
     {
      "interface": "IDrawingDoc",
      "member": "CreateConstructionGeometry",
      "path": "C:/swapi/types/IDrawingDoc/CreateConstructionGeometry.md",
-     "anchor": "Sets the selected sketch segments to be construction geometry instead of sketch geometry."
+     "anchor": "Sets the selected sketch segments to be construction geometry instead of sketch geometry.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObject6",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
-     "anchor": "Gets the selected object."
+     "anchor": "Gets the selected object.",
+     "kind": "method"
     },
     {
      "interface": "ISelectionMgr",
      "member": "GetSelectedObjectCount2",
      "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
+     "anchor": "Gets the number of selected objects.",
+     "kind": "method"
     },
     {
-     "interface": "IComponent2",
+     "interface": "ISketchSegment",
      "member": "Select4",
-     "path": "C:/swapi/types/IComponent2/Select4.md",
-     "anchor": "Selects this component."
+     "path": "C:/swapi/types/ISketchSegment/Select4.md",
+     "anchor": "Selects this sketch segment and marks it.",
+     "kind": "method"
     },
     {
      "interface": "IModelDoc2",
      "member": "SelectionManager",
      "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available.",
+     "kind": "property"
     },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
      "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines.",
+     "kind": "property"
     }
    ],
    "allowed_non_com": [],
@@ -1503,15 +1374,39 @@
    }
   },
   {
-   "tool": "solidworks_sketch_spline",
-   "impl": "scripts/sw_part.py:sketch_spline",
-   "claim": "Draw a spline through the given points in the active 2D sketch, creating a new sketch when none is active.",
+   "tool": "solidworks_sketch_start",
+   "impl": "scripts/sw_part.py:start_sketch",
+   "claim": "Enter a new sketch on a reference plane.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
-    "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+    "anchor": "Inserts a new sketch in the current part or assembly document."
    },
    "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "InsertSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+     "anchor": "Inserts a new sketch in the current part or assembly document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
     {
      "interface": "IModelDoc2",
      "member": "SketchManager",
@@ -1521,11 +1416,11 @@
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-r1",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDoc2.SketchManager 的官方 Description 与首句共享词干 sketch"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/InsertSketch.md、IModelDoc2/ClearSelection2.md、IModelDoc2/Extension.md、IModelDocExtension/SelectByID2.md、IModelDoc2/SketchManager.md。首句＝官方『Inserts a new sketch…』＋在指定基准面上：实现（`sw_part.py::start_sketch`）先 ClearSelection2(True)，再经 model.Extension.SelectByID2(候选名, \"PLANE\", …) 选中基准面（_select_first_candidate 逐个试中英文名，官方 SelectByID2『Selects the specified entity.』的 Type 参数就是 swSelectType_e），选中后才 InsertSketch(True)。⚠ 如实交代：官方 InsertSketch 页没有『基准面』参数 ⇒ 首句里的『on a reference plane』若视为该 API 的参数语义，则它落在 SelectByID2 那条官方页上，而不是 InsertSketch 页 —— 两条页合起来才覆盖首句。"
    }
   },
   {
@@ -1539,31 +1434,31 @@
    },
    "members": [
     {
+     "interface": "IModelDocExtension",
+     "member": "Stretch",
+     "path": "C:/swapi/types/IModelDocExtension/Stretch.md",
+     "anchor": "Stretch the selected entities."
+    },
+    {
      "interface": "IModelDoc2",
      "member": "Extension",
      "path": "C:/swapi/types/IModelDoc2/Extension.md",
      "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
     },
     {
-     "interface": "IBody2",
+     "interface": "ISketch",
      "member": "Name",
-     "path": "C:/swapi/types/IBody2/Name.md",
-     "anchor": "Gets or sets the name of the selected body."
-    },
-    {
-     "interface": "IModelDocExtension",
-     "member": "Stretch",
-     "path": "C:/swapi/types/IModelDocExtension/Stretch.md",
-     "anchor": "Stretch the selected entities."
+     "documented": false,
+     "gap": "C:\\swapi\\types\\ISketch 目录存在（105 个页）但**没有 Name.md**，index/by_member_name.md 里也无 `on **ISketch**` 的 Name 条目；C:\\cworks_en\\api 是 Simulation 的参考页，与草图接口无关。按铁律 5 不编页。该调用位于 _active_sketch_name 的旁证读数里（取不到就回 None，不影响主操作）。"
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 IModelDocExtension.Stretch 的官方 Description 与首句共享词干 stretch"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDocExtension/Stretch.md：`void Stretch(KeepRelations, BaseX, BaseY, DestX, DestY)` —— 与首句「from a base point to a destination point」逐参对应；实现把对外毫米参数在边界处 /1000 换算后传入（官方是模型单位）。★ 该成员在 **IModelDocExtension** 上（不是 IModelDoc2），实现先取 model.Extension 再调，与页一致。activity: 前置选区由 select_active_sketch_segments 自建（GetSketchSegments + Select4，见实现注释）。★ ISketch.Name 查不到页 ⇒ documented:false。"
    }
   },
   {
@@ -1572,21 +1467,15 @@
    "claim": "Trim the selected sketch entities.",
    "claim_evidence": {
     "kind": "official",
-    "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-    "anchor": "Gets the number of selected objects."
+    "path": "C:/swapi/types/ISketchManager/SketchTrim.md",
+    "anchor": "Trims the selected sketch entities."
    },
    "members": [
     {
-     "interface": "ISelectionMgr",
-     "member": "GetSelectedObjectCount2",
-     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
-     "anchor": "Gets the number of selected objects."
-    },
-    {
-     "interface": "IModelDoc2",
-     "member": "SelectionManager",
-     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
-     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+     "interface": "ISketchManager",
+     "member": "SketchTrim",
+     "path": "C:/swapi/types/ISketchManager/SketchTrim.md",
+     "anchor": "Trims the selected sketch entities."
     },
     {
      "interface": "IModelDoc2",
@@ -1596,18 +1485,442 @@
     },
     {
      "interface": "IModelDoc2",
-     "member": "SketchTrim",
-     "path": "C:/swapi/types/IModelDoc2/SketchTrim.md",
-     "anchor": "Obsolete. Superseded by [[ISketchManager::SketchExtend]] and [[ISketchManager::SketchTrim]]."
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
     }
    ],
    "allowed_non_com": [],
    "verified": {
-    "by": "auto-pipeline",
+    "by": "review-g5",
     "at": "2026-11-01",
-    "method": "official-page anchor + 词干重叠门槛",
-    "level": "auto",
-    "notes": "成员 ISelectionMgr.GetSelectedObjectCount2 的官方 Description 与首句共享词干 select"
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/SketchTrim.md：`(Option, X, Y, Z)` 四参 —— 实现传 (枚举值, x, y, 0.0) 一致；官方 Description「Trims the selected sketch entities.」与首句同一件事。实现按 option 白名单校验（未知值先抛），并在调用前用选择器建好选区（官方 Remarks 对不同 option 的选取形态有要求，见实现 docstring 的逐条摘录）。"
+   }
+  },
+  {
+   "tool": "solidworks_add_sketch_relation",
+   "impl": "scripts/sw_part.py:add_sketch_relation",
+   "claim": "Add one geometric relation such as sgHORIZONTAL or sgCOINCIDENT to the current sketch selection.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
+    "anchor": "Adds the specified constraint to the selected entities."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchAddConstraints",
+     "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
+     "anchor": "Adds the specified constraint to the selected entities."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus",
+     "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+     "anchor": "Gets the current constrained status of the sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus2",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无此页（只有 ISketch/GetConstrainedStatus.md 与 IComponent2/GetConstrainedStatus.md）；C:\\swapi\\index\\by_member_name.md 搜 `GetConstrainedStatus2` 0 命中；C:\\swapi\\types\\ISketch 目录内无该成员。实现里是 `for _member in (\"GetConstrainedStatus\", \"GetConstrainedStatus2\")` 的试名兜底，第一个就成功 ⇒ 该名字是防御性探测，不是实际调到的成员。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/SketchAddConstraints.md（Description/Parameters/Remarks 全读）与 ISketch/GetConstrainedStatus.md、ISketchManager/ActiveSketch.md、IModelDoc2/SketchManager.md。① 首句＝官方 Description 逐字同义（把一条约束加到**选中的实体**上）；② 描述第二句也有页内依据：官方 Remarks 的 2006+ 清单逐条列了 sgHORIZONTAL、sgCOINCIDENT 等 60 余项，**没有** sgEQUAL、**没有** sgMIDPOINT ⇒ 「这两个名字不存在并被拒」成立；③ 实现 `sw_part.py::add_sketch_relation` 末尾 `model.SketchAddConstraints(name)`，前缀补全与大小写归一在纯函数 _sg_relation_name 里。★ 额外的 COM 调用（不在草稿里，已补登）：前置状态门经 sw_sketch.active_sketch → IModelDoc2.SketchManager → ISketchManager.ActiveSketch，再取 ISketch.GetConstrainedStatus；**status == 2 才允许加关系是本仓项目规则（沿用 specs/221），不是官方 swConstrainedStatus_e 的规定** —— 已在实现注释里如实标注，本台账同样如实记录。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_3point_arc",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_3point_arc",
+   "claim": "Draw an arc through three points: its start, its end and one point on the arc.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/Create3PointArc.md",
+    "anchor": "Creates a 3-point arc."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "Create3PointArc",
+     "path": "C:/swapi/types/ISketchManager/Create3PointArc.md",
+     "anchor": "Creates a 3-point arc."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/Create3PointArc.md（Description/Parameters/Returns）与 IModelDoc2/SketchManager.md。★ 订正草稿指错页：草稿登记 IModelDoc2/Create3PointArc（那一页只有『Obsolete. Superseded by [[ISketchManager::Create3PointArc]].』），而实现 `sw_sketch_primitives.py::sketch_3point_arc` 走 `get_com_member(_sm(model), \"Create3PointArc\", …)`，`_sm` 取的是 IModelDoc2.SketchManager ⇒ 真正调的是 **ISketchManager.Create3PointArc**（官方『Creates a 3-point arc.』，返回 SketchSegment）。⚠ 如实交代一处官方缺口：官方 Parameters 只写 X1/Y1/Z1…X3/Y3/Z3『point 1..3』，**没有逐字给出「起点/终点/弧上点」的对应**（两份 CHM 与 examples 里的 3-point arc 例程也没有该说明）⇒ 首句冒号后的三点角色由参数序承载、属本仓说法；与 B2 的 solidworks_sketch_add_3point_center_rectangle 同一口径（官方 Description 提供「三点画弧」这一件事）。另核对：_f(v)=v*_MM_TO_M ⇒ 描述第二句『in millimetres』成立（官方 X/Y 用米）。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_fully_defined_status",
+   "impl": "scripts/sw_sketch_status.py:get_constrained_status",
+   "claim": "Read the constrained-status integer of the sketch being edited.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+    "anchor": "Gets the current constrained status of the sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus",
+     "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+     "anchor": "Gets the current constrained status of the sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketch/GetConstrainedStatus.md：Description『Gets the current constrained status of the sketch.』、Signature `System.int GetConstrainedStatus()`（零参数、回整数）、Returns 指向 swConstrainedStatus_e ⇒ 与首句『读正在编辑草图的受约束状态整数』是同一件事。实现 `sw_sketch_status.py::get_constrained_status` 里 `get_com_member(sk, \"GetConstrainedStatus\")`，sk 由 sw_sketch.active_sketch 取得（IModelDoc2.SketchManager → ISketchManager.ActiveSketch）；无活动草图时 raise（官方关于「必须处于编辑态」只说『Gets the active sketch.』，取不到即 None，本仓的选择是抛错，如实记录）。★ 发现描述与实现不符（**第二句**，不影响首句证据）：描述称『this repository does not interpret the value, so treat the number as raw and unlabelled』，而实现返回 status_meaning(value)（含中文语义）与 fully_defined=(value==3) ⇒ 本仓其实**有**解释。已上报本批（未改描述、未改实现，本规格只写台账）。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_linear_pattern",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_linear_pattern",
+   "claim": "Create a linear sketch pattern of the selected entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateLinearSketchStepAndRepeat.md",
+    "anchor": "Creates a linear sketch pattern."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "CreateLinearSketchStepAndRepeat",
+     "path": "C:/swapi/types/ISketchManager/CreateLinearSketchStepAndRepeat.md",
+     "anchor": "Creates a linear sketch pattern."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g5",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateLinearSketchStepAndRepeat.md：12 参 `NumX, NumY, SpacingX, SpacingY, AngleX, AngleY, DeleteInstances, VaryInstance?, …`（实现逐位传 12 个实参，角度用 math.radians 换算）与首句同一件事。成员在 **ISketchManager** 上（不是 IModelDoc2 的同名重载）—— 实现正是 `get_com_member(model, \"SketchManager\")` 再调。前置选择由 _select_spec 建立、并按 ISelectionMgr.GetSelectedObjectCount2 回读。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_circle",
+   "impl": "scripts/sw_part.py:sketch_circle",
+   "claim": "Draw a circle in the open sketch from a centre and a radius.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCircleByRadius.md",
+    "anchor": "Creates a circle based on a center point and a specified radius."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCircleByRadius",
+     "path": "C:/swapi/types/ISketchManager/CreateCircleByRadius.md",
+     "anchor": "Creates a circle based on a center point and a specified radius."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCircleByRadius.md（Description / Parameters / Remarks 全读）。① 首句「Draw a circle in the open sketch from a centre and a radius」与官方 Description 同义，参数表逐字：XC/YC/Zc 中心、Radius 半径，**单位米** —— 实现 `_MM_TO_M` 换算，与官方单位一致；② ★ 草稿把成员指到 IModelDoc2/CreateCircleByRadius.md（Obsolete，签名是 (P1, Radius) 两参）——**指错接口**：实现是 `SketchManager.CreateCircleByRadius` 四参，本台账改记 ISketchManager 页；③ 官方 Remarks 还写「若无活动草图则新建一个」，而首句说 open sketch ⇒ 保守表述，不矛盾；④ 无更深一层委托。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_line",
+   "impl": "scripts/sw_part.py:sketch_line",
+   "claim": "Draw a straight line in the open sketch from one point to another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateLine.md",
+    "anchor": "Creates a sketch line in the currently active 2D or 3D sketch."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateLine",
+     "path": "C:/swapi/types/ISketchManager/CreateLine.md",
+     "anchor": "Creates a sketch line in the currently active 2D or 3D sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateLine.md。① 首句与官方 Description 同义；② 官方 Remarks 明写「若无活动草图，则不创建并返回 NULL」⇒ 首句「in the open sketch」成立且更严格；③ 草稿原指 IModelDoc2/CreateLine.md（Obsolete，签名 (P1, P2) 两参）——**指错接口**，已改记 ISketchManager/CreateLine（六参 X1..Z2），与实现六个实参逐一对应。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_arc",
+   "impl": "scripts/sw_part.py:sketch_arc",
+   "claim": "Draw an arc in the active sketch from a centre, a start point and an end point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateArc.md",
+    "anchor": "Creates an arc based on a center point, a start point, an end point, and a direction."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateArc",
+     "path": "C:/swapi/types/ISketchManager/CreateArc.md",
+     "anchor": "Creates an arc based on a center point, a start point, an end point, and a direction."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateArc.md。① 首句（圆心 + 起点 + 终点）与官方 Description 同义；参数表 Direction 逐字：+1 逆时针、-1 顺时针 —— 实现 `direction=1` 默认正与此一致；② 官方参数表明确 XC/YC/Zc/X1..Z2 **单位米** ⇒ 实现 `_MM_TO_M` 正确；③ 草稿原指 IModelDoc2/CreateArc.md（Obsolete，(P1,P2,P3,Dir)）——**指错接口**，已改记 ISketchManager 页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_centerline",
+   "impl": "scripts/sw_part.py:sketch_centerline",
+   "claim": "Draw a centreline in the active sketch.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCenterLine.md",
+    "anchor": "Creates a center line between the specified points."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCenterLine",
+     "path": "C:/swapi/types/ISketchManager/CreateCenterLine.md",
+     "anchor": "Creates a center line between the specified points."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCenterLine.md。① 首句「Draw a centreline in the active sketch」与官方 Description 同义（两点之间建中心线）；② 参数表逐字写「in meters」⇒ 实现 `_MM_TO_M` 正确（该函数 2026-10-10 修过 1000× 单位 bug，真机读数 output/_probe_unit_verdict.json）；③ 草稿原指 IModelDoc2/CreateCenterLine.md（Obsolete，官方同页写 Superseded by ISketchManager::CreateCenterLine）——**指错接口**，已改记 ISketchManager 页；④ 描述第二句「可作旋转轴」不是官方页的话（官方 Remarks 只说也能用 CreateLine + ConstructionGeometry 造中心线构造线），属项目规则，本台账如实记在首句之外。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_ellipse",
+   "impl": "scripts/sw_part.py:sketch_ellipse",
+   "claim": "Draw a full ellipse in the active sketch from its centre, a major-axis point and a minor-axis point.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateEllipse.md",
+    "anchor": "Creates an ellipse using the specified center, major-axis, and minor-axis points."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateEllipse",
+     "path": "C:/swapi/types/ISketchManager/CreateEllipse.md",
+     "anchor": "Creates an ellipse using the specified center, major-axis, and minor-axis points."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateEllipse.md。① 首句「full ellipse … centre, a major-axis point and a minor-axis point」与官方 Description **逐项吻合**，官方 Remarks 也明写「creates a full ellipse」（对应描述的 「never an elliptical arc」）；② 该页参数表**没写单位**（只说 coordinate），而同族 CreateCircleByRadius / CreateArc 的页逐字写「in meters」⇒ 家族口径是米，实现的 `_MM_TO_M` 与之一致（本条只把「米」记为家族口径，不冒充本页的字面）；③ 草稿原指 IModelDoc2/CreateEllipse.md（Obsolete，(Center, Major, Minor)）——**指错接口**，已改记 ISketchManager。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_tangent_arc",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_tangent_arc",
+   "claim": "Draw an arc tangent to the last sketch segment, through one point and ending at another.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateTangentArc.md",
+    "anchor": "Creates a tangent arc."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateTangentArc",
+     "path": "C:/swapi/types/ISketchManager/CreateTangentArc.md",
+     "anchor": "Creates a tangent arc."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateTangentArc.md 与官方示例 examples/Create_Tangent_Arc_Example_VB.md。① 首句「Draw an arc tangent to the last sketch segment, through one point and ending at another」：官方页给「Creates a tangent arc」+ 起点/终点两参数 + ArcType；官方示例的正是在 CreateLine 之后以上一段的终点为首点调 CreateTangentArc ⇒ 首句成立（相切对象由示例给，不是页里的字面）；② 参数表 ArcType 写「Type of tangent arc as defined in swTangentArcTypes_e」；③ ★ **描述第三句 `arc_type is an integer whose value table no available source documents` 与官方相反**：C:/swapi/enums/swTangentArcTypes_e.md **有页**（swForward=1 / swLeft=2 / swBack=3 / swRight=4）⇒ 已写进 defects，本记录只担保首句与成员，请下一批改 doc；④ 草稿原指 IModelDoc2/CreateTangentArc.md（Obsolete，六参无 ArcType）——**指错接口**，已改记 ISketchManager 七参页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_circular_pattern",
+   "impl": "scripts/sw_sketch_edit_ops.py:sketch_circular_pattern",
+   "claim": "Create a circular sketch pattern of the selected entities.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/CreateCircularSketchStepAndRepeat.md",
+    "anchor": "Creates circular sketch pattern."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "CreateCircularSketchStepAndRepeat",
+     "path": "C:/swapi/types/ISketchManager/CreateCircularSketchStepAndRepeat.md",
+     "anchor": "Creates circular sketch pattern."
+    },
+    {
+     "interface": "ISketchSegment",
+     "member": "Select4",
+     "path": "C:/swapi/types/ISketchSegment/Select4.md",
+     "anchor": "Selects this sketch segment and marks it."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-g4",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/CreateCircularSketchStepAndRepeat.md（Parameters 九项全读）与官方示例 examples/Create_and_Edit_Circular_Sketch_Pattern_Example_VB.md。① 首句「Create a circular sketch pattern of the selected entities」与官方 Description 同义；「of the selected entities」由官方示例给：示例先 ClearSelection2(True) 再 CreateCornerRectangle，紧接着调 CreateCircularSketchStepAndRepeat 把该矩形阵列 ⇒ 阵列对象是**当前选区**；② 参数单位注意：官方 ArcAngle/PatternSpacing 未标单位，但 PatternSpacing 在 IModelDoc2 旧页逐字写 「in radians」，实现 `math.radians()` 转换两次 ⇒ 与官方弧度口径一致；③ 草稿原指 IModelDoc2/CreateCircularSketchStepAndRepeat.md（Obsolete 六参）——**指错接口**，实现走 ISketchManager 九参页；④ 补登了草稿漏的更深调用：_select_spec → select_sketch_segment （ISketchSegment.Select4 / ISketch.GetSketchSegments），这两页都在官方树里。"
    }
   }
  ]

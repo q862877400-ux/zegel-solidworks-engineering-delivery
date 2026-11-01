@@ -120,19 +120,67 @@ def stems(text: str) -> set[str]:
     }
 
 
-def pick_primary(claim: str, members: list[dict]) -> tuple[dict | None, list[str]]:
-    """⇒ `(与首句最贴的成员, 共同词干)`：重叠为 0 时返回 `(None, [])`。
+#: 动作动词（判定「官方描述的主语动词是否与首句同族」用）
+ACTION_VERBS = frozenset(
+    "create add insert apply set get read list export import open close save delete remove show "
+    "switch draw run solve mesh build generate measure report collect inspect review update modify "
+    "move rotate activate suppress select edit".split()
+)
+
+#: 宽松的「是谁的访问器」描述 —— 它们能和任何句子凑出词干，但不能证明「这工具干了什么」
+ACCESSOR_PREFIXES = ("gets the ", "gets or sets ", "returns the ")
+
+#: ★ 证据质量门槛：低于它就不自动落地，交给人读页（宁可多送核，不可放假的过去）
+MIN_SCORE = 2
+
+
+def _verb(text: str) -> str:
+    """⇒ 文本第一个词的词干（`Creates` ⇒ `creat`）。
+
+    :param text: 任意英文句子。
+    """
+    m = re.search(r"[A-Za-z]+", str(text or ""))
+    return stem(m.group(0)) if m else ""
+
+
+def score_member(claim: str, m: dict) -> tuple[int, list[str]]:
+    """⇒ `(证据分, 共同词干)`：衡量「这条官方描述能不能支撑工具首句」。
+
+    加分：共同词干数；首句与官方描述**同族动词**（+3）；是 method（+1）。
+    减分：官方页写着 `Obsolete.`（−2）；只是访问器描述（−1）。
+
+    :param claim: 工具 `doc` 首句。
+    :param m: 一条成员登记（含 `anchor` / `kind`）。
+    """
+    desc = str(m.get("anchor") or "")
+    if not desc:
+        return -99, []
+    shared = stems(claim) & stems(desc)
+    s = len(shared)
+    cv, dv = _verb(claim), _verb(desc)
+    if cv and dv and cv == dv:
+        s += 3
+    if m.get("kind") == "method":
+        s += 1
+    if desc.lower().startswith("obsolete"):
+        s -= 2
+    if desc.lower().startswith(ACCESSOR_PREFIXES) and cv in ACTION_VERBS:
+        s -= 1
+    return s, sorted(shared)
+
+
+def pick_primary(claim: str, members: list[dict]) -> tuple[dict | None, list[str], int]:
+    """⇒ `(最佳成员, 共同词干, 分数)`：分数低于 `MIN_SCORE` 时返回 `(None, [], 分数)`。
 
     :param claim: 工具 `doc` 首句。
     :param members: 草稿里的成员登记。
     """
-    want = stems(claim)
-    best: tuple[dict | None, list[str]] = (None, [])
+    best: tuple[dict | None, list[str], int] = (None, [], -99)
     for m in members:
-        shared = want & stems(m.get("anchor", ""))
-        if len(shared) > len(best[1]):
-            best = (m, sorted(shared))
-    return best
+        s, shared = score_member(claim, m)
+        if s > best[2]:
+            best = (m, shared, s)
+    return best if best[2] >= MIN_SCORE else (None, [], best[2])
 
 
 def impl_evidence(rec: dict) -> tuple[dict, str] | None:
@@ -183,9 +231,12 @@ def build_batch(tools: list[str], drafts: dict[str, dict]) -> tuple[dict, list[d
             continue
         documented = [m for m in members if m.get("documented") is not False]
         if documented:
-            primary, shared = pick_primary(rec["claim"], documented)
+            primary, shared, score = pick_primary(rec["claim"], documented)
             if primary is None:
-                review.append({"tool": tool, "why": "首句与成员官方描述零词干重叠（需要人判断它到底干什么）"})
+                review.append(
+                    {"tool": tool,
+                     "why": "证据分 %d < %d（首句与官方描述不同族/太泛，需要人读页判断）" % (score, MIN_SCORE)}
+                )
                 continue
             evidence = {"kind": "official", "path": primary["path"], "anchor": primary["anchor"]}
             note = "成员 %s.%s 的官方 Description 与首句共享词干 %s" % (
@@ -253,6 +304,24 @@ def main(argv=None) -> int:
         print("  %s：可落地 %d / %d（需人工 %d）" % (batch, len(payload["records"]), len(tools), len(review)))
         if args.write:
             out = LEDGER_DIR / ("%s.json" % batch)
+            #: ★★ **人读过的记录不许被自动档覆盖**：`verified.level == "human"` 的条目
+            #:   优先级最高（它们是真读了官方页的）。没有这条，一次重跑就会把
+            #:   复核成果冲掉，而且从 git diff 上不容易看出来（同一文件整体重写）✓
+            prev = {}
+            if out.is_file():
+                try:
+                    for rec in json.loads(out.read_text(encoding="utf-8")).get("records") or []:
+                        if str((rec.get("verified") or {}).get("level") or "") == "human":
+                            prev[rec["tool"]] = rec
+                except (OSError, json.JSONDecodeError):
+                    prev = {}
+            if prev:
+                by_tool = {rec["tool"]: i for i, rec in enumerate(payload["records"])}
+                for tool, rec in prev.items():
+                    if tool in by_tool:
+                        payload["records"][by_tool[tool]] = rec
+                    else:
+                        payload["records"].append(rec)
             out.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
     REVIEW.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,512 @@
+{
+ "batch": "review-r1",
+ "defects": [],
+ "records": [
+  {
+   "tool": "solidworks_add_sketch_relation",
+   "impl": "scripts/sw_part.py:add_sketch_relation",
+   "claim": "Add one geometric relation such as sgHORIZONTAL or sgCOINCIDENT to the current sketch selection.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
+    "anchor": "Adds the specified constraint to the selected entities."
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchAddConstraints",
+     "path": "C:/swapi/types/IModelDoc2/SketchAddConstraints.md",
+     "anchor": "Adds the specified constraint to the selected entities."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus",
+     "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+     "anchor": "Gets the current constrained status of the sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus2",
+     "documented": false,
+     "gap": "C:\\swapi\\types 无此页（只有 ISketch/GetConstrainedStatus.md 与 IComponent2/GetConstrainedStatus.md）；C:\\swapi\\index\\by_member_name.md 搜 `GetConstrainedStatus2` 0 命中；C:\\swapi\\types\\ISketch 目录内无该成员。实现里是 `for _member in (\"GetConstrainedStatus\", \"GetConstrainedStatus2\")` 的试名兜底，第一个就成功 ⇒ 该名字是防御性探测，不是实际调到的成员。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelDoc2/SketchAddConstraints.md（Description/Parameters/Remarks 全读）与 ISketch/GetConstrainedStatus.md、ISketchManager/ActiveSketch.md、IModelDoc2/SketchManager.md。① 首句＝官方 Description 逐字同义（把一条约束加到**选中的实体**上）；② 描述第二句也有页内依据：官方 Remarks 的 2006+ 清单逐条列了 sgHORIZONTAL、sgCOINCIDENT 等 60 余项，**没有** sgEQUAL、**没有** sgMIDPOINT ⇒ 「这两个名字不存在并被拒」成立；③ 实现 `sw_part.py::add_sketch_relation` 末尾 `model.SketchAddConstraints(name)`，前缀补全与大小写归一在纯函数 _sg_relation_name 里。★ 额外的 COM 调用（不在草稿里，已补登）：前置状态门经 sw_sketch.active_sketch → IModelDoc2.SketchManager → ISketchManager.ActiveSketch，再取 ISketch.GetConstrainedStatus；**status == 2 才允许加关系是本仓项目规则（沿用 specs/221），不是官方 swConstrainedStatus_e 的规定** —— 已在实现注释里如实标注，本台账同样如实记录。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_add_3point_arc",
+   "impl": "scripts/sw_sketch_primitives.py:sketch_3point_arc",
+   "claim": "Draw an arc through three points: its start, its end and one point on the arc.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/Create3PointArc.md",
+    "anchor": "Creates a 3-point arc."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "Create3PointArc",
+     "path": "C:/swapi/types/ISketchManager/Create3PointArc.md",
+     "anchor": "Creates a 3-point arc."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/Create3PointArc.md（Description/Parameters/Returns）与 IModelDoc2/SketchManager.md。★ 订正草稿指错页：草稿登记 IModelDoc2/Create3PointArc（那一页只有『Obsolete. Superseded by [[ISketchManager::Create3PointArc]].』），而实现 `sw_sketch_primitives.py::sketch_3point_arc` 走 `get_com_member(_sm(model), \"Create3PointArc\", …)`，`_sm` 取的是 IModelDoc2.SketchManager ⇒ 真正调的是 **ISketchManager.Create3PointArc**（官方『Creates a 3-point arc.』，返回 SketchSegment）。⚠ 如实交代一处官方缺口：官方 Parameters 只写 X1/Y1/Z1…X3/Y3/Z3『point 1..3』，**没有逐字给出「起点/终点/弧上点」的对应**（两份 CHM 与 examples 里的 3-point arc 例程也没有该说明）⇒ 首句冒号后的三点角色由参数序承载、属本仓说法；与 B2 的 solidworks_sketch_add_3point_center_rectangle 同一口径（官方 Description 提供「三点画弧」这一件事）。另核对：_f(v)=v*_MM_TO_M ⇒ 描述第二句『in millimetres』成立（官方 X/Y 用米）。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_end",
+   "impl": "scripts/sw_part.py:end_sketch",
+   "claim": "Leave the current sketch and return a sketch reference that feature tools can reuse.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+    "anchor": "True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not"
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "InsertSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+     "anchor": "True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchContours",
+     "path": "C:/swapi/types/ISketch/GetSketchContours.md",
+     "anchor": "Gets the sketch contours in this sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchRegions",
+     "path": "C:/swapi/types/ISketch/GetSketchRegions.md",
+     "anchor": "Gets the sketch regions in this sketch."
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetSketchSegments",
+     "path": "C:/swapi/types/ISketch/GetSketchSegments.md",
+     "anchor": "Gets the sketch segments in this sketch, which include line, arc, spline, parabola, and ellipse entities."
+    },
+    {
+     "interface": "ISketch",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\ISketch 下无 Name.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 的 104 个成员**无 Name**（只有 IFeature/Name.md 等）；两份 CHM（AI Solidworks\\官方文档\\SWhelp\\sldworksapi 与 sldworksapiv6）都搜不到 *ISketch~Name*、*Sketch~Name* 页。实现 _capture_sketch_ref 用 _safe_com_member(sketch_obj, \"Name\", default=fallback) 取草图名，取不到时退成 fallback（\"Sketch1\"）—— 与 docs/known-facts.md 第 9 条的中文名问题同族。"
+    },
+    {
+     "interface": "ISketch",
+     "member": "GetFeature",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\ISketch 下无 GetFeature.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 成员无 GetFeature（索引里 GetFeature 只出现在其它接口）；两份 CHM 也搜不到 *ISketch~GetFeature*、*Sketch~GetFeature* 页。实现 _capture_sketch_ref/_refresh_sketch_ref 用它取草图对应的 IFeature，取不到回 None（不抛）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/InsertSketch.md（Description/Parameters/Remarks）、IModelDoc2/SketchManager.md、ISketchManager/ActiveSketch.md、ISketch/GetSketchContours|GetSketchRegions|GetSketchSegments.md。① 首句『离开当前草图』的官方依据是 InsertSketch 的 UpdateEditRebuild 参数逐字『True to rebuild the part with any changes made to the sketch and exit sketch mode, false to not』——本工具传 True（`sw_part.py::end_sketch` 里 `model.SketchManager.InsertSketch(True)`），语义同一件事；② 首句后半『返回可复用的草图引用』是本仓行为：_capture_sketch_ref 在退草图**前**取 SketchManager.ActiveSketch，再读 Name/GetFeature/GetSketchContours/GetSketchRegions/GetSketchSegments 缓存，退草图后 _refresh_sketch_ref 再刷一遍。★ 两条查不到页的成员（ISketch.Name / ISketch.GetFeature）按铁律 5 记 documented:false，不编页。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_fully_defined_status",
+   "impl": "scripts/sw_sketch_status.py:get_constrained_status",
+   "claim": "Read the constrained-status integer of the sketch being edited.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+    "anchor": "Gets the current constrained status of the sketch."
+   },
+   "members": [
+    {
+     "interface": "ISketch",
+     "member": "GetConstrainedStatus",
+     "path": "C:/swapi/types/ISketch/GetConstrainedStatus.md",
+     "anchor": "Gets the current constrained status of the sketch."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    },
+    {
+     "interface": "ISketchManager",
+     "member": "ActiveSketch",
+     "path": "C:/swapi/types/ISketchManager/ActiveSketch.md",
+     "anchor": "Gets the active sketch."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketch/GetConstrainedStatus.md：Description『Gets the current constrained status of the sketch.』、Signature `System.int GetConstrainedStatus()`（零参数、回整数）、Returns 指向 swConstrainedStatus_e ⇒ 与首句『读正在编辑草图的受约束状态整数』是同一件事。实现 `sw_sketch_status.py::get_constrained_status` 里 `get_com_member(sk, \"GetConstrainedStatus\")`，sk 由 sw_sketch.active_sketch 取得（IModelDoc2.SketchManager → ISketchManager.ActiveSketch）；无活动草图时 raise（官方关于「必须处于编辑态」只说『Gets the active sketch.』，取不到即 None，本仓的选择是抛错，如实记录）。★ 发现描述与实现不符（**第二句**，不影响首句证据）：描述称『this repository does not interpret the value, so treat the number as raw and unlabelled』，而实现返回 status_meaning(value)（含中文语义）与 fully_defined=(value==3) ⇒ 本仓其实**有**解释。已上报本批（未改描述、未改实现，本规格只写台账）。"
+   }
+  },
+  {
+   "tool": "solidworks_sketch_start",
+   "impl": "scripts/sw_part.py:start_sketch",
+   "claim": "Enter a new sketch on a reference plane.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+    "anchor": "Inserts a new sketch in the current part or assembly document."
+   },
+   "members": [
+    {
+     "interface": "ISketchManager",
+     "member": "InsertSketch",
+     "path": "C:/swapi/types/ISketchManager/InsertSketch.md",
+     "anchor": "Inserts a new sketch in the current part or assembly document."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SketchManager",
+     "path": "C:/swapi/types/IModelDoc2/SketchManager.md",
+     "anchor": "Gets the sketch manager, which allows access to sketch-creation routines."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISketchManager/InsertSketch.md、IModelDoc2/ClearSelection2.md、IModelDoc2/Extension.md、IModelDocExtension/SelectByID2.md、IModelDoc2/SketchManager.md。首句＝官方『Inserts a new sketch…』＋在指定基准面上：实现（`sw_part.py::start_sketch`）先 ClearSelection2(True)，再经 model.Extension.SelectByID2(候选名, \"PLANE\", …) 选中基准面（_select_first_candidate 逐个试中英文名，官方 SelectByID2『Selects the specified entity.』的 Type 参数就是 swSelectType_e），选中后才 InsertSketch(True)。⚠ 如实交代：官方 InsertSketch 页没有『基准面』参数 ⇒ 首句里的『on a reference plane』若视为该 API 的参数语义，则它落在 SelectByID2 那条官方页上，而不是 InsertSketch 页 —— 两条页合起来才覆盖首句。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_add_mate_checked",
+   "impl": "scripts/sw_assembly.py:add_mate5_checked",
+   "claim": "Add a mate between two preselected entities with the 15-parameter AddMate5 call.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+    "anchor": "If entities are not preselected, then ErrorStatus is swAddMateError_e.swAddMateError_IncorrectSelections, and nothing is returned."
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IMate2",
+     "member": "Name",
+     "documented": false,
+     "gap": "C:\\swapi\\types\\IMate2 目录里无语义成员 Name（只有 Alignment/CanBeFlipped/DisplayDimension*/Distance*ArcCondition/Flipped/ForceMisalignment/Get*/Has* 等）；C:\\swapi\\index\\by_member_name.md 搜 `Name` 在 **IMate2** 上 0 命中（只有 IMateReference/IMateLoadReference 的 Name）；C:\\swapi\\types 下无 IMate/IMate2 的 Name.md。实现对 `mate.Name = name` 外层包 try/except pass ⇒ 这一句即使无效也不会报错。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IAssemblyDoc/AddMate5.md 的 Description/Signature/Parameters/Remarks 全页。首句三件事逐条对上：① Signature 参数数了**正好 15 个**（MateTypeFromEnum, AlignFromEnum, Flip, Distance, DistanceAbsUpperLimit, DistanceAbsLowerLimit, GearRatioNumerator, GearRatioDenominator, Angle, AngleAbsUpperLimit, AngleAbsLowerLimit, ForPositioningOnly, LockRotation, WidthMateOption, out ErrorStatus）；② 『between two preselected entities』＝官方 Remarks 第 1-3 步（先 ClearSelection2 → SelectByID2 各选一个实体 → 调本方法）＋『If entities are not preselected, then ErrorStatus is …IncorrectSelections, and nothing is returned.』；③ 描述第二句的 Obsolete 就是官方 Description 原文，Remarks 还给了分流（标准/高级/机械 ⇒ CreateMate）。实现 `sw_assembly.py::add_mate5_checked` 调 AddMate5(15 参) 并检查 swAddMateError_e（0 Unknown / 1 NoError 放行），`clear_selection=True`（默认）时按官方第 4 步 ClearSelection2(True)。★ 成员缺口如实记：`mate.Name = name`（可选参数）在官方页里查不到 IMate2.Name，记 documented:false；改名应走 IFeature.Name。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_add_parallel_mate",
+   "impl": "scripts/sw_assembly.py:add_mate_parallel",
+   "claim": "Add a parallel mate between two named faces of the active assembly.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/enums/swMateType_e.md",
+    "anchor": "swMatePARALLEL | 3"
+   },
+   "members": [
+    {
+     "interface": "IAssemblyDoc",
+     "member": "AddMate5",
+     "path": "C:/swapi/types/IAssemblyDoc/AddMate5.md",
+     "anchor": "Obsolete. Superseded by [[IAssemblyDoc::CreateMate.]]"
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IMate2",
+     "member": "Name",
+     "documented": false,
+     "gap": "同 add_mate5_checked：C:\\swapi\\types\\IMate2 无 Name 成员页，C:\\swapi\\index\\by_member_name.md 里 IMate2 的 `Name` 0 命中；实现里 `mate.Name = name` 在 try/except 内（本工具走 add_mate5_checked，name 默认 None ⇒ 实际不执行）。"
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 enums/swMateType_e.md、IAssemblyDoc/AddMate5.md（Parameters/Remarks）、IModelDocExtension/SelectByID2.md、IModelDoc2/ClearSelection2.md。首句拆三段逐一坐实：① 『parallel mate』＝官方 swMateType_e 的 swMatePARALLEL = 3，本仓 SW_MATE_PARALLEL = 3（sw_assembly.py 顶部常量），**逐值对上**；AddMate5 的 MateTypeFromEnum 官方说明是『Type of mate as defined in [[swMateType_e]]』⇒ 两者合起来才是完整依据（官方没有任何一句直接写「加平行配合」）。② 『two named faces』＝实现 ClearSelection2(True) 后 _select_by_id(ext, face1_name, \"FACE\", mark=1)、再 append=True 选第二个面，_select_by_id 就是 sw_connect.select_by_id → IModelDocExtension.SelectByID2（Name 参数官方写『Name of object to select』）；官方 Remarks 的 mark 表也写『Other swMateType_e option ⇒ 1』，与实现 mark=1 一致。③ 『active assembly』＝注入的 model 即活动装配文档。未发现描述与官方/实现不符。"
+   }
+  },
+  {
+   "tool": "solidworks_assembly_performance_analysis_report",
+   "impl": "scripts/sw_assembly.py:collect_mate_feature_summary",
+   "claim": "Summarise the mates and features of the active assembly as per-item counts.",
+   "claim_evidence": {
+    "kind": "impl",
+    "path": "scripts/sw_assembly.py",
+    "anchor": "@return 包含 name、type、depth 的列表，用于验证真实机械配合是否写入特征树。"
+   },
+   "members": [
+    {
+     "interface": "IModelDoc2",
+     "member": "FirstFeature",
+     "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetFirstSubFeature",
+     "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextSubFeature",
+     "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetNextFeature",
+     "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."
+    },
+    {
+     "interface": "IFeature",
+     "member": "Name",
+     "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."
+    },
+    {
+     "interface": "IFeature",
+     "member": "GetTypeName2",
+     "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "★ 先证「官方没有这个成员」：C:\\swapi\\types 下递归搜 *Performance* = **0 个文件**，C:\\swapi\\index\\by_member_name.md 全表含 performanc 的行 **0 命中** ⇒ 官方 API 里没有「性能分析」入口，按铁律 5 不编页；描述自己也写了『not a call to an official performance-analysis member』，与事实一致。故 claim_evidence 用 **impl 档**（本仓实现）：collect_mate_feature_summary 经 iter_feature_tree 遍历特征树（IModelDoc2.FirstFeature → IFeature.GetNextFeature / GetFirstSubFeature / GetNextSubFeature），逐项读 IFeature.Name 与 IFeature.GetTypeName2（官方 FirstFeature 页的 Remarks 也逐字要求『use IFeature::GetTypeName2 … instead of relying solely on IFeature::Name』，本实现两个都读，符合），再按 MateGroup/前缀 Mate/名称含 mate|配合 过滤。★ 订正草稿指错页：草稿给 feature.Name 登记 IBomFeature.Name（BOM 表名），实际是 IFeature.Name。★ 发现描述与实现不一致（**首句就带偏差**，故用 impl 档并在此明记）：描述写『as per-item counts』『reports real counts』，而实现返回的是逐项条目 {name,type,depth} 的**列表**，不做任何计数（scripts/sw_assembly.py:collect_mate_feature_summary 无 len/计数返回）。已上报，未改描述。"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_hole_table",
+   "impl": "scripts/sw_drawing_expose.py:create_hole_table",
+   "claim": "Insert a hole table on a drawing view.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IView/InsertHoleTable3.md",
+    "anchor": "Inserts a hole table in this drawing view."
+   },
+   "members": [
+    {
+     "interface": "IView",
+     "member": "InsertHoleTable3",
+     "path": "C:/swapi/types/IView/InsertHoleTable3.md",
+     "anchor": "Inserts a hole table in this drawing view."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetFirstView",
+     "path": "C:/swapi/types/IDrawingDoc/GetFirstView.md",
+     "anchor": "Gets the first drawing [[view]] on the current sheet."
+    },
+    {
+     "interface": "IView",
+     "member": "GetName2",
+     "path": "C:/swapi/types/IView/GetName2.md",
+     "anchor": "Gets the name of this drawing view displayed in the FeatureManager design tree."
+    },
+    {
+     "interface": "IView",
+     "member": "Name",
+     "path": "C:/swapi/types/IView/Name.md",
+     "anchor": "Obsolete. Superseded by [[IView::GetName2]] and [[IView::SetName2]]."
+    },
+    {
+     "interface": "IView",
+     "member": "GetNextView",
+     "path": "C:/swapi/types/IView/GetNextView.md",
+     "anchor": "Gets the next drawing view in the drawing."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObject6",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObject6.md",
+     "anchor": "Gets the selected object."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectType3",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectType3.md",
+     "anchor": "Gets the type of object selected."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IView/InsertHoleTable3.md（Description/Signature/Parameters/Remarks 全读）、IDrawingDoc/GetFirstView.md、IView/GetName2|Name|GetNextView.md、IModelDoc2/SelectionManager.md、ISelectionMgr/GetSelectedObjectCount2|GetSelectedObject6|GetSelectedObjectType3.md。① 首句与官方 Description 逐字同义（『Inserts a hole table in this drawing view.』），实现是 get_com_member(view, \"InsertHoleTable3\", …) 9 参，与官方 Signature 的 9 个参数逐一对位（UseAnchorPoint/X/Y/AnchorType/StartValue/Template/TagOrder/TagType/ManualTags，其中 ManualTags 传空 Dispatch，与官方 examples 的 Nothing 一致）。② 描述第二句的 mark 表与官方 Remarks 逐字对上（datum origin vertex=1、hole edges and faces=2、X/Y 轴参考=4/8），官方还要求调用前用 IModelDocExtension::SelectByID2 选好 ⇒ 『本工具不代选』与实现一致。③ 视图像按名找：_view_by_name 走 IDrawingDoc.GetFirstView → IView.GetName2（取不到再退已废弃的 IView.Name）→ IView.GetNextView。★ 实现缺陷（非首句，已上报、未改）：_selection_marks 用 `GetSelectedObjectType3` 的返回值当 mark 累加（sw_drawing_expose.py 内 `mark = c.get_com_member(mgr, \"GetSelectedObjectType3\", i, -1)`），它返回的是 swSelectType_e 对象类型、不是选择标记 ⇒ preconditions_held 实际在按类型判定；同函数里 GetSelectedObject6 取了却未用（`_ = m`）。按官方页，取选择标记应走 ISelectionMgr.GetSelectedObjectMark（见 GetSelectedObjectCount2 页 See Also）。"
+   }
+  },
+  {
+   "tool": "solidworks_drawing_create_section_view",
+   "impl": "scripts/sw_drawing_expose.py:create_section_view",
+   "claim": "Insert a section view at the given position on the active drawing.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/CreateSectionViewAt5.md",
+    "anchor": "Creates the specified section view."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "CreateSectionViewAt5",
+     "path": "C:/swapi/types/IDrawingDoc/CreateSectionViewAt5.md",
+     "anchor": "Creates the specified section view."
+    },
+    {
+     "interface": "IView",
+     "member": "GetSection",
+     "path": "C:/swapi/types/IView/GetSection.md",
+     "anchor": "Gets the section for this section view."
+    },
+    {
+     "interface": "IDrSection",
+     "member": "SetLabel2",
+     "path": "C:/swapi/types/IDrSection/SetLabel2.md",
+     "anchor": "Sets the label for this section view."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "SelectionManager",
+     "path": "C:/swapi/types/IModelDoc2/SelectionManager.md",
+     "anchor": "Gets the [[ISelectionMgr]] object for this document, which makes the currently selected object available."
+    },
+    {
+     "interface": "ISelectionMgr",
+     "member": "GetSelectedObjectCount2",
+     "path": "C:/swapi/types/ISelectionMgr/GetSelectedObjectCount2.md",
+     "anchor": "Gets the number of selected objects."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r1",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IDrawingDoc/CreateSectionViewAt5.md（Description/Parameters/Remarks）、IView/GetSection.md、IDrSection/SetLabel2.md、IModelDoc2/SelectionManager.md、ISelectionMgr/GetSelectedObjectCount2.md。① 首句『在给定位置插入剖视图』＝官方 Description『Creates the specified section view.』＋ Parameters 逐字『X: x position on the drawing sheet for the center of the section view』（Y/Z 同）；实现把形参 mm 经 _mm 换成米后传入，位置语义对得上（官方该参数按米）。② 描述第二句『剖面线必须先选中』有官方 Remarks 逐字支持：『Before calling this method, select the section line or lines to use as a section line.』③ 实现链路（`subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py::add_section_view`）：CreateSectionViewAt5 → IView.GetSection → IDrSection.SetLabel2（官方 Remarks 点名就是这条链），标签状态按 swSetSectionLabelStatus_e 的 <0/=0/>0 分档如实回报；▶ 注：scripts/sw_drawing.py 是转发壳，真实现在 subskills 里，故门禁的一层委托索引看不到这一层的成员 —— 本台账按源码补登。④ 前置计数走 IModelDoc2.SelectionManager → ISelectionMgr.GetSelectedObjectCount2(-1)，只算「有没有选」，与描述『reports preconditions_held so an empty selection is not read as a failure』一致。"
+   }
+  }
+ ]
+}

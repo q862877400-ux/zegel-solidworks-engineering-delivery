@@ -233,3 +233,25 @@ def test_ledger_skips_underscore_drafts(tmp_path):
     records, broken = G.load_ledger(ledger)
     assert set(records) == {"y"}
     assert broken == []
+
+
+def test_normalize_does_not_eat_python_source(tmp_path):
+    """★ 回归：归一化**不许**对 .py 跑 HTML 标签剥除。
+
+    实测踩过：`re.sub(r"<[^>]+>", " ")` 对 Python 源码会把 `list[str]` 到下一个 `>`
+    整段吞掉（31 KB 的 `sw_drawing_view.py` 归一化后只剩 25 KB），于是
+    `def <函数名>(` 这种**实现锚点**永远判「找不到」——假红。
+    """
+    src = "def list_drawing_views_report(model) -> dict:\n    rows: list[str] = []\n"
+    assert "def list_drawing_views_report(" in G.normalize(src)
+
+
+def test_read_page_strips_html_only_for_html(tmp_path):
+    """HTML 页（cosworks 帮助）读进来要剥标签/解实体；markdown 页原样返回。"""
+    html = tmp_path / "ICWStudy~RunAnalysis.html"
+    html.write_text("<html><body><p>Gets the results &amp; names.</p></body></html>", encoding="utf-8")
+    md = tmp_path / "FeatureRevolve2.md"
+    md.write_text("---\ntype: IFeatureManager\n---\n\nCreates a feature.\n", encoding="utf-8")
+    assert "Gets the results & names." in (G.read_page(html) or "")
+    assert "<p>" not in (G.read_page(html) or "")
+    assert "type: IFeatureManager" in (G.read_page(md) or "")

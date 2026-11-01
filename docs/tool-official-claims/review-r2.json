@@ -1,0 +1,547 @@
+{
+ "batch": "review-r2",
+ "note": "人读复核批：18 个机器判不了的 MCP 工具（钣金/曲面/焊件/自定义属性/导出/视图）。每条记录逐字读过 C:/swapi/types 官方页（Description/Parameters/Remarks）并与 scripts/ 实现对照；claim 逐字等于 tools/show_tool_claim_context.py 打印的模型可见描述首句。3 个工具按判据无法落地，进 defects。",
+ "defects": [
+  {
+   "tool": "solidworks_sheet_metal_create_edge_flange",
+   "why": "首句把「不可用」归因为『官方调用需要仅进程内的指针，pywin32 取不到』，官方页不支持这个因果：官方的创建示例用的是 AddEdges（普通对象数组）+ InsertSketchForEdgeFlange，全程不碰 IGetEdges / ISetEdges / IAccessSelections2 这些仅 in-process unmanaged C++ 的指针变体。所以「官方调用需要进程内指针」不成立，不能拿 IGetEdges 的『Not supported』去当这句话的依据。另（实现侧，按规格不在本批改）：官方示例的顺序是 InsertSketchForEdgeFlange → CreateDefinition(swFmEdgeFlange) → AddEdges → 设属性 → CreateFeature，而 create_edge_flange 只设 4 个属性、既不调 InsertSketchForEdgeFlange 也不调 AddEdges（依赖调用方预选，官方 Remarks 未认可这条路）。",
+   "evidence": "C:/swapi/examples/Create_Edge_Flange_Example_VBNET.md：『bValue = swEntity.Select4(False, Nothing)』…『swFeature = swModel.InsertSketchForEdgeFlange(swEdge, dAngle, False)』『Call FeatData.AddEdges(vFlangeEdges, vSketchFeats)』『edgeFlangeFeat = swModel.FeatureManager.CreateFeature(FeatData)』；C:/swapi/types/IEdgeFlangeFeatureData/AddEdges.md：『Adds edges to this edge flange.』+ Remarks『Before calling this method, call IModelDoc2::InsertSketchForEdgeFlange to associate the sketches with the edges.』；C:/swapi/types/IEdgeFlangeFeatureData/IGetEdges.md：『in-process, unmanaged C++: Pointer to an array of edges for this edge flange』/『VBA, VB.NET, C#, and C++/CLI: Not supported』——该页只说明这一族访问器仅进程内可调，不是「创建需要它」；仓内记录的真机失败点是 ReverseDirection 跨接口属性泄漏（docs/known-facts.md 事实 34），该属性已从实现删除。"
+  },
+  {
+   "tool": "solidworks_export_image",
+   "why": "首句的『current view（当前视图）』在官方 API 文档里拼不出来：实现走 IModelDocExtension.SaveAs3（7 参），官方该页只说保存活动文档、按扩展名做格式转换，全页没有 image / 图形窗口 / 当前视图 任何字样（CHM 同名页也一样）；官方唯一写「当前视图」的是 IModelDoc2.SaveBMP（『Saves the current view as a bitmap (BMP) file.』），而本工具明确不用 SaveBMP（只出 .bmp）。⇒ 不能拿 SaveAs3 的『按扩展名转换』去支撑「把当前视图导出成 PNG/JPG」。建议改法（不由本批执行）：把首句改成「Save the active document as a PNG or JPG image file」（SaveAs3 有官方句），把「当前视图原样捕获、尺寸不可选」降为第二句并标为实测事实。",
+   "evidence": "C:/swapi/types/IModelDocExtension/SaveAs3.md：『Saves the active document to the specified name with advanced options.』·『the file extension indicates any conversion that should be performed (for example, Part1.igs to save in IGES format)』·Signature 7 参无尺寸入参；C:/swapi/types/IModelDoc2/SaveBMP.md：『Saves the current view as a bitmap (BMP) file.』（本工具不用它的理由见 scripts/sw_export.py::export_to_image 的 docstring）；全库 grep『.png/.jpg/JPEG』在 types/ 下只命中图标与贴图类页面，无视图导出页。"
+  },
+  {
+   "tool": "solidworks_get_view_model_doc",
+   "why": "首句『Get the document that owns the model view』要求 IModelView 上「由视图取文档」的成员，但离线官方文档树里没有这一页：C:/swapi/types/IModelView 全部 75 个成员页（与 _overview 的 property 31 + method 44 = 75 吻合）中没有 GetModelDoc，也没有 ModelDoc；C:/swapi/index/by_member_name.md 里 GetModelDoc 只挂在 IComponent2 / IDerivedPartFeatureData / IMirrorPartFeatureData；CHM（AI Solidworks/官方文档/SWhelp/sldworksapi）根本没有 IModelView 成员页。权威类型库反射 _raw/reflect_sldworks/iface_sldworks.txt 第 11393 行确实有『ModelDoc GetModelDoc()』且位于 IModelView 段（前后是 get_Xform / GetNext）⇒ 成员存在（按铁律 4 以类型库为准），但无官方页可逐字引用 ⇒ 本门禁判据下 claim 无锚点（claim-unanchored），故不落地。建议：官方 md 树补该页，或给这个描述改一种本门禁承认的依据（types 之外的官方源需要先扩判据）。",
+   "evidence": "C:/swapi/types/IModelView/ 75 个成员页清单（无 GetModelDoc/ModelDoc）；C:/swapi/types/IModelView/_overview.md：『property_count: 31』『method_count: 44』；C:/swapi/index/by_member_name.md：『- `GetModelDoc` [method] on **IComponent2**』/『on **IDerivedPartFeatureData**』/『on **IMirrorPartFeatureData**』（无 IModelView）；_raw/reflect_sldworks/iface_sldworks.txt:11393『ModelDoc GetModelDoc()』；SWhelp/sldworksapi 下 43 个含 ModelView 的文件里没有 IModelView~* 成员页。"
+  }
+ ],
+ "records": [
+  {
+   "tool": "solidworks_sheet_metal_create_swept_flange",
+   "impl": "scripts/sw_sheet_metal.py:create_swept_flange",
+   "claim": "Create a native swept flange along a path selection, untested on this machine.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISweptFlangeFeatureData/_overview.md",
+    "anchor": "Allows access to a sheet metal swept flange feature."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FeatureManager", "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."},
+    {"interface": "IFeatureManager", "member": "CreateDefinition", "path": "C:/swapi/types/IFeatureManager/CreateDefinition.md",
+     "anchor": "Creates a feature data object of the specified type."},
+    {"interface": "IFeatureManager", "member": "CreateFeature", "path": "C:/swapi/types/IFeatureManager/CreateFeature.md",
+     "anchor": "Creates the specified feature."},
+    {"interface": "IFeature", "member": "GetErrorCode", "path": "C:/swapi/types/IFeature/GetErrorCode.md",
+     "anchor": "Obsolete. Superseded by [[IFeature::GetErrorCode2]]."},
+    {"interface": "ISweptFlangeFeatureData", "member": "Path", "path": "C:/swapi/types/ISweptFlangeFeatureData/Path.md",
+     "anchor": "Gets or sets the sweep path of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "Profile", "path": "C:/swapi/types/ISweptFlangeFeatureData/Profile.md",
+     "anchor": "Gets or sets the sweep profile of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "StartOffset", "path": "C:/swapi/types/ISweptFlangeFeatureData/StartOffset.md",
+     "anchor": "Gets or sets the start offset of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "EndOffset", "path": "C:/swapi/types/ISweptFlangeFeatureData/EndOffset.md",
+     "anchor": "Gets or sets the end offset of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "FlangePosition", "path": "C:/swapi/types/ISweptFlangeFeatureData/FlangePosition.md",
+     "anchor": "Gets or sets the flange position of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "FlattenAlongPath", "path": "C:/swapi/types/ISweptFlangeFeatureData/FlattenAlongPath.md",
+     "anchor": "Gets or sets whether to flatten the flange profile along the sweep path of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "TrimSideBends", "path": "C:/swapi/types/ISweptFlangeFeatureData/TrimSideBends.md",
+     "anchor": "Gets or sets whether to remove extra material in neighboring bends of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "ReverseDirection", "path": "C:/swapi/types/ISweptFlangeFeatureData/ReverseDirection.md",
+     "anchor": "Gets or sets whether to reverse the direction of sheet metal thickness of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "UseDefaultRadius", "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultRadius.md",
+     "anchor": "Gets or sets whether to use the bend radius from the original sheet metal feature in this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "BendRadius", "path": "C:/swapi/types/ISweptFlangeFeatureData/BendRadius.md",
+     "anchor": "Gets or sets the bend radius of this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "UseDefaultBendAllowance", "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultBendAllowance.md",
+     "anchor": "Gets or sets whether to use the bend allowance from the original sheet metal feature in this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "UseDefaultBendRelief", "path": "C:/swapi/types/ISweptFlangeFeatureData/UseDefaultBendRelief.md",
+     "anchor": "Gets or sets whether to use the bend relief from the original sheet metal feature in this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "UseGaugeTable", "path": "C:/swapi/types/ISweptFlangeFeatureData/UseGaugeTable.md",
+     "anchor": "Gets or sets whether to use an Excel gauge table for this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "UseMaterialSheetMetalParameters", "path": "C:/swapi/types/ISweptFlangeFeatureData/UseMaterialSheetMetalParameters.md",
+     "anchor": "Gets or sets whether to use the material sheet metal parameters in this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "OverrideDefaultSheetMetalParameters", "path": "C:/swapi/types/ISweptFlangeFeatureData/OverrideDefaultSheetMetalParameters.md",
+     "anchor": "Gets or sets whether to override the default sheet metal parameters for this swept flange feature."},
+    {"interface": "ISweptFlangeFeatureData", "member": "Thickness", "path": "C:/swapi/types/ISweptFlangeFeatureData/Thickness.md",
+     "anchor": "Gets or sets the sheet metal thickness of this swept flange feature."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/CreateDefinition（Type 清单含『swFmSweptFlange (sheet metal swept flange)』）、IFeatureManager/CreateFeature、ISweptFlangeFeatureData/_overview（『Allows access to a sheet metal swept flange feature.』）与本次实际设的 16 个属性页（Path/Profile/StartOffset/EndOffset/FlangePosition/FlattenAlongPath/TrimSideBends/ReverseDirection/UseDefaultRadius/BendRadius/UseDefaultBendAllowance/UseDefaultBendRelief/UseGaugeTable/UseMaterialSheetMetalParameters/OverrideDefaultSheetMetalParameters/Thickness），另对照官方示例 C:/swapi/examples/Create_Swept_Flange_Example_VBNET.md：示例顺序与实现一致（先有基体法兰 → CreateDefinition(swFmSweptFlange) → 逐条设属性（含 Path/Profile）→ CreateFeature），示例也确实不调 AccessSelections/ReleaseSelectionAccess，与实现的『不调』一致。首句的『untested on this machine』是验证状态说明，不是 API 语义断言，官方页无从引用也不构成矛盾。草稿漏掉的 16 个 ISweptFlangeFeatureData 属性已补登（它们在嵌套 _apply(data) 里，提取器识别不了 data 是 COM 对象）。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_evidence",
+   "impl": "scripts/sw_surface.py:collect_surface_evidence",
+   "claim": "Read the surface evidence: whether the Modeler object is reachable and which surface creation methods are registered.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ISldWorks/GetModeler.md",
+    "anchor": "Gets the [[IModeler]] interface."
+   },
+   "members": [
+    {"interface": "ISldWorks", "member": "GetModeler", "path": "C:/swapi/types/ISldWorks/GetModeler.md",
+     "anchor": "Gets the [[IModeler]] interface."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ISldWorks/GetModeler（『Gets the [[IModeler]] interface.』，Signature『System.object GetModeler()』）与 IModeler/_overview（『Provides an interface to temporary body objects.』，method_count 123）。实现只调用一个 COM 成员 get_modeler(sw_app)→ISldWorks.GetModeler，据此回 has_modeler；首句后半『which surface creation methods are registered』说的是**本模块自己的登记表** SURFACE_CREATION_METHODS（scripts/sw_surface.py），表里的键全是 IModeler 的官方成员名（CreatePlanarSurface/CreateCylindricalSurface/… 共 19 个非指针 Create*Surface），不是一句官方语义句——这一点在此如实登记，供复核人判断该半句的依据层级。返回里的 pointer_variants_available=False 是后端结论（见缺陷报告/已知事实），官方页只说明 19 个非 I 前缀成员可用，不含该结论。"
+   }
+  },
+  {
+   "tool": "solidworks_surface_midsurface_create",
+   "impl": "scripts/sw_sheet_metal_weld_entry.py:create_midsurface",
+   "claim": "Create surface midsurfaces for one body of the active part and report the new sheet bodies.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertMidSurface.md",
+    "anchor": "Inserts a midsurface feature."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FeatureManager", "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."},
+    {"interface": "IPartDoc", "member": "GetBodies2", "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."},
+    {"interface": "IFeatureManager", "member": "InsertMidSurface", "path": "C:/swapi/types/IFeatureManager/InsertMidSurface.md",
+     "anchor": "Inserts a midsurface feature."},
+    {"interface": "", "member": "GetSurfaceBodies", "path": "", "anchor": "", "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi（无 IModelView/IPartDoc 同名页）。按铁律 5 记缺口、不编页 —— 实现里它是 **试名探测**（scripts/sw_sheet_metal_weld_entry.py::_surface_body_count 的循环，两源均查不到，取不到就降级返回 None）。"},
+    {"interface": "", "member": "GetSurfaceBodyCount", "path": "", "anchor": "", "documented": false,
+     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi。同上：实现是 _surface_body_count 里的第二个试名，取不到就降级，不静默成 0。"}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertMidSurface 全页（Description/Parameters/Remarks）：Remarks『A midsurface feature is calculated from the solid body in your part document… Each reference surface is considered a sheet body.』⇒ 首句『one body of the active part… new sheet bodies』与之同一件事。★ 两处须复核人注意：① 草稿把 GetBodies2 登记成 IComponent2（1 参版），实现是 get_com_member(model,'GetBodies2',0,False) 两个实参、接收者是零件文档 ⇒ 按接收者改登 IPartDoc.GetBodies2（已改）；② 官方该页 Parameters 与 Remarks 互相矛盾——Parameters 写 PBodyIn/PPartDocIn『in the context of an assembly; otherwise, null or Nothing』，Remarks 写 pPartDocIn 是『the component's model document』、pBody 是该组件的体；实现传了真实 body+model（与 Remarks 一致、与 Parameters 相左）。本批不裁对错，只记录（同 docs/recon-206/pre-code-conflict-lookup 的 precondition_diff 一类）。另外 _surface_body_count 试的两个成员名两源都查不到，已按铁律 5 记 documented:false。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_ensure_cut_list",
+   "impl": "scripts/sw_weldment.py:ensure_cut_list",
+   "claim": "Create native cut-list folders for a weldment that has none, grouping bodies by their longest bounding-box edge.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+    "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FirstFeature", "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."},
+    {"interface": "IFeature", "member": "GetNextFeature", "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."},
+    {"interface": "IFeature", "member": "GetFirstSubFeature", "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."},
+    {"interface": "IFeature", "member": "GetNextSubFeature", "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."},
+    {"interface": "IFeature", "member": "GetTypeName2", "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."},
+    {"interface": "IFeature", "member": "Name", "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."},
+    {"interface": "IPartDoc", "member": "GetBodies2", "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."},
+    {"interface": "IBody2", "member": "GetBodyBox", "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."},
+    {"interface": "IModelDoc2", "member": "FeatureManager", "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."},
+    {"interface": "IFeatureManager", "member": "InsertWeldmentCutList2", "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."},
+    {"interface": "IModelDoc2", "member": "EditRebuild3", "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IFeatureManager/InsertWeldmentCutList2（『Inserts a cut-list-item folder feature containing the specified weldment bodies.』，Signature『Feature InsertWeldmentCutList2( System.object Bodies )』，Parameters『Array of [[Body2]] objects』）、IBody2/GetBodyBox、IPartDoc/GetBodies2、IFeature 的遍历四件（FirstFeature/GetNextFeature/GetFirstSubFeature/GetNextSubFeature/GetTypeName2/Name）、IModelDoc2/EditRebuild3 ⇒ 首句『按包围盒最长边分组 + 建原生清单文件夹』两半都有官方页。★ 草稿漏登 InsertWeldmentCutList2：实现是 getattr(manager,'InsertWeldmentCutList2') 动态取 + 失败时走 _oleobj_.Invoke(174, DISPATCH_METHOD)，静态提取看不到，已补登（Receipt 同 sw_weldment.py::create_cut_list）。草稿还把 feature.Name 指到 IBomFeature.Name，接收者其实是 IFeature，已改。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_evidence",
+   "impl": "scripts/sw_weldment.py:weldment_evidence",
+   "claim": "Read back the weldment state: features, cut-list folders and their properties.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IConfiguration/GetCutListItems.md",
+    "anchor": "Gets the cut list folders in this active or non-active configuration."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FirstFeature", "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."},
+    {"interface": "IFeature", "member": "GetNextFeature", "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."},
+    {"interface": "IFeature", "member": "GetFirstSubFeature", "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."},
+    {"interface": "IFeature", "member": "GetNextSubFeature", "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."},
+    {"interface": "IFeature", "member": "GetTypeName2", "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."},
+    {"interface": "IFeature", "member": "Name", "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."},
+    {"interface": "IFeature", "member": "GetSpecificFeature2", "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."},
+    {"interface": "IFeature", "member": "CustomPropertyManager", "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."},
+    {"interface": "ICutListItem", "member": "CustomPropertyManager", "path": "C:/swapi/types/ICutListItem/CustomPropertyManager.md",
+     "anchor": "Gets the custom property manager for this configuration-specific cut list."},
+    {"interface": "ICustomPropertyManager", "member": "GetNames", "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."},
+    {"interface": "ICustomPropertyManager", "member": "Get6", "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."},
+    {"interface": "IBodyFolder", "member": "GetBodyCount", "path": "C:/swapi/types/IBodyFolder/GetBodyCount.md",
+     "anchor": "Gets the number of bodies in the folder."},
+    {"interface": "IBodyFolder", "member": "UpdateCutList", "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+     "anchor": "Updates an automatically generated cut list."},
+    {"interface": "IPartDoc", "member": "GetBodies2", "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."},
+    {"interface": "IBody2", "member": "GetBodyBox", "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."},
+    {"interface": "IModelDoc2", "member": "FeatureManager", "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."},
+    {"interface": "IFeatureManager", "member": "InsertWeldmentCutList2", "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."},
+    {"interface": "IModelDoc2", "member": "EditRebuild3", "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."},
+    {"interface": "IModelDoc2", "member": "ConfigurationManager", "path": "C:/swapi/types/IModelDoc2/ConfigurationManager.md",
+     "anchor": "Gets the [[IConfigurationManager]] object, which allows access to a configuration in a model."},
+    {"interface": "IConfigurationManager", "member": "ActiveConfiguration", "path": "C:/swapi/types/IConfigurationManager/ActiveConfiguration.md",
+     "anchor": "Gets the active configuration."},
+    {"interface": "IConfiguration", "member": "GetCutListItems", "path": "C:/swapi/types/IConfiguration/GetCutListItems.md",
+     "anchor": "Gets the cut list folders in this active or non-active configuration."},
+    {"interface": "IConfiguration", "member": "Name", "path": "C:/swapi/types/IConfiguration/Name.md",
+     "anchor": "Gets or sets the configuration name."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IConfiguration/GetCutListItems、ICutListItem/CustomPropertyManager、IFeature/CustomPropertyManager（『Gets the custom property information for weldment and cut-list item features only.』）、IBodyFolder/GetBodyCount、ICustomPropertyManager/GetNames+Get6、IConfigurationManager/ActiveConfiguration、IConfiguration/Name、IFeature 遍历族、IPartDoc/GetBodies2 ⇒ 首句『回读 features / cut-list folders / 其属性』三样都有官方页，且都是读成员。与首句第二句的『只在 create_missing_cut_list / update_cut_list_too 要求时才写模型』一致：写操作只有 IBodyFolder.UpdateCutList（官方『Updates an automatically generated cut list.』）与 ensure_cut_list 那条（InsertWeldmentCutList2 + EditRebuild3），只读路径走 _read_cut_list_folders 不调它们；这两条的成员也据此一并登记（create_missing_cut_list=True 时确实会走到）。草稿把 GetBodies2 指到 IComponent2、把 Name 指到 IBomFeature，均已按接收者改正。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_set_cut_list_properties",
+   "impl": "scripts/sw_weldment.py:set_cut_list_properties",
+   "claim": "Set cut-list properties on every cut-list item and return the read-back list.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/Add3.md",
+    "anchor": "Adds a custom property to a configuration or model document."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FirstFeature", "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."},
+    {"interface": "IFeature", "member": "GetNextFeature", "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."},
+    {"interface": "IFeature", "member": "GetFirstSubFeature", "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."},
+    {"interface": "IFeature", "member": "GetNextSubFeature", "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."},
+    {"interface": "IFeature", "member": "GetTypeName2", "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."},
+    {"interface": "IFeature", "member": "Name", "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."},
+    {"interface": "IFeature", "member": "CustomPropertyManager", "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."},
+    {"interface": "ICustomPropertyManager", "member": "Add3", "path": "C:/swapi/types/ICustomPropertyManager/Add3.md",
+     "anchor": "Adds a custom property to a configuration or model document."},
+    {"interface": "ICustomPropertyManager", "member": "Get6", "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."},
+    {"interface": "IPartDoc", "member": "GetBodies2", "path": "C:/swapi/types/IPartDoc/GetBodies2.md",
+     "anchor": "Gets the bodies in this part."},
+    {"interface": "IBody2", "member": "GetBodyBox", "path": "C:/swapi/types/IBody2/GetBodyBox.md",
+     "anchor": "Gets the bounding box for this body."},
+    {"interface": "IModelDoc2", "member": "FeatureManager", "path": "C:/swapi/types/IModelDoc2/FeatureManager.md",
+     "anchor": "Gets the [[IFeatureManager]] object, which allows access to the FeatureManager design tree."},
+    {"interface": "IFeatureManager", "member": "InsertWeldmentCutList2", "path": "C:/swapi/types/IFeatureManager/InsertWeldmentCutList2.md",
+     "anchor": "Inserts a cut-list-item folder feature containing the specified weldment bodies."},
+    {"interface": "IModelDoc2", "member": "EditRebuild3", "path": "C:/swapi/types/IModelDoc2/EditRebuild3.md",
+     "anchor": "Rebuilds only those features that need to be rebuilt in the active configuration in the model."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ICustomPropertyManager/Add3（Signature 4 参 FieldName/FieldType/FieldValue/OverwriteExisting，实现 manager.Add3(name,30,value,2) 参数个数与顺序一致；30=swCustomInfoText）、Get6（6 参，出参用 VARIANT(VT_BYREF|…) 包，与 implementation 一致）、IFeature/CustomPropertyManager、IBodyFolder 一族 ⇒ 首句『写每个清单项属性 + 回读』两半都有官方页。清单项由 ensure_cut_list 保证存在（实现第一句就是 ensure_cut_list(model)），故把该路径的成员（InsertWeldmentCutList2/GetBodyBox/EditRebuild3）一并登记。草稿把 Name 指到 IBomFeature、GetBodies2 指到 IComponent2，已按接收者改正。"
+   }
+  },
+  {
+   "tool": "solidworks_weldment_update_cut_list",
+   "impl": "scripts/sw_weldment.py:update_cut_list",
+   "claim": "Refresh every native cut-list folder and return folder-level geometry evidence.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+    "anchor": "Updates an automatically generated cut list."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "FirstFeature", "path": "C:/swapi/types/IModelDoc2/FirstFeature.md",
+     "anchor": "Gets the first feature in the document."},
+    {"interface": "IFeature", "member": "GetNextFeature", "path": "C:/swapi/types/IFeature/GetNextFeature.md",
+     "anchor": "Gets the next feature in the part."},
+    {"interface": "IFeature", "member": "GetFirstSubFeature", "path": "C:/swapi/types/IFeature/GetFirstSubFeature.md",
+     "anchor": "Gets the first sub-feature that belongs to this feature."},
+    {"interface": "IFeature", "member": "GetNextSubFeature", "path": "C:/swapi/types/IFeature/GetNextSubFeature.md",
+     "anchor": "Gets the next sub-feature from the owner of this sub-feature."},
+    {"interface": "IFeature", "member": "GetTypeName2", "path": "C:/swapi/types/IFeature/GetTypeName2.md",
+     "anchor": "Gets the type of feature."},
+    {"interface": "IFeature", "member": "Name", "path": "C:/swapi/types/IFeature/Name.md",
+     "anchor": "Gets or sets the name of the current feature."},
+    {"interface": "IFeature", "member": "GetSpecificFeature2", "path": "C:/swapi/types/IFeature/GetSpecificFeature2.md",
+     "anchor": "Gets the more specific interface to a selected feature."},
+    {"interface": "IBodyFolder", "member": "UpdateCutList", "path": "C:/swapi/types/IBodyFolder/UpdateCutList.md",
+     "anchor": "Updates an automatically generated cut list."},
+    {"interface": "IBodyFolder", "member": "GetBodyCount", "path": "C:/swapi/types/IBodyFolder/GetBodyCount.md",
+     "anchor": "Gets the number of bodies in the folder."},
+    {"interface": "IFeature", "member": "CustomPropertyManager", "path": "C:/swapi/types/IFeature/CustomPropertyManager.md",
+     "anchor": "Gets the custom property information for weldment and cut-list item features only."},
+    {"interface": "ICustomPropertyManager", "member": "GetNames", "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."},
+    {"interface": "ICustomPropertyManager", "member": "Get6", "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IBodyFolder/UpdateCutList 全页：Description『Updates an automatically generated cut list.』、Returns『True if the automatically generated cut list is successfully updated…』、Remarks『You must specify when to update an automatically generated cut list in a part document.』⇒ 与首句『Refresh every native cut-list folder』同一件事，且证实它是**写**操作（首句第二句已明说『Modifies the cut list』，与官方一致）。『folder-level geometry evidence』侧读了 IFeature/GetSpecificFeature2（→ IBodyFolder）、IBodyFolder/GetBodyCount、ICustomPropertyManager/GetNames+Get6。草稿把 Name 指到 IBomFeature，接收者其实是 IFeature，已改。"
+   }
+  },
+  {
+   "tool": "solidworks_custom_property_count",
+   "impl": "scripts/sw_custom_property.py:custom_property_count",
+   "claim": "Return how many custom properties the document or one configuration has.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/Count.md",
+    "anchor": "Gets the number of custom properties."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "Extension", "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."},
+    {"interface": "IModelDocExtension", "member": "CustomPropertyManager", "path": "", "anchor": "", "documented": false,
+     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM（AI Solidworks\\官方文档\\SWhelp\\sldworksapi\\SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html）有正文『Gets the custom properties for this document or configuration.』+ 参数 ConfigName，但 CHM 是机器本地目录（.gitignore 排除），不能写进台账当页。按纪律不编页，只记账。"},
+    {"interface": "ICustomPropertyManager", "member": "Count", "path": "C:/swapi/types/ICustomPropertyManager/Count.md",
+     "anchor": "Gets the number of custom properties."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ICustomPropertyManager/Count（『Gets the number of custom properties.』，Returns『0 or the number of custom properties』，Remarks『Call this method before calling ICustomPropertyManager::IGetNames.』）⇒ 与首句『how many custom properties』同一件事；『document or one configuration』由 IModelDocExtension.CustomPropertyManager(ConfigName) 那条决定（.md 页空、CHM 页有正文，见该成员的 gap）。★ 草稿把 Count 指到 IBalloonStack（同名成员按字母序取错）——接收者是 ICustomPropertyManager，已按实现 docstring『ICustomPropertyManager.Count』与接收者改正。"
+   }
+  },
+  {
+   "tool": "solidworks_custom_property_get",
+   "impl": "scripts/sw_custom_property.py:custom_property",
+   "claim": "Read one file custom property value together with its type and whether it is editable.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+    "anchor": "Gets the value and the evaluated value of the specified custom property."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "Extension", "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."},
+    {"interface": "IModelDocExtension", "member": "CustomPropertyManager", "path": "", "anchor": "", "documented": false,
+     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"},
+    {"interface": "ICustomPropertyManager", "member": "Get6", "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."},
+    {"interface": "ICustomPropertyManager", "member": "GetType2", "path": "C:/swapi/types/ICustomPropertyManager/GetType2.md",
+     "anchor": "Gets the type of the specified custom property for a configuration or model document."},
+    {"interface": "ICustomPropertyManager", "member": "IsCustomPropertyEditable", "path": "C:/swapi/types/ICustomPropertyManager/IsCustomPropertyEditable.md",
+     "anchor": "Gets whether the specified custom property is editable in the specified configuration."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 Get6（6 参，出参 out ValOut/ResolvedValOut/WasResolved/LinkToProperty，实现 _read_value_via_get6 用 VARIANT(VT_BYREF|…) 包 4 个出参，与 Signature 吻合）、GetType2（『Gets the type of the specified custom property…』，Returns 为 swCustomInfoType_e）、IsCustomPropertyEditable（『Gets whether the specified custom property is editable in the specified configuration.』）⇒ 首句『值 + 类型 + 是否可编辑』三样都有官方页。★★ 但实现有参数个数缺陷（按规格不在本批改，另报）：官方签名是 IsCustomPropertyEditable(PropertyName, ConfigurationName) 两个必填参数（反射 _raw/reflect_sldworks/iface_sldworks.txt:4330『Boolean IsCustomPropertyEditable(String, String)』只有一个重载），而 scripts/sw_custom_property.py 只传了 name 一个实参，异常被 except 吞掉、editable 恒为 None ⇒ 首句承诺的『whether it is editable』目前取不到。"
+   }
+  },
+  {
+   "tool": "solidworks_custom_property_list",
+   "impl": "scripts/sw_custom_property.py:custom_properties",
+   "claim": "Read every file custom property of the active document with its value and type.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+    "anchor": "Gets the names of the custom properties."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "Extension", "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."},
+    {"interface": "IModelDocExtension", "member": "CustomPropertyManager", "path": "", "anchor": "", "documented": false,
+     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"},
+    {"interface": "ICustomPropertyManager", "member": "GetNames", "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."},
+    {"interface": "ICustomPropertyManager", "member": "Count", "path": "C:/swapi/types/ICustomPropertyManager/Count.md",
+     "anchor": "Gets the number of custom properties."},
+    {"interface": "ICustomPropertyManager", "member": "Get6", "path": "C:/swapi/types/ICustomPropertyManager/Get6.md",
+     "anchor": "Gets the value and the evaluated value of the specified custom property."},
+    {"interface": "ICustomPropertyManager", "member": "GetType2", "path": "C:/swapi/types/ICustomPropertyManager/GetType2.md",
+     "anchor": "Gets the type of the specified custom property for a configuration or model document."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 GetNames（『Gets the names of the custom properties.』，Returns『Names of the custom properties』）、Count（Remarks 要求先 Count 再 IGetNames；实现里是 count_reported=Count 与逐个 Get6 并行，两边都有页）、Get6、GetType2 ⇒ 首句『每个属性 + 值 + 类型』同一件事。草稿把 Count 指到 IBalloonStack，已按接收者改成 ICustomPropertyManager。"
+   }
+  },
+  {
+   "tool": "solidworks_custom_property_names",
+   "impl": "scripts/sw_custom_property.py:custom_property_names",
+   "claim": "Return the custom property names of the document or one configuration as a list.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+    "anchor": "Gets the names of the custom properties."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "Extension", "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."},
+    {"interface": "IModelDocExtension", "member": "CustomPropertyManager", "path": "", "anchor": "", "documented": false,
+     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"},
+    {"interface": "ICustomPropertyManager", "member": "GetNames", "path": "C:/swapi/types/ICustomPropertyManager/GetNames.md",
+     "anchor": "Gets the names of the custom properties."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 ICustomPropertyManager/GetNames（『Gets the names of the custom properties.』，Signature『System.object GetNames()』，Returns『Names of the custom properties』）⇒ 与首句『names … as a list』同一件事（实现把返回的 SAFEARRAY 转成 list）。『document or one configuration』由 IModelDocExtension.CustomPropertyManager(ConfigName) 决定（.md 页空，见 gap）。"
+   }
+  },
+  {
+   "tool": "solidworks_export_dxf",
+   "impl": "scripts/sw_export.py:export_dxf_report",
+   "claim": "Export the active document to a DXF file at output_path and confirm the file exists and is not empty.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IPartDoc/ExportToDWG2.md",
+    "anchor": "Saves various aspects of a part (sheet metal, faces, loops, and annotation views) to one or more DXF/DWG files, preserving the specified file name."
+   },
+   "members": [
+    {"interface": "IModelDoc2", "member": "GetType", "path": "C:/swapi/types/IModelDoc2/GetType.md",
+     "anchor": "Gets the type of the document."},
+    {"interface": "IPartDoc", "member": "ExportToDWG2", "path": "C:/swapi/types/IPartDoc/ExportToDWG2.md",
+     "anchor": "Saves various aspects of a part (sheet metal, faces, loops, and annotation views) to one or more DXF/DWG files, preserving the specified file name."},
+    {"interface": "IModelDoc2", "member": "GetPathName", "path": "C:/swapi/types/IModelDoc2/GetPathName.md",
+     "anchor": "Gets the full path name for this document, including the file name."},
+    {"interface": "IModelDoc2", "member": "GetTitle", "path": "C:/swapi/types/IModelDoc2/GetTitle.md",
+     "anchor": "Gets the title of the document that appears in the active window's title bar."},
+    {"interface": "IModelDoc2", "member": "ClearSelection2", "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."},
+    {"interface": "IModelDoc2", "member": "Extension", "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."},
+    {"interface": "IModelDocExtension", "member": "SaveAs3", "path": "C:/swapi/types/IModelDocExtension/SaveAs3.md",
+     "anchor": "Saves the active document to the specified name with advanced options."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IPartDoc/ExportToDWG2（『Saves various aspects of a part (sheet metal, faces, loops, and annotation views) to one or more DXF/DWG files…』，9 参，实现按 9 参传）与 IModelDocExtension/SaveAs3（工程图分支：『Saves the active document to the specified name…』；Remarks 明写 SaveAs3『Overwrites existing files unless they are read only』『Call IModelDoc2::ClearSelection2 before calling this method to clear the selection list』⇒ 实现里 _export_generic 先 ClearSelection2(True) 与官方 Remarks 一致）、IModelDoc2/GetType（3=工程图分支的选择依据）⇒ 首句『导出成 DXF』同一件事；『confirm the file exists and is not empty』是本仓判据（_export_report 回读文件大小），不是 API 断言。★ 草稿只登了 GetType：真正的成员在深两层的 export_to_dxf/_export_generic/export_flat_pattern_dxf 里，已逐条补登（按接收者：ExportToDWG2 在 IPartDoc，SaveAs3 在 IModelDocExtension）。★ 另记：未保存的钣金件会被显式拒绝（export_flat_pattern_dxf 的前置），与首句第二句一致。"
+   }
+  },
+  {
+   "tool": "solidworks_view_get_display_mode",
+   "impl": "scripts/sw_view.py:get_display_mode",
+   "claim": "Read the display mode of the model view as an swViewDisplayMode code.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/DisplayMode.md",
+    "anchor": "Gets or sets the display mode for this model view."
+   },
+   "members": [
+    {"interface": "IModelView", "member": "DisplayMode", "path": "C:/swapi/types/IModelView/DisplayMode.md",
+     "anchor": "Gets or sets the display mode for this model view."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelView/DisplayMode 全页：Description『Gets or sets the display mode for this model view.』、Returns『Display mode as defined by [[swViewDisplayMode_e]]』、Signature『System.int DisplayMode {get; set;}』（**属性**，不是方法；实现 get_com_member(view,'DisplayMode') 按属性取，正确）⇒ 首句『as an swViewDisplayMode code』正是 Returns 那一句，逐字有据。该页无 Remarks、无前置条件 ⇒ 首句第二句『the reference documents no preconditions for reading it』与页面一致。"
+   }
+  },
+  {
+   "tool": "solidworks_view_get_next",
+   "impl": "scripts/sw_view.py:get_next_view",
+   "claim": "Get the next model view in the document, or nothing when the list of views ends.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/GetNext.md",
+    "anchor": "When this method returns Nothing or null, you have reached the end of the list."
+   },
+   "members": [
+    {"interface": "IModelView", "member": "GetNext", "path": "C:/swapi/types/IModelView/GetNext.md",
+     "anchor": "Gets the next model view after this model view."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelView/GetNext 全页：Description『Gets the next model view after this model view.』、Returns『Next [[model view]] or Nothing or null if no more model views exist』、Remarks『You can traverse through the model views in a document by using this method. When this method returns Nothing or null, you have reached the end of the list.』⇒ 首句两个分句（取下一个 / 到尾部回空）**都在这一页**，claim 锚点取 Remarks 那句（『or nothing when the list ends』的逐字依据），成员锚点取 Description。实现 get_com_member(view,'GetNext') 零参调用，与 Signature『System.object GetNext()』一致。"
+   }
+  },
+  {
+   "tool": "solidworks_view_redraw",
+   "impl": "scripts/sw_view.py:redraw_view",
+   "claim": "Refresh the graphics window or one rectangular region of it.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IModelView/GraphicsRedraw.md",
+    "anchor": "Redraws the specified region of or the entire SOLIDWORKS graphics window."
+   },
+   "members": [
+    {"interface": "IModelView", "member": "GraphicsRedraw", "path": "C:/swapi/types/IModelView/GraphicsRedraw.md",
+     "anchor": "Redraws the specified region of or the entire SOLIDWORKS graphics window."}
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "review-r2",
+    "at": "2026-11-01",
+    "method": "read official page",
+    "level": "human",
+    "notes": "读了 IModelView/GraphicsRedraw 全页：Description『Redraws the specified region of or the entire SOLIDWORKS graphics window.』、Parameters『Array of four integers or longs indicating the boundary of the region…; if the array is empty, then the entire graphics window is redrawn』、Remarks『This method forces the specified region or the entire SOLIDWORKS graphics window to be updated immediately when called.』⇒ 首句『重绘整个窗口或一个矩形区域』逐字同一件事，连『空 = 整窗』的实现默认（scope_or_none=None）也与 Parameters 一致。首句第二句『does not modify model geometry』与 Description/Remarks 不冲突（该页只说重绘）。"
+   }
+  }
+ ]
+}
