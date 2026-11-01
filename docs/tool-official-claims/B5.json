@@ -2490,7 +2490,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi（无 IModelView/IPartDoc 同名页）。按铁律 5 记缺口、不编页 —— 实现里它是 **试名探测**（scripts/sw_sheet_metal_weld_entry.py::_surface_body_count 的循环，两源均查不到，取不到就降级返回 None）。"
+     "gap": "GetSurfaceBodies 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -2498,7 +2498,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；C:\\swapi\\index\\by_member_name.md 命中 0 个接口（无）。已查 SWhelp\\sldworksapi。同上：实现是 _surface_body_count 里的第二个试名，取不到就降级，不静默成 0。"
+     "gap": "GetSurfaceBodyCount 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -2720,37 +2720,47 @@
      "interface": "IFeatureManager",
      "member": "GetPartingLinesCount",
      "documented": false,
-     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingLinesCount.md；该成员真身在 IPartingLineFeatureData（该页 Description『Gets the number of edges used as parting lines.』）。实现从 FeatureManager 上读，真机 AttributeError"
+     "gap": "GetPartingLinesCount 在 IFeatureManager 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
-     "interface": "IFeatureManager",
+     "interface": "IToolingSplitFeatureData",
      "member": "GetPartingSurfacesCount",
-     "documented": false,
-     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetPartingSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+     "path": "C:/swapi/types/IToolingSplitFeatureData/GetPartingSurfacesCount.md",
+     "anchor": "Gets the number of parting surface bodies in this tooling split feature.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
-     "interface": "IFeatureManager",
+     "interface": "IToolingSplitFeatureData",
      "member": "GetCavitySurfacesCount",
-     "documented": false,
-     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCavitySurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+     "path": "C:/swapi/types/IToolingSplitFeatureData/GetCavitySurfacesCount.md",
+     "anchor": "Gets the number of cavity surface bodies in this tooling split feature.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
-     "interface": "IFeatureManager",
+     "interface": "IToolingSplitFeatureData",
      "member": "GetCoreSurfacesCount",
-     "documented": false,
-     "gap": "C:\\swapi\\types\\IFeatureManager\\ 无 GetCoreSurfacesCount.md；IPartingLineFeatureData / IPartingSurfaceFeatureData 下也没有同名页 —— 两套离线源都查不到"
+     "path": "C:/swapi/types/IToolingSplitFeatureData/GetCoreSurfacesCount.md",
+     "anchor": "Gets the number of core surface bodies in this tooling split feature.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
-     "interface": "IModelDoc2",
+     "interface": "IPartingSurfaceFeatureData",
      "member": "PartingType",
-     "documented": false,
-     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 PartingType.md；该成员真身在 IPartingSurfaceFeatureData（Beyond『Gets or sets the type of parting surface.』）"
+     "path": "C:/swapi/types/IPartingSurfaceFeatureData/PartingType.md",
+     "anchor": "Gets or sets the type of parting surface.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
-     "interface": "IModelDoc2",
+     "interface": "IPartingLineFeatureData",
      "member": "CoreCavitySplit",
-     "documented": false,
-     "gap": "C:\\swapi\\types\\IModelDoc2\\ 无 CoreCavitySplit.md；真身在 IPartingLineFeatureData（『Gets or sets the core/cavity split option for a parting line.』）"
+     "path": "C:/swapi/types/IPartingLineFeatureData/CoreCavitySplit.md",
+     "anchor": "Gets or sets the core/cavity split option for a parting line.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],

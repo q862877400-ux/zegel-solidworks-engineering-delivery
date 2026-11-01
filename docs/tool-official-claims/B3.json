@@ -252,7 +252,7 @@
      "interface": "",
      "member": "Name",
      "documented": false,
-     "gap": "实现取的是 `IAssemblyDoc::AddMate5` 的返回值（该页 ## Returns 逐字「[[Mate]]」）；`IMate` / `IMate2` 在 `C:\\swapi\\types` 下都没有 `Name` 成员页，`by_member_name` 索引里 `Name` 只挂在 IFeature / IBomFeature / IMateLoadReference 等 24 个接口上 ⇒ 草稿指向的 `IMateLoadReference.Name` 是**另一个对象**的成员，已订正为「查不到」。按铁律 5 记账，不编页。"
+     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -959,7 +959,7 @@
      "interface": "IMate2",
      "member": "Name",
      "documented": false,
-     "gap": "C:\\swapi\\types\\IMate2 目录里无语义成员 Name（只有 Alignment/CanBeFlipped/DisplayDimension*/Distance*ArcCondition/Flipped/ForceMisalignment/Get*/Has* 等）；C:\\swapi\\index\\by_member_name.md 搜 `Name` 在 **IMate2** 上 0 命中（只有 IMateReference/IMateLoadReference 的 Name）；C:\\swapi\\types 下无 IMate/IMate2 的 Name.md。实现对 `mate.Name = name` 外层包 try/except pass ⇒ 这一句即使无效也不会报错。"
+     "gap": "Name 在 IMate2 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -1009,7 +1009,7 @@
      "interface": "IMate2",
      "member": "Name",
      "documented": false,
-     "gap": "同 add_mate5_checked：C:\\swapi\\types\\IMate2 无 Name 成员页，C:\\swapi\\index\\by_member_name.md 里 IMate2 的 `Name` 0 命中；实现里 `mate.Name = name` 在 try/except 内（本工具走 add_mate5_checked，name 默认 None ⇒ 实际不执行）。"
+     "gap": "Name 在 IMate2 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],

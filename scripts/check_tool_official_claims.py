@@ -95,6 +95,16 @@ SWAPI_INDEX = Path(r"C:\swapi\index\by_member_name.md")
 #:   的工具全挂在那些接口上 ⇒ 只查一棵树会把「有页」的成员误记成「查不到」。
 CWORKS_API = Path(r"C:\cworks_en\api")
 
+#: ★ 其余**本机离线官方源**（按覆盖面排序）。★ 它们**不是**"没查到就算了"的借口：
+#:   每一棵都要查，结果的**形态**（有描述 / 只有签名 / 全无）写进台账的 `gap`。
+HTML_DOC_ROOTS = (
+    CWORKS_API,
+    Path(r"C:\cworks_vb6"),
+    Path(r"C:\cworks_manual"),
+    ROOT / "AI Solidworks" / "官方文档" / "SWhelp" / "sldworksapi",
+    ROOT / "AI Solidworks" / "官方文档" / "SWhelp" / "cosworks",
+)
+
 #: 包装函数形态：这三个是本仓全部「显式点名成员」的入口（`scripts/check_member_names.py` 同表）
 WRAP_NAMES = {"get_com_member", "call_com_member", "safe_get_com_member", "get_com_member_raw"}
 
@@ -194,29 +204,30 @@ def page_front_matter(text: str) -> dict:
     return out
 
 
-_CWORKS_PAGE = re.compile(
-    r"^SolidWorks\.Interop\.cosworks~SolidWorks\.Interop\.cosworks\.(?P<iface>[A-Za-z_]\w*)"
-    r"~(?P<member>[A-Za-z_]\w*)\.html?$"
-)
+def html_member_index(root: Path) -> dict[str, list[tuple[str, str]]]:
+    """⇒ `{成员名: [(接口, 页路径)]}`：一棵 HTML 帮助树里的接口成员页。
 
-
-def cworks_member_index(root: Path = CWORKS_API) -> dict[str, list[tuple[str, str]]]:
-    """⇒ `{成员名: [(接口, 页路径)]}`：Simulation add-in 帮助解包里的接口成员页。
-
-    ★ 文件名就是身份：`SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis.html`
-      ⇒ 接口 `ICWStudy`、成员 `RunAnalysis`。`_members` / `~I` 开头的聚合页不算成员页。
+    ★ 文件名就是身份，最后两段是 `<接口>~<成员>`：
+      `SolidWorks.Interop.cosworks~…ICWStudy~RunAnalysis.html` ·
+      `CosmosWorksLib~CWLoadsAndRestraintsManager~AddConvection.html` ·
+      `SolidWorks.Interop.sldworks~…IModelDoc2~ViewZoomtofit2.html`。
+      `_members` 聚合页不算成员页。
     ★ 树不在（换机器）⇒ 返回空 dict，不抛。
     """
     out: dict[str, list[tuple[str, str]]] = {}
     if not root.is_dir():
         return out
-    for path in root.iterdir():
-        if path.suffix.lower() not in {".html", ".htm"}:
+    for path in root.rglob("*.htm*"):
+        parts = path.stem.split("~")
+        if len(parts) < 2:
             continue
-        m = _CWORKS_PAGE.match(path.name)
-        if not m or m.group("member").endswith("_members") or m.group("member").startswith("I"):
+        iface, member = parts[-2], parts[-1]
+        #: `SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~RunAnalysis`
+        #: ⇒ 接口名取最后一段（去掉程序集前缀）✓
+        iface = iface.rsplit(".", 1)[-1]
+        if not iface or not member or member.endswith("_members") or iface.endswith("_members"):
             continue
-        out.setdefault(m.group("member"), []).append((m.group("iface"), str(path)))
+        out.setdefault(member, []).append((iface, str(path)))
     return out
 
 
@@ -234,8 +245,9 @@ def member_index() -> dict[str, list[tuple[str, str]]] | None:
                 continue
             member, iface = m.group("member"), m.group("iface")
             idx.setdefault(member, []).append((iface, str(SWAPI_TYPES / iface / (member + ".md"))))
-    for member, entries in cworks_member_index().items():
-        idx.setdefault(member, []).extend(entries)
+    for root in HTML_DOC_ROOTS:
+        for member, entries in html_member_index(root).items():
+            idx.setdefault(member, []).extend(entries)
     return idx or None
 
 

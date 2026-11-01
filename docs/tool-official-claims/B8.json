@@ -2605,7 +2605,7 @@
      "interface": "IFeature",
      "member": "GetSketch",
      "documented": false,
-     "gap": "C:\\swapi\\types 无 IFeature/GetSketch.md；CHM sldworksapi 亦无 IFeature~GetSketch 页（只查得到 IFeature.GetSpecificFeature2）。实现里 `for meth in (\"GetSpecificFeature2\", \"GetSketch\")` 的第二条分支在真机会 AttributeError 并被 except 吞掉 ⇒ 该成员不存在"
+     "gap": "GetSketch 在 IFeature 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "IEntity",
@@ -4987,8 +4987,10 @@
     {
      "interface": "IModelDoc2",
      "member": "ViewZoomtofit2",
-     "documented": false,
-     "gap": "C:/swapi/types 下无 IModelDoc2/ViewZoomtofit2.md（index/by_member_name.md 里也没有 ViewZoomtofit2 条目）；已查 IModelDoc2 目录与全库成员索引，均无此成员页。按铁律 5 不编页。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html",
+     "anchor": "Zooms the currently active view to fit the screen.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "IModelDoc2",
@@ -5281,8 +5283,10 @@
     {
      "interface": "IModelDoc2",
      "member": "ViewZoomtofit2",
-     "documented": false,
-     "gap": "C:\\swapi\\types 无 IModelDoc2/ViewZoomtofit2.md 与 IModelView/ViewZoomtofit2.md；C:\\swapi\\index\\by_member_name.md 里 `ViewZoomtofit2` 命中 0 条；CHM 解包 AI Solidworks\\官方文档\\SWhelp\\sldworksapi 无该名页面。★ 实现 `sw_review.zoom_to_fit` 确实按名字调它 ⇒ 按铁律 5 记账，不编页。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html",
+     "anchor": "Zooms the currently active view to fit the screen.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -6199,8 +6203,10 @@
     {
      "interface": "IModelDoc2",
      "member": "ViewZoomtofit2",
-     "documented": false,
-     "gap": "C:\\swapi\\types 无 IModelDoc2/ViewZoomtofit2.md 与 IModelView/ViewZoomtofit2.md；C:\\swapi\\index\\by_member_name.md 里 `ViewZoomtofit2` 命中 0 条；CHM 解包 AI Solidworks\\官方文档\\SWhelp\\sldworksapi 无该名页面。★ 实现 `sw_review.zoom_to_fit` 确实按名字调它 ⇒ 按铁律 5 记账，不编页。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html",
+     "anchor": "Zooms the currently active view to fit the screen.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -8698,10 +8704,12 @@
      "anchor": "Gets or sets the name of the current feature."
     },
     {
-     "interface": "",
+     "interface": "IModelDoc2",
      "member": "ViewZoomtofit2",
-     "documented": false,
-     "gap": "`C:\\swapi\\types` 全树**没有** `ViewZoomtofit2`（也无 ViewZoomToFit 任何大小写）：IModelDoc2 目录下无任何 View* 页，IModelView 只有 `ZoomByFactor`，IModelDocExtension 只有 `ViewZoomToSheet`；`by_member_name` 索引同样 0 命中。按铁律 5 记账，不编页。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html",
+     "anchor": "Zooms the currently active view to fit the screen.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],

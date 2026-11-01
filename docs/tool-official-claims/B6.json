@@ -75,7 +75,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "CostingDefaults 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:292: Object get_CostingDefaults()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -179,7 +179,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "CostingTemplateName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:32: String get_CostingTemplateName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -187,7 +187,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "CurrencyCode 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:34: String get_CurrencyCode()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -195,7 +195,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "CurrencyName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:35: String get_CurrencyName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -203,7 +203,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "CurrencySeparator 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:36: String get_CurrencySeparator()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -231,7 +231,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "LotSizeForMultibody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:267: Int32 get_LotSizeForMultibody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -239,7 +239,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "LotSizeForSingleBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:268: Int32 get_LotSizeForSingleBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -324,7 +324,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "LotSize 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:38: Int32 get_LotSize()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -352,7 +352,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "MarkUpPercent 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:39: Double get_MarkUpPercent()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
@@ -360,7 +360,7 @@
      "path": "",
      "anchor": "",
      "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "gap": "MarkUpType 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:40: Int32 get_MarkUpType()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -959,37 +959,47 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ICosmosWorks",
      "member": "ActiveDoc",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICosmosWorks~ActiveDoc.html",
+     "anchor": "Gets the model document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWModelDoc",
      "member": "StudyManager",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWModelDoc~StudyManager.html",
+     "anchor": "Gets the study manager.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "StudyCount",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性（不加括号调用）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~StudyCount.html",
+     "anchor": "Gets the number of studies in the open document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "GetStudy",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　方法，传下标。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~GetStudy.html",
+     "anchor": "Gets the study at the specified index.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "Name",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取不到名字也照列（空名字），不跳过。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+     "anchor": "Gets the name of this study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2331,7 +2341,7 @@
      "interface": "",
      "member": "Name",
      "documented": false,
-     "gap": "Costing 加载项（SolidWorks.Interop.sldcostingapi）在本机离线文档树里**没有任何页**：`C:\\swapi\\types` 下 566 个接口目录中无一个 Cost* / ICost* 目录，`by_member_name` 索引 0 命中；本仓反射转储 `_raw/reflect/iface_sldcostingapi.txt` 有签名、无文档。按铁律 5 记账，不编页。 另：反射转储 `ICostBody` 段逐字只有 `String GetName()`，**没有** `Name` ——实现取的是 `Name`，很可能应为 `GetName`；已按「不改实现」的纪律记进本批 defects。"
+     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -2357,25 +2367,25 @@
      "interface": "",
      "member": "GetCostAnalysis",
      "documented": false,
-     "gap": "Costing 加载项（SolidWorks.Interop.sldcostingapi）在本机离线文档树里**没有任何页**：`C:\\swapi\\types` 下 566 个接口目录中无一个 Cost* / ICost* 目录，`by_member_name` 索引 0 命中；本仓反射转储 `_raw/reflect/iface_sldcostingapi.txt` 有签名、无文档。按铁律 5 记账，不编页。 反射转储 `ICostBody` 段逐字有 `CostAnalysis GetCostAnalysis()`。"
+     "gap": "GetCostAnalysis 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
      "member": "GetName",
      "documented": false,
-     "gap": "Costing 加载项（SolidWorks.Interop.sldcostingapi）在本机离线文档树里**没有任何页**：`C:\\swapi\\types` 下 566 个接口目录中无一个 Cost* / ICost* 目录，`by_member_name` 索引 0 命中；本仓反射转储 `_raw/reflect/iface_sldcostingapi.txt` 有签名、无文档。按铁律 5 记账，不编页。 反射转储 `ICostBody` 段逐字有 `String GetName()`。"
+     "gap": "GetName 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:246: String GetName()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
      "member": "GetSWBody",
      "documented": false,
-     "gap": "Costing 加载项（SolidWorks.Interop.sldcostingapi）在本机离线文档树里**没有任何页**：`C:\\swapi\\types` 下 566 个接口目录中无一个 Cost* / ICost* 目录，`by_member_name` 索引 0 命中；本仓反射转储 `_raw/reflect/iface_sldcostingapi.txt` 有签名、无文档。按铁律 5 记账，不编页。 反射转储 `ICostBody` 段逐字有 `Object GetSWBody()`。"
+     "gap": "GetSWBody 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:247: Object GetSWBody()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "",
      "member": "Name",
      "documented": false,
-     "gap": "Costing 加载项（SolidWorks.Interop.sldcostingapi）在本机离线文档树里**没有任何页**：`C:\\swapi\\types` 下 566 个接口目录中无一个 Cost* / ICost* 目录，`by_member_name` 索引 0 命中；本仓反射转储 `_raw/reflect/iface_sldcostingapi.txt` 有签名、无文档。按铁律 5 记账，不编页。 另：反射转储 `ICostBody` **没有** `Name`（只有 `GetName()`） ⇒ 见本批 defects。"
+     "gap": "Name 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldcostingapi.txt:255: String get_Name()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -2418,14 +2428,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddCentrifugalForce",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddCentrifugalForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddCentrifugalForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方参数是**单实体**（DispEntity），实现取选区第一个 ⇒ 与描述一致。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddCentrifugalForce.html",
+     "anchor": "Creates a centrifugal force.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2468,14 +2482,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddConvection",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddConvection` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddConvection.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷，描述要求 thermal 研究是真机/项目规则（第二句已写明 static 计数不变）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddConvection.html",
+     "anchor": "Creates a convection load for thermal studies.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2518,14 +2536,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddDistributedMass",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddDistributedMass` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddDistributedMass.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现传 (entities, units, mass) 三参，与来源块抄的官方 4 参（+ByRef ErrorCode）一致。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddDistributedMass.html",
+     "anchor": "Creates a distributed mass.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2568,14 +2590,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddElasticConnector",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddElasticConnector` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddElasticConnector.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现冻结的一参调用；描述「static 研究」是项目规则（第二句已写明）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddElasticConnector.html",
+     "anchor": "Adds an elastic support fixture.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2618,14 +2644,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddForce",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　force_type 直接进 AddForce 的第一参（1=法向、2=力矩），SWS_FORCE_TYPES 有表。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddForce.html",
+     "anchor": "Pass null in RefGeom if reference geometry is not used.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2668,14 +2698,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddGravity",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddGravity` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddGravity.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方参数是单实体 ⇒ 实现取选区第一个实体，与描述「only the first selected entity」一致。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddGravity.html",
+     "anchor": "Adds a gravity load.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2718,14 +2752,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddHeatFlux",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddHeatFlux` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddHeatFlux.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddHeatFlux.html",
+     "anchor": "Creates a heat flux load for thermal studies.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2768,14 +2806,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddHeatPower",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddHeatPower` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddHeatPower.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddHeatPower.html",
+     "anchor": "Creates a heat power load for thermal studies.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2818,14 +2860,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddPressure",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddPressure` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddPressure.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　实现来源块抄的官方 VB 声明里第 3 参写作 RegGeom（非 RefGeom）；实现用空 Dispatch 参数包代替裸 None（真机 -2147352571 类型不匹配）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddPressure.html",
+     "anchor": "Pass null or nothing if reference geometry is not used. If you pass a Dispatch pointer, it is ignored.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2868,14 +2914,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddRadiation",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddRadiation` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddRadiation.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　两参调用（radiation_type + entities），与来源块抄的官方签名一致。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRadiation.html",
+     "anchor": "Creates a radiation load for thermal studies.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2918,14 +2968,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddRemoteLoad",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddRemoteLoad` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddRemoteLoad.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　描述里的「location / direction / magnitude」是本仓对 DX/DY/DZ 的读法：官方参数名是 DXValue/DYValue/DZValue，枚举值表本仓注明反射 dump 未收录 ⇒ 只做 int 透传。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddRemoteLoad.html",
+     "anchor": "Creates a remote load of the specified type at the specified location.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -2968,14 +3022,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddTemperature",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddTemperature` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddTemperature.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　热载荷；描述要求 thermal 研究是项目规则。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddTemperature.html",
+     "anchor": "Creates a temperature load for thermal studies.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -3018,14 +3076,18 @@
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "AddForce",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AddForce` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~AddForce.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　★ 力矩不是独立方法：add_torque 走 AddForce 且第一参传 SWS_FORCE_TYPES['torque']=2 ⇒ 成员登记为 AddForce（不是 AddTorque）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~AddForce.html",
+     "anchor": "Pass null in RefGeom if reference geometry is not used.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　回读判据：Count 前后差 == 1 才算 ok（回读优先，不看返回对象）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -3063,19 +3125,23 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ICosmosWorks",
      "member": "ActiveDoc",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICosmosWorks~ActiveDoc.html",
+     "anchor": "Gets the model document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWModelDoc",
      "member": "StudyManager",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWModelDoc~StudyManager.html",
+     "anchor": "Gets the study manager.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -3113,43 +3179,53 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ICosmosWorks",
      "member": "ActiveDoc",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICosmosWorks~ActiveDoc.html",
+     "anchor": "Gets the model document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWModelDoc",
      "member": "StudyManager",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWModelDoc~StudyManager.html",
+     "anchor": "Gets the study manager.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "CreateNewStudy3",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy3` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　官方签名 CreateNewStudy3(Name, StudyType, MeshType, &ErrorCode) 逐字抄自实现来源块（反射 dump）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~CreateNewStudy3.html",
+     "anchor": "Creates a new study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "CreateNewStudy2",
      "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy2` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　降级入口 1：(Name, StudyType, &ErrorCode)。"
+     "gap": "CreateNewStudy2 在 ICWStudyManager 上无描述页；只有签名页、无散文说明：C:\\cworks_en\\api\\SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~CreateNewStudy2.html（ICWStudyManager）；出厂类型库有签名（无描述）：iface_cosworks.txt:2597: CWStudy CreateNewStudy2(String, Int32, Int32&)。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ICWStudyManager",
      "member": "CreateNewStudy",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CreateNewStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　降级入口 2：官方 4 参 (Name, StudyType, MeshType, &ErrorCode)。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~CreateNewStudy.html",
+     "anchor": "For documents with surface geometry only (no solids), only RefSurfShellElementMesh is supported.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "Name",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　回读新建研究的实际名字。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+     "anchor": "Gets the name of this study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -3187,109 +3263,143 @@
      "interface": "ICwAddincallback",
      "member": "CosmosWorks",
      "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `CosmosWorks` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　加载项对象上的 CosmosWorks 入口（官方 getter 名 get_CosmosWorks，挂在 ICwAddincallback 上）。"
+     "gap": "CosmosWorks 在 ICwAddincallback 上无描述页；只有签名页、无散文说明：C:\\cworks_vb6\\CosmosWorksLib~CosmosWorks.html（CosmosWorksLib）；出厂类型库有签名（无描述）：iface_cosworks.txt:238: CosmosWorks get_CosmosWorks()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ICosmosWorks",
      "member": "ActiveDoc",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveDoc` 命中 1 个接口（ISldWorks），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　取 CWModelDoc。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICosmosWorks~ActiveDoc.html",
+     "anchor": "Gets the model document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWModelDoc",
      "member": "StudyManager",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，不是无参方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWModelDoc~StudyManager.html",
+     "anchor": "Gets the study manager.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "ActiveStudy",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ActiveStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性，活动研究下标。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~ActiveStudy.html",
+     "anchor": "Gets or sets the index of the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "StudyCount",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `StudyCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~StudyCount.html",
+     "anchor": "Gets the number of studies in the open document.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudyManager",
      "member": "GetStudy",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetStudy` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudyManager~GetStudy.html",
+     "anchor": "Gets the study at the specified index.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "LoadsAndRestraintsManager",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `LoadsAndRestraintsManager` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　属性（get_ 前缀），不是方法。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~LoadsAndRestraintsManager.html",
+     "anchor": "Gets the loads and restraints manager.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "Name",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　研究名。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~Name.html",
+     "anchor": "Gets the name of this study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "AnalysisType",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `AnalysisType` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　算例类型。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~AnalysisType.html",
+     "anchor": "Gets the type of the analysis of the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "MeshType",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `MeshType` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　网格类型。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~MeshType.html",
+     "anchor": "Gets the mesh type of this study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWStudy",
      "member": "ConfigurationName",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `ConfigurationName` 命中 4 个接口（IDocumentSpecification / ILibraryFeatureData / IStructuralMemberFeatureData / IView3D），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　配置名。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWStudy~ConfigurationName.html",
+     "anchor": "Gets the name of the study's configuration.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "Count",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Count` 命中 4 个接口（IBalloonStack / ICustomPropertyManager / IFaultEntity / IParagraphs），**全部不是 cosworks 程序集的接口**。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~Count.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　载荷条数。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~Count.html",
+     "anchor": "Gets the number of loads and restraints defined in the active study.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraintsManager",
      "member": "GetLoadsAndRestraints",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `GetLoadsAndRestraints` 0 命中。cosworks 册确有该成员的 CHM 页（AI Solidworks/官方文档/SWhelp/cosworks/ICWLoadsAndRestraintsManager~GetLoadsAndRestraints.html），但正文是 JSON 转义后嵌入的 HTML：**自然语言句子不落盘**（实测搜「Adds 」0 命中），只有参数名与签名片段可逐字命中（以 AddForce 页实测：NForceType / DispArray / RefGeom / ErrorCode 各 9–10 处）⇒ 取不到能支撑语义的整句锚点，不能当本门禁的锚点源（门禁只接受可逐字匹配的整句）。　官方 2 参 (Index, &ErrorCode) —— 初稿曾按单参调用，已被反射清单纠正；实现现在传 out_i4()。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraintsManager~GetLoadsAndRestraints.html",
+     "anchor": "Gets the load or restraint at the specified index.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraints",
      "member": "Name",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Name` 命中 24 个接口（IBody2 / IBomFeature / ICommandGroup / ICommandTab / IComment / IComponent2 …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷名。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraints~Name.html",
+     "anchor": "Gets the name of load or restraint.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraints",
      "member": "Type",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `Type` 命中 36 个接口（IBodyFolder / ICalloutVariable / ICamera / IChamferFeatureData2 / IConfiguration / ICornerTreatmentGroupFolder …），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷类型。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraints~Type.html",
+     "anchor": "Gets the type of the load or restraint.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraints",
      "member": "State",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `State` 命中 1 个接口（IPropertyManagerPageCheckbox），**全部不是 cosworks 程序集的接口**。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　单条载荷状态。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraints~State.html",
+     "anchor": "Gets the suppression state of the load or restraint.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICWLoadsAndRestraints",
      "member": "EntityCount",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `EntityCount` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　★ 计数属性在管理器上叫 Count，EntityCount 属于**单条载荷对象**（实现来源块专门记了这次纠错）。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICWLoadsAndRestraints~EntityCount.html",
+     "anchor": "Gets the number of entities in this load or restraint.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICosmosWorks",
      "member": "VersionNumber",
-     "documented": false,
-     "gap": "C:/swapi/types 整族缺席：566 个接口目录里没有 ICW*（无 ICWLoadsAndRestraintsManager / ICWStudyManager / ICWModelDoc / ICosmosWorks），官方离线树只收 sldworks / swconst / 部分动学 API；C:/swapi/index/by_member_name.md：搜 `VersionNumber` 0 命中。cosworks 册逐文件看过：47 个文件只覆盖 ICWLoadsAndRestraintsManager 一族与两个示例，没有 ICWStudyManager / ICWModelDoc / ICosmosWorks 的成员页。实现来源块引用的另一条官方源（反射 dump `D:\\AI\\SW\\_raw\\reflect\\iface_cosworks.txt`）**本机已不存在**（Test-Path False）⇒ 本台账无法沿那条链路复核签名，也不拿它当依据。　cosmos 版本号。"
+     "path": "C:/cworks_en/api/SolidWorks.Interop.cosworks~SolidWorks.Interop.cosworks.ICosmosWorks~VersionNumber.html",
+     "anchor": "Gets the SOLIDWORKS Simulation version number.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],

@@ -1225,7 +1225,7 @@
      "interface": "",
      "member": "Xform",
      "documented": false,
-     "gap": "`C:\\swapi\\types` 全树**没有** `Xform` 成员页（`by_member_name` 索引 0 命中；只有 `ApplyTransform` 等把 Xform 当**形参名**的页面）⇒ 按铁律 5 记账，不编页。"
+     "gap": "Xform 在 （未登记接口） 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldworks.txt:11386: Object get_Xform()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "IModelView",

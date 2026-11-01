@@ -746,13 +746,13 @@
      "interface": "ISketch",
      "member": "Name",
      "documented": false,
-     "gap": "C:\\swapi\\types\\ISketch 下无 Name.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 的 104 个成员**无 Name**（只有 IFeature/Name.md 等）；两份 CHM（AI Solidworks\\官方文档\\SWhelp\\sldworksapi 与 sldworksapiv6）都搜不到 *ISketch~Name*、*Sketch~Name* 页。实现 _capture_sketch_ref 用 _safe_com_member(sketch_obj, \"Name\", default=fallback) 取草图名，取不到时退成 fallback（\"Sketch1\"）—— 与 docs/known-facts.md 第 9 条的中文名问题同族。"
+     "gap": "Name 在 ISketch 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     },
     {
      "interface": "ISketch",
      "member": "GetFeature",
      "documented": false,
-     "gap": "C:\\swapi\\types\\ISketch 下无 GetFeature.md；C:\\swapi\\index\\by_member_name.md 里 ISketch 成员无 GetFeature（索引里 GetFeature 只出现在其它接口）；两份 CHM 也搜不到 *ISketch~GetFeature*、*Sketch~GetFeature* 页。实现 _capture_sketch_ref/_refresh_sketch_ref 用它取草图对应的 IFeature，取不到回 None（不抛）。"
+     "gap": "GetFeature 在 ISketch 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -1449,7 +1449,7 @@
      "interface": "ISketch",
      "member": "Name",
      "documented": false,
-     "gap": "C:\\swapi\\types\\ISketch 目录存在（105 个页）但**没有 Name.md**，index/by_member_name.md 里也无 `on **ISketch**` 的 Name 条目；C:\\cworks_en\\api 是 Simulation 的参考页，与草图接口无关。按铁律 5 不编页。该调用位于 _active_sketch_name 的旁证读数里（取不到就回 None，不影响主操作）。"
+     "gap": "Name 在 ISketch 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],
@@ -1543,7 +1543,7 @@
      "interface": "ISketch",
      "member": "GetConstrainedStatus2",
      "documented": false,
-     "gap": "C:\\swapi\\types 无此页（只有 ISketch/GetConstrainedStatus.md 与 IComponent2/GetConstrainedStatus.md）；C:\\swapi\\index\\by_member_name.md 搜 `GetConstrainedStatus2` 0 命中；C:\\swapi\\types\\ISketch 目录内无该成员。实现里是 `for _member in (\"GetConstrainedStatus\", \"GetConstrainedStatus2\")` 的试名兜底，第一个就成功 ⇒ 该名字是防御性探测，不是实际调到的成员。"
+     "gap": "GetConstrainedStatus2 在 ISketch 上无描述页；全部 6 棵离线源未命中成员页。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],

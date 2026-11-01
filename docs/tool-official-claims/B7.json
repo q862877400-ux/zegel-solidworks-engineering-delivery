@@ -904,12 +904,12 @@
      "kind": "method"
     },
     {
-     "interface": "",
+     "interface": "IModelDoc2",
      "member": "ViewZoomtofit2",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "C:\\swapi\\types 无该成员页；by_member_name 索引命中 0 个接口（无）。已查 SWhelp\\cosworks 与 SWhelp\\sldworksapi，均无此页 —— 按铁律 5 记账，不编页。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDoc2~ViewZoomtofit2.html",
+     "anchor": "Zooms the currently active view to fit the screen.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     }
    ],
    "allowed_non_com": [],
@@ -940,10 +940,10 @@
     {
      "interface": "IModelDocExtension",
      "member": "CustomPropertyManager",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM（AI Solidworks\\官方文档\\SWhelp\\sldworksapi\\SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html）有正文『Gets the custom properties for this document or configuration.』+ 参数 ConfigName，但 CHM 是机器本地目录（.gitignore 排除），不能写进台账当页。按纪律不编页，只记账。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html",
+     "anchor": "Gets the custom properties for this document or configuration.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICustomPropertyManager",
@@ -980,10 +980,10 @@
     {
      "interface": "IModelDocExtension",
      "member": "CustomPropertyManager",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html",
+     "anchor": "Gets the custom properties for this document or configuration.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICustomPropertyManager",
@@ -1032,10 +1032,10 @@
     {
      "interface": "IModelDocExtension",
      "member": "CustomPropertyManager",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html",
+     "anchor": "Gets the custom properties for this document or configuration.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICustomPropertyManager",
@@ -1090,10 +1090,10 @@
     {
      "interface": "IModelDocExtension",
      "member": "CustomPropertyManager",
-     "path": "",
-     "anchor": "",
-     "documented": false,
-     "gap": "页存在但无正文：C:\\swapi\\types\\IModelDocExtension\\CustomPropertyManager.md 只有 front-matter 与标题（242 字节，无 Description/Signature/Parameters/Remarks）⇒ 无逐字锚点可引。已查 CHM 同名页（有正文『Gets the custom properties for this document or configuration.』），但 CHM 属机器本地目录、不入台账路径。按纪律不编页，只记账。"
+     "path": "D:/Agent-Studio/Deepseek-Harness/DSH-Data/workspace/SW/AI Solidworks/官方文档/SWhelp/sldworksapi/SolidWorks.Interop.sldworks~SolidWorks.Interop.sldworks.IModelDocExtension~CustomPropertyManager.html",
+     "anchor": "Gets the custom properties for this document or configuration.",
+     "documented": true,
+     "resolved_by": "audit-undocumented"
     },
     {
      "interface": "ICustomPropertyManager",
@@ -1379,7 +1379,7 @@
      "interface": "IModelView",
      "member": "GetModelDoc",
      "documented": false,
-     "gap": "C:\\swapi\\types\\IModelView\\ 里无 GetModelDoc.md（该目录列出的成员无此名）；CHM sldworksapi 的 .NET 树亦无 IModelView~GetModelDoc 页；只有 VB6 官方帮助 AI Solidworks\\官方文档\\SWhelp\\sldworksapivb6\\SldWorks~ModelView~GetModelDoc.html （标题 GetModelDoc Method (ModelView)，签名 GetModelDoc() As ModelDoc，无散文说明）"
+     "gap": "GetModelDoc 在 IModelView 上无描述页；全部 6 棵离线源未命中成员页；出厂类型库有签名（无描述）：iface_sldworks.txt:11394: ModelDoc GetModelDoc()。已查：C:\\swapi\\types · C:\\cworks_en\\api · C:\\cworks_vb6 · C:\\cworks_manual · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\sldworksapi · D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\AI Solidworks\\官方文档\\SWhelp\\cosworks。"
     }
    ],
    "allowed_non_com": [],

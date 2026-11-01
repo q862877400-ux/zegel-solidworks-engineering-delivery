@@ -75,3 +75,20 @@
 - 以 `_` 开头的文件是草稿，门禁不读；★ 别把草稿改名当成品提交。
 - 核完一批，跑一次全量 `--report`，把该批的 `no-record` 清零，然后 `--write-baseline`
   让待核清单降下来（**只许降**）。
+
+## 四、官方源清单（未登记成员必须逐棵查过）
+
+| 源 | 覆盖 | 形态 |
+|---|---|---|
+| `C:\swapi\types\<接口>\<成员>.md` | sldworks / swconst（566 个接口） | 有 Description / Signature / Remarks |
+| `C:\cworks_en\api\*.html` | **Simulation / Topology / 部分 Costing**（2704 页） | .NET 参考页，有描述句 |
+| `AI Solidworks\官方文档\SWhelp\sldworksapi\*.html` | sldworks 老快照（11498 页） | ★ 多数**只有签名与语言过滤**，无散文说明 |
+| `AI Solidworks\官方文档\SWhelp\cosworks\*.html` | ICWLoadsAndRestraintsManager（45 页） | 正文嵌在 script 里，抽取物见 `_raw/cosworks_pages/` |
+| `C:\cworks_vb6\*.html` | VB6 声明（2842 页） | 只有签名 |
+| `C:\cworks_manual\*.html` | 手册页（776 页） | 视页面而定 |
+| `_raw/reflect*/iface_*.txt` | 出厂类型库（**冲突裁决者**） | 只有签名，**不能当语义锚点** |
+
+★ **再查一遍**：`python -B tools/audit_undocumented_members.py --write`
+  它会把「有描述页」的升级成正式证据（页 + 逐字锚点），把「只有签名 / 全无」的写进
+  `gap`（含查过哪几棵源、出厂类型库的签名行）。★ 不跨接口兜底：同名成员在多个接口上
+  有页时**不猜**，宁可判「查不到」。
