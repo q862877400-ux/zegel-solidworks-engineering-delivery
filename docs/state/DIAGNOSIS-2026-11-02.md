@@ -171,3 +171,33 @@ python -B scripts\gen_level_audit.py       # 能力等级审计（生成物）
 ```
 
 **台账**：`docs/state/file-audit.jsonl`（8,670 行，每行一个入库文件 + 机械事实 + 裁决 + 证据）。
+
+---
+
+## 7 · 远端与推送（★ 归属与可见性写在这里）
+
+### 7.1 现状
+
+| 远端 | 指向 | 推送能力 |
+|---|---|---|
+| `origin` | **`q862877400-ux/solidworks-engineering-delivery`**（**私有**） | ✅ 本仓自建 |
+| `upstream` | `wzyn20051216/solidworks-automation-skill`（**别人的仓库**） | ⛔ **已关闭**（`set-url --push` 置为 `DISABLED-never-push-to-a-foreign-repo`）|
+
+- 推送时间 2026-11-02；分支 `master`；远端 HEAD = `ef8c8177` = 本地 HEAD（逐字符核对）。
+- 规模：**1,811 个提交** / **8,681 个跟踪文件** / `.git` 约 **80 MB**。
+
+### 7.2 为什么建**私有**仓，而不是公开
+
+三条都是实测，不是顾虑：
+
+1. **历史提交里有真实凭据**：`docs/history/research-misumi-api.md` 曾有 2 处 Misumi API key。**工作树已脱敏**（本轮第 8 项修复），但**历史提交仍含原值** ⇒ 公开等于把凭据连同历史一起发出去。
+2. **`solidpilot-salvage/` 是第三方 salvage**：241 个文件来自 `eyfel/mcp-server-solidworks`（**AGPL-3.0**）目录下的抢救件。本仓许可是 MIT，**公开混入 AGPL 内容有许可风险**。
+3. **大二进制**：`scripts/jlcfa_index.json` 单文件 **14.31 MB**，另有多个 4.58 MB 的 `.bmp` 审阅截图。
+
+### 7.3 公开前必须做的三件事（清单，未做）
+
+1. **清史**：`git filter-repo` 或 BFG 抹掉那两个 key，并**到 Misumi 侧轮换**（凭据一旦进过 git 历史就应视为已泄露）；
+2. **剔除 `solidpilot-salvage/`**（或先逐文件核归属许可）；
+3. **剔除/瘦身大二进制**（`jlcfa_index.json`、`output/**/*.bmp`、`archive/**`），或改用 LFS。
+
+★ 只有这三件做完，公开才是干净的；在此之前**私有仓是唯一正确状态**。
