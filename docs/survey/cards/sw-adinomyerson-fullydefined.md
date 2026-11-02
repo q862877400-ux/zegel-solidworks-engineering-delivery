@@ -77,6 +77,23 @@ README 有一条「Strength checks (no simulation)」——**明确说自己不�
 4. **版本兼容性未声明**：只写 SolidWorks，未写测试过的版本；这一点比 `hjbaard`（明确 SW2026 SP3.2）与 `soheil-mp`（明确 SW2025 SP1.2）弱。
 5. **单文件偏大**（`sheet_metal.py` 84.8 KB）。
 
+### 5.5 宣传与关注度（2026-11-02 实测，回答「为什么 0 星」）
+
+**一处宣传都没找到**：GitHub 主页无 `blog`、无 `twitter_username`；仓库 `homepage` 为 **null**、`has_discussions=false`；README 里唯一的外链是 `antigravity.google/download`、`docs.astral.sh/uv/`、`modelcontextprotocol.io`——都是工具文档，不是推广。
+
+**「没人关注」的量化**（`gh api repos/.../releases --jq '.[] | "\(.tag_name) dl=\([.assets[].download_count]|add)"'`，2026-11-02）：
+
+| 版本 | 下载次数 |
+|---|---:|
+| v0.3.3 | **4** |
+| v0.3.2 | **3** |
+| v0.3.1 | **4** |
+| v0.3.0 | **4** |
+| v0.2.0 | **4** |
+
+⇒ **每个版本全世界只有 3–4 次下载（含作者自测）**。这不是「酒香巷子深」，是**巷子口没开**。（来源：本卡 §5.5 的 release 下载统计，命令见该节）
+作者 bio 逐字「**Mechanical engineering student at TAU and systems engineer for TAUver Space Robotics Group**」——学生项目，未做任何推广。
+
 ## 6. 对我方目标的可用处（能学 / 不能学）
 
 **能学（三件，都是我们 E1 缺的）**：

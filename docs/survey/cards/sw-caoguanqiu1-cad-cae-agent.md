@@ -68,6 +68,14 @@ README 第二段就把上游写清楚（`andrewbartels1`，MIT），不遮掩。
 4. **原生算例不公开**：README 自述「原生 CAD/CWR 算例留在本地」⇒ **最有价值的产物我们拿不到**，只能拿代码和脱敏数值。
 5. **94,934 行里有多少是上游**：未做逐文件归属统计（已知派生自 `andrewbartels1`）。（来源：本卡 §9 未确认事项）
 
+### 5.5 宣传与关注度（2026-11-02 实测，回答「为什么 1 星」）
+
+**没有社媒宣传**：仓库 `homepage` 为 **null**、`topics` 为空、`has_discussions=false`、**无 release**；README 里没有 B 站 / YouTube / 小红书 / X 的任何链接。
+
+唯一的外部「露出」是一条**参赛线索**：文档里引用了 `scrm.nvidia.cn/lp/dgx-spark-hackathon-agent-skills-20260920`（NVIDIA DGX Spark hackathon · agent skills，2026-09-20）⇒ **疑似为参赛作品**，这也解释了它为什么把「对照实验 + `results.json` + `timings.csv`」做得比同体量项目认真——**评测要交可复现的数据**。
+
+HN（Algolia）、YouTube 搜索均**无命中**（报告 §12.5）。
+
 ## 6. 对我方目标的可用处（能学 / 不能学）
 
 **能学（四件）**：

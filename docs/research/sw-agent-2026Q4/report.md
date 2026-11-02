@@ -515,3 +515,84 @@ EXIT=0    missing: []
 - **新增卡片 3 张**（均已过 `check_survey_cards.py`），JSONL 增 5 行。
 - **未深挖但已具名**：`Coleas33/smart_SW`（AGPL，只读思想）、`msmith297/solidworks-agent`、`ddhh1212/CAutoD`、`jasonXiao422/drawing2sw`、`xiongQvQ/CadJSON-Studio`、`oce-projects/oce-solid-agent-mcp`、`AlchemistCache/alchemist-solidworks-mcp`、`PatrickMcKenzier/*` 与 `tan000tan/*`（疑似我方上游的 fork，未核）。
 - **仍然可能漏**：GitHub 搜索只能按元数据筛；**没有写 README、没有打 solidworks 关键词的低星项目我搜不到**。这是本节方法的天花板，如实写明。
+
+---
+
+## 12. 他们自己有没有宣传？（B站 / YouTube / 社交媒体实测）
+
+> **业主 2026-11-02 追问**：「这几个低星高质量的项目，在社交媒体、B站视频、或者 YouTube 上搜一搜，有没有他们自己发的宣传？」
+
+**结论先说**：**分两种完全不同的失败方式。**
+- `fyjgtddco`（41 星那套工程模式）**真的在推**——B 站有视频，但推给了**错误的受众**：他的粉丝是来游戏区看星铁爆料的；
+- `adinomyerson`（0 星 / FullyDefined）**完全没推**——按发版下载量看，全世界只有 **3–4 个人**下载过。
+
+### 12.1 测到的宣传痕迹与真实触达
+
+| 项目 | 星 | 我找到的宣传动作 | 真实触达（实测读数）|
+|---|---:|---|---|
+| `fyjgtddco/DSH-SW-and-CAD` | 41 | **B 站账号 `Firefly-LOVE`（UID 3537104783018949，Lv5）**——GitHub 个人主页直接填了这个空间；发过「AI机械实验室」系列；README 挂飞极盘网盘放长流程产物 | 「AI机械实验室 **EP01**（BV1tjpn6aE3N，5:18）」**874 播放 / 14 赞 / 4 币 / 28 收藏**；「**EP02**（BV1STWw6UEna）」**39 播放 / 3 赞** |
+| `adinomyerson/FullyDefined` | **0** | **一处都没有**：GitHub 主页无 blog、仓库无 homepage、README 无任何社交/视频外链 | **每个 release 只有 3–4 次下载**（v0.2.0–v0.3.3 全量，见 §12.4）|
+| `caoguanqiu1-alt/CAD-CAE-Agent` | 1 | **没有社媒**；但文档里引了 `scrm.nvidia.cn` 的 **DGX Spark hackathon / agent skills（2026-09-20）**页面 ⇒ 疑似参赛作品 | 无 release、无 topics、无 homepage |
+| `jasonXiao422/drawing2sw` | **0** | **建了自己的项目主页**（GitHub Pages，`/docs` 分支构建，状态 built，18 KB）＋ **5 个 release（最新 v0.7.5）**＋ 13 个 topics | **release 下载量 0–3 次**（v0.7.1–v0.7.5 多为 0，v0.6.0 为 3）|
+| `xiongQvQ/CadJSON-Studio` | 1 | **B 站发过演示视频**（README 顶部放 `b23.tv/teykRYN` → **BV1RpWA6tETs**，UP 主「不知名的熊007」UID 111137778）| **57 播放 / 2 赞** |
+
+### 12.2 `fyjgtddco` 的 B 站：推了，但推错了人
+
+他的 B 站主页（`space.bilibili.com/3537104783018949`）**共 14 个视频**，签名是「**想看崩铁爆料的关注我，必发**」。把播放量按题材排开，问题一目了然：
+
+| 题材 | 代表视频 | 播放 |
+|---|---|---:|
+| **星铁（崩坏）爆料/整活** | 星铁冷门角色暴打来古士 | **141,277** |
+| 星铁爆料 | 星期日知道会杀了我的 | **74,809** |
+| 星铁实机 | 【7月16日最新】知更鸟 sp 实机 | **40,475** |
+| 星铁实机 | 【7月16日最新】sp 砂金实机 | **20,287** |
+| 科普 | 飞机雷击科普 | 62 |
+| 科普 | 手机怎么知道你在哪？GPS 与爱因斯坦 | 67 |
+| **AI × 机械** | **AI机械实验室 EP01（机械臂）** | **874** |
+| **AI × 机械** | **AI机械实验室 EP02（整理桌面）** | **39** |
+
+⇒ **他的粉丝盘子是游戏区来的（单条 14 万播放），工程内容掉到两位数。** 这不是「没宣传」，是**受众错配**：一个做机械设计的人，在游戏爆料的账号上发工程自动化。
+
+★ 还有一层：**他的 14 个视频里没有一条是讲这个 SolidWorks 工程模式仓库的**。EP01 讲「一句话指挥机械臂」——而该仓库的描述恰好是用「请帮我完成一个**机械臂**」举例，所以 EP01 **很可能**就是这个项目的演示（874 播放），但**视频简介为空、无字幕，我无法确认**（见 §12.5 边界）。
+
+### 12.3 他是什么人：GitHub 主页自己写的
+
+- `fyjgtddco`：显示名 **Firefly_LOVE**，bio 逐字——「**大一新生，机械设计专业，代码可能有一点乱，见谅一下，感谢各位**」；followers **0**、公开仓库 **3** 个、账号建于 **2024-11-02**。
+- `adinomyerson`：bio 逐字「**Mechanical engineering student at TAU and systems engineer for TAUver Space Robotics Group**」（特拉维夫大学机械工程学生）。
+- `caoguanqiu1-alt`：曹冠秋（无 bio、无社交链接）。
+
+⇒ **你问的「手搓大神」，最重的那个其实是个大一新生。** 2.5 个月、36 个提交、120 条 GB 规则、三道硬门禁——出自一个 follower 为 0 的学生账号。
+
+### 12.4 「没人关注」的量化：不是 0 星，是 3 次下载
+
+| 项目 | 最新版本 | 该版本下载 | 全部版本下载合计（可见范围）|
+|---|---|---:|---:|
+| `adinomyerson/FullyDefined` | v0.3.3 | **4** | v0.2.0–v0.3.3 各 **3–4**（逐版见 §12.6 命令）|
+| `jasonXiao422/drawing2sw` | v0.7.5 | **1** | v0.7.1–v0.7.5 多为 **0**，v0.6.0 为 3 |
+| `caoguanqiu1-alt/CAD-CAE-Agent` | 无 release | — | — |
+
+⇒ **0 星只是表面；FullyDefined 每个版本全世界只有 3–4 次下载**——包括作者自己测试在内。**这不是「酒香巷子深」，是巷子口根本没开。**
+
+### 12.5 YouTube：这三个项目**都不在上面**；上面是别人
+
+- YouTube 搜 `FullyDefined SOLIDWORKS MCP` / `CAutoD SolidWorks` / `CAD-CAE agent`，**没有一条属于这三个项目**。
+- 但搜到的东西本身有信息量：
+  - **MecAgent 在 YouTube 上有大量宣传视频**：「GPT-6 Astra on CAD (SolidWorks 2026) with MecAgent - Robot Arm」「…V2.0.0 - Spec-to-CAD - Drone」「AI Automations in Solidworks - MecAgent Demo」「GPT-6 vs Claude vs MecAgent: Can AI Design in SOLIDWORKS?」——**与它 3.5 万安装量的自述一致，商业方是真在推**。
+  - 「SOLIDWORKS AI Just Got Better - Here's What's New in **FD03**」里的 **FD = Dassault 官方的 Feature Drop**（[solidworks.com 的 R2026x FD03 页面](https://www.solidworks.com/fr/media/whats-new-solidworks-ai-r2026x-fd03)），**不是** `FullyDefined`——搜索时极易混淆，记一笔。
+  - 另有第三方做的「SOLIDWORKS MCP Setup Guide」「SolidWorks MCP Modeling Contest: GPT Astra vs Claude Code」等，说明**这个赛道在 YouTube 上已经有内容生态**，只是我们的低星对象不在其中。
+- **Hacker News**：Algolia 搜 `solidworks mcp` / `FullyDefined solidworks` / `CAD-CAE agent` / `dsh engineering mode`，**没有一条命中这三个项目**。
+
+### 12.6 这一节说明什么
+
+1. **「低星 = 没人做宣传」这个假设是错的。** 五个里面三个做了宣传（B 站视频 ×2、自建主页 ×1），照样 0–1 星。**宣传不是充分条件。**
+2. **两种失败要区分开**：`fyjgtddco` 是**受众错配**（游戏粉丝看工程内容），`FullyDefined` / `drawing2sw` 是**没触达**（0 下载 / 0 播放）。前者靠换平台能救，后者靠换渠道才行。
+3. **商业方的宣传密度完全不是一个量级**：MecAgent 在 YouTube 有一条视频产线 + 官网 + 定价页 + 40 万安装；个人作者是「发一条 B 站 + 挂个网盘」。⇒ **如果只按「谁被看见」判断项目质量，会系统性倒向商业方。**
+4. **对我方的直接用处**：`FullyDefined` 这种「0 下载但把全约束做进代码」的东西，**只能靠读码找到，任何榜单和推荐流都不会给你**。这反过来支持我上一轮的建议——**判据要看代码，不要看热度**。
+
+### 12.7 方法与边界（如实写）
+
+- **工具**：本次加载了 `agent-reach` 技能，但它的 CLI（`agent-reach`）**本机未安装**；实际用的是技能里列出的零配置后端：`bili`（B站 CLI，可用）＋ `curl`（直连 GitHub API / HN Algolia / YouTube）。
+- **未用的**：`yt-dlp`（未安装）⇒ **YouTube 只能拿到搜索页标题，拿不到视频详情与描述**，所以「YouTube 上有没有他们的视频」这一条结论来自**搜索标题比对**，不是逐条点开核。
+- **未覆盖的平台**：小红书 / Twitter(X) / Reddit（`opencli` 未安装、`twitter` CLI 未配置、Reddit 需登录态）⇒ **这三个平台是空白**，不能说「他们没发」。
+- **★ 环境坑（第二次踩到同一类）**：`bili --help` 在 GBK 控制台下直接崩（`UnicodeEncodeError: 'gbk' codec can't encode character '\U0001f4fa'`）。**必须先设 `PYTHONIOENCODING=utf-8`**，否则连帮助都出不来。这与我本轮在 `release_check` 上踩的是**同一类 GBK 假红**。
+- **可复现命令**：`bili user 3537104783018949` · `bili user-videos 3537104783018949 -n 50` · `bili video BV1tjpn6aE3N` · `bili video BV1RpWA6tETs` · `curl -sIL https://b23.tv/teykRYN` · `gh api repos/<owner>/<repo>/releases --jq '.[] | "\(.tag_name) dl=\([.assets[].download_count]|add)"'` · `curl -s "https://hn.algolia.com/api/v1/search?query=<q>"`（均 2026-11-02 实测）。
