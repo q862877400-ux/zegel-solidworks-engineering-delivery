@@ -137,7 +137,7 @@ def test_反射覆盖规模足够支撑否定结论() -> None:
 def test_反射里有面的法向() -> None:
     """★ `IFace2.Normal` 三源互证成立。
 
-    `C:\swapi` 写 `System.object Normal {get; set;}`、Returns「Array of 3 doubles」；
+    `C:\\swapi` 写 `System.object Normal {get; set;}`、Returns「Array of 3 doubles」；
     反射写 `Object get_Normal()` —— 同一个成员。
     """
     text = _reflect_text()

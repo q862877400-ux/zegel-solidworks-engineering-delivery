@@ -331,7 +331,7 @@ punchout:{
   host:"https://chn-nt-api.misumi.com.cn",
   api_base_path:"customer",
   api_version:"v1",
-  api_key:"hyqTU5nsVhS8B3cYN8fxTSHbED2Tz39W5UvyKTZK",
+  api_key:"<REDACTED-2026-11-02>",  // 2026-11-02 脱敏：原为第三方接口的真实凭据，已移除；需使用请自行申请
   checkin:{ checkin_url_host:"https://www.misumi.com.cn",
             checkin_url_path:"/order/punchout/checkin" },
   mauth:{  mauth_host:"https://int-mauth.misumi.com.cn" },
@@ -341,8 +341,8 @@ punchout:{
 
 > ⚠️ 更正父会话的一处猜测：父会话说「一个 **staging** 的 api_key 明文」。
 > 实际上 `punchout.api_key` 与 `apikey.newton_nstg` 是**两个不同的值**：
-> - `punchout.api_key = hyqTU5nsVhS8B3cYN8fxTSHbED2Tz39W5UvyKTZK`（PunchOut 专用，线上值）
-> - `apikey.newton_nstg = z7egOF19hr9DUxsvyGhkO69qMuCa2O8Y796BuksP`
+> - `punchout.api_key = <REDACTED-2026-11-02>`（PunchOut 专用，线上值；2026-11-02 脱敏）
+> - `apikey.newton_nstg = <REDACTED-2026-11-02>`（2026-11-02 脱敏；原值与本条同源，已移除）
 >   （与 `newton_local` **同值** ——「nstg」是历史遗留命名，并非独立 staging 环境）
 > 真正带 `int-` 前缀的是 `int-mauth.misumi.com.cn`，那是 M-Auth 服务，与 api_key 无关。
 

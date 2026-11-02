@@ -125,5 +125,9 @@ def test_revolve_boss_normalises_empty_axis_to_none(batch17):
     s = _spec(batch17, "solidworks_revolve_boss")
     assert s.derived_args(_P(angle_deg=360.0, axis_sketch_name=""))["axis_sketch_name"] is None
     assert s.derived_args(_P(angle_deg=360.0, axis_sketch_name="Axis1"))["axis_sketch_name"] == "Axis1"
-    #: ⚠ 负例：不归一化时目标函数会收到空的**字符串**（那可能改变分支）
-    assert "" is not None
+    #: ★★ 2026-11-02 补正：这里原先是 `assert "" is not None` —— **恒真**，什么也没验
+    #:   （逐文件诊断轮点名）。★ 真正的反例是「归一化若失效，目标函数会收到空**字符串**
+    #:   而不是 `None`，那可能改变分支」⇒ 直接把这两个值分开判，让失效真的红。
+    got = s.derived_args(_P(angle_deg=360.0, axis_sketch_name=""))["axis_sketch_name"]
+    assert got is None, "归一化失效：把空字符串传给了目标函数（应转为 None）"
+    assert got != "", "归一化失效：值仍是空字符串"

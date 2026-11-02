@@ -799,7 +799,7 @@ def sketch_spline(model, points):
 
     ★★★★★ **2026-10-04（接手轮）★ 把上面那句从"断言"升级为"真机否证"** ——
       处置阶段 2 · T1 的**逐条流程第 ② 步**（★ **真机验证后继可不可调**）✓
-      ★ **官方逐字**（★ `C:\swapi\types\ISketchManager\CreateSpline3.md`）：
+      ★ **官方逐字**（★ `C:\\swapi\\types\\ISketchManager\\CreateSpline3.md`）：
         ★ `CreateSpline3(object PointData, object Surfs, object Direction, bool SimulateNaturalEnds,
           **out object Status**)` ⇒ **5 参** ✓
         ★★ 而它的 `## Remarks` 逐字：★ 「To create a **2D spline**… ★ **All other parameters with
@@ -1579,8 +1579,8 @@ def revolve_cut(model, sketch_name, angle_rad, axis_sketch_name=None):
         受影响体（仅 UseFeatScope=true 且 UseAutoSel=false）
         ```
       ⇒ ★★ **故本函数与 `revolve_boss` **只差一个布尔** —— ★ 而★ 那正是"读文档"省下的弯路** ✓
-      ★ 证据：`C:\swapi\types\IFeatureManager\FeatureRevolveCut2.md`（Obsolete 那句）
-        · `...\FeatureRevolve2.md`（签名 + Remarks）
+      ★ 证据：`C:\\swapi\\types\\IFeatureManager\\FeatureRevolveCut2.md`（Obsolete 那句）
+        · `...\\FeatureRevolve2.md`（签名 + Remarks）
         · 真机：`output/revolve-cut-evidence.json`
 
     :param sketch_name: 轮廓草图名（★ 官方 mark = 0）

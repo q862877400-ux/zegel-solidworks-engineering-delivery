@@ -35,7 +35,7 @@
 | 25 | `drawing_bom_balloons` | `verified` | `original` | ✓ | — |
 | 26 | `drawing_center_lines` | `stitched` | `original` | ✓ | — |
 | 27 | `drawing_current_sheet_query` | `verified` | `original` | ✓ | — |
-| 28 | `drawing_dimension_insertion` | `not_implemented` | `mixed` | ✓ | — |
+| 28 | `drawing_dimension_insertion` | `stitched` | `mixed` | ✓ | — |
 | 29 | `drawing_model_annotations` | `stitched` | `original` | ✓ | — |
 | 30 | `drawing_view_operations` | `verified` | `original` | ✓ | — |
 | 31 | `drawing_views_and_summary` | `verified` | `original` | ✓ | — |
@@ -156,9 +156,9 @@
 | level | 条数 |
 |---|---|
 | `indexed` | 0 |
-| `not_implemented` | 3 |
+| `not_implemented` | 2 |
 | `source_verified` | 0 |
-| `stitched` | 37 |
+| `stitched` | 38 |
 | `verified` | 100 |
 
 ## 三、`source` 分布
@@ -176,9 +176,9 @@
 | level \ source | merged | mixed | original | undetermined | upstream |
 |---|---|---|---|---|---|
 | `indexed` | 0 | 0 | 0 | 0 | 0 |
-| `not_implemented` | 0 | 1 | 1 | 0 | 1 |
+| `not_implemented` | 0 | 0 | 1 | 0 | 1 |
 | `source_verified` | 0 | 0 | 0 | 0 | 0 |
-| `stitched` | 0 | 7 | 19 | 1 | 10 |
+| `stitched` | 0 | 8 | 19 | 1 | 10 |
 | `verified` | 0 | 3 | 90 | 0 | 7 |
 
 > ⚠ 读法：`level: verified` 说的是「**有我们自己的运行证据**」，

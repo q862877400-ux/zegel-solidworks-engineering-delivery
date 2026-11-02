@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import warnings
 from pathlib import Path
 
 #: 2026-10-03（接手轮）强制 stdout 为 UTF-8 —— 本门禁会 print 中文与箭头/勾这类符号，
@@ -71,14 +72,32 @@ def scan() -> tuple[int, list[str]]:
                 #: nning of the file`
                 #: ⇒ ★ **门禁有盲区** ⇒ 改用 `compile(..., "exec")`（★ 它走完整的编译期
                 #: 检查）。
-                compile(p.read_text(encoding="utf-8"), str(p), "exec")
+                #: ★★ 2026-11-02（逐文件诊断轮）**补第二处盲区**：`compile` 遇到**无效转义
+                #:   序列**（如 docstring 里写 `C:\swapi` 的 `\s`）只发 **`SyntaxWarning`**、
+                #:   不抛异常 ⇒ 门禁一直是绿的，而**未来 Python 版本会把它变成硬错误**
+                #:   （本仓实测 6 个文件 / 8 处，含 `sw_part.py` / `sw_export.py` /
+                #:   `sw_drawing_expose.py` 及其 bundled 副本）。
+                #:   ⇒ 这里显式把告警收起来，非空即计入 `bad`。
+                with warnings.catch_warnings(record=True) as caught:
+                    warnings.simplefilter("always")
+                    compile(p.read_text(encoding="utf-8"), str(p), "exec")
+                for item in caught:
+                    if issubclass(item.category, SyntaxWarning):
+                        bad.append(
+                            "%s:%s: %s（★ 未来版本会变成硬错误）"
+                            % (
+                                p.relative_to(REPO_ROOT),
+                                item.lineno,
+                                (str(item.category.__name__) + ": " + str(item.message)).strip()[:140],
+                            )
+                        )
             except SyntaxError as exc:
                 bad.append(
                     "%s:%s: %s"
                     % (
                         p.relative_to(REPO_ROOT),
                         exc.lineno,
-                        (exc.msg or "").split("(")[0].strip(),
+                        (exc.msg or "").strip().replace(chr(10), " ")[:140] or type(exc).__name__,
                     )
                 )
             except UnicodeDecodeError:

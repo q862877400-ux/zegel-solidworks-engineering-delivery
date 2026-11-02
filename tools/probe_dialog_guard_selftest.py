@@ -27,9 +27,9 @@
 
 ## 官方依据
 
-`C:\swapi\types\ISldWorks\SendMsgToUser2.md`（3 参）·
-`enums\swMessageBoxIcon_e.md`（`swMbInformation = 2`）·
-`enums\swMessageBoxBtn_e.md`（`swMbOk = 2`）
+`C:\\swapi\\types\\ISldWorks\\SendMsgToUser2.md`（3 参）·
+`enums\\swMessageBoxIcon_e.md`（`swMbInformation = 2`）·
+`enums\\swMessageBoxBtn_e.md`（`swMbOk = 2`）
 """
 from __future__ import annotations
 

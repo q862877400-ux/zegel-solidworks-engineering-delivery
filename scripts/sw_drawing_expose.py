@@ -95,7 +95,7 @@ def create_projected_view(
       · `create_standard_views_with_projection` 在本机**返回 blocked** —— ★ 而那**不是**
         「本机 COM 代理没有那个成员」：★★ 2026-10-04（接手轮）查明真因是**成员名拼错** ——
         代码里写 `CreateFirstAngleViews2`，而**官方真名是 `Create1stAngleViews2`**
-        （`1st` 非 `First`；`c:\swapi\types\IDrawingDoc\Create1stAngleViews2.md` +
+        （`1st` 非 `First`；`c:\\swapi\\types\\IDrawingDoc\\Create1stAngleViews2.md` +
         出厂类型库反射：真名 2 处 / 错名 0 处）。⇒ ★ 那条 `DRAWING_PROJECTION_API_UNAVAILABLE`
         **是假阴性**，已在 `drawing_workflow.py` 修掉（★ 修完**仍需真机复验**）。
       · 而 `add_view` → `CreateDrawViewFromModelView3` **实测建成**（返回真实 `CDispatch` 视图对象），

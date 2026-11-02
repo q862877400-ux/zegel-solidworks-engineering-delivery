@@ -826,9 +826,13 @@
   {
    "id": "drawing_dimension_insertion",
    "label": "SolidWorks 工程图模型尺寸自动插入",
-   "level": "not_implemented",
+   "level": "stitched",
+    "★_2026-11-02_工具层补口": "★★★ 本轮（2026-11-02）更正上一条的**一半**：该条原记 not_implemented 的理由是「实现层没有对应函数」——★ 经核那是**搜错了成员名**。真正干活的是 `IDrawingDoc::InsertModelAnnotations4`（8 参：Option/Types/AllViews/DuplicateDims/HiddenFeatureDims/UsePlacementInSketch/InsertAllAnnotations/InsertAllReferenceGeometry，返回 IAnnotation 数组），而 `InsertModelDimensions` 只是另一个 1 参、**void** 的成员。★ 子技能 `subskills/solidworks-engineering-drawing/scripts/drawing_workflow.py` 的 `insert_dimensions` **早已实现**这条调用链 ⇒ 缺的是**工具层暴露**，不是「没做」。★ 本轮据此补了 `scripts/sw_drawing_annotations.py`（含回读：插入前后逐视图 `GetAnnotationCount` 求和报 delta）与工具 `solidworks_drawing_insert_model_annotations`，并加离线契约测试 `tests/test_sw_drawing_annotations.py`（7 例，假 COM）。★★ **等级仍取 stitched 而不是 verified**：★ 本机至今**没有建出过一次非空插入**（前一轮在「夹具零件没有尺寸可插」的情形下得到空结果）⇒ 按铁律 2 / 红线⑥，在真机拿到 delta>0 之前不许记 verified。★★ 判据：`delta` 读不到时本模块返回 None 且 ok=False，绝不把未知当 0、也不把「返回 True/None」当插上了。",
    "★_2026-10-04_降级说明": "★★★★ 从 `verified` 降为 `not_implemented` —— ★ 处置 `JUDGE-A_B.md` 的 🔴 **A-drawing 一**（★ 那条只说「evidence 是循环自证」，★ **而顺着它往下核，发现的是更重的事**）✓ ★★ **本条目自己的 `limitations[0]` 早就记着**（★ 2026-10-01 轮 290）：「★ **核了实现在哪 —— 结论是「实现层没有对应函数」**：★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**、不是实现）」✓ ⇒ ★★★ **即：★ 这条能力**没有实现**、★ 而 `level` 一直写着 `verified`** ✓ ★★★★ **而本轮我又独立复核了一遍**（★ 全仓搜 `AddDimension` / `AddDimension2` / `InsertDimension`）⇒ ★ **命中的**只有** ARITY 表**（★ `scripts/sw_api_sldworks.py`）—— ★★ **能力层零实现** ✓ ⇒ ★ **所以按五级枚举**（`verified` / `source_verified` / `stitched` / `indexed` / `not_implemented`）**取最贴的 `not_implemented`** ✓",
-   "backends": [
+   "mcp_tools": [
+     "solidworks_drawing_insert_model_annotations"
+    ],
+    "backends": [
     "solidworks-com"
    ],
    "verified_versions": [

@@ -647,7 +647,17 @@ def check_spec(spec: ToolSpec) -> None:
 
 
 def check_specs(specs: list[ToolSpec]) -> list[str]:
-    """批量校验，返回**所有**问题（不短路）；空列表 = 全过。"""
+    """批量校验，返回**所有**问题（不短路）；空列表 = 全过。
+
+    ★★ 2026-11-02（逐文件诊断轮）：**除 `GateError` 外的异常也必须记成问题，不许穿透**。
+    ★ 起因是实测：把 `params` 误写成裸 `dict` 列表时，`check_spec` 抛的是
+      `AttributeError: 'dict' object has no attribute 'name'`，而本函数只 `except GateError`
+      ⇒ 异常**穿透**整套调用链：`server.py` **导入期就崩**（499 个工具全拿不到、MCP 服务起不来），
+      并且把 `scripts/check_param_binding.py` 与 `docs/state/probes/probe_all_specs.py`
+      **本身**打崩（门禁崩了，就只剩「绿」与「没跑」两种状态，分不清）。
+    ★ 正确语义：**声明坏了是「一个问题」，不是「让门禁停摆」** ⇒ 捕获 `Exception` 记为该
+      spec 的问题并继续校验其余声明。
+    """
     problems: list[str] = []
     names: set[str] = set()
     for s in specs:
@@ -655,6 +665,11 @@ def check_specs(specs: list[ToolSpec]) -> list[str]:
             check_spec(s)
         except GateError as exc:
             problems.append(str(exc))
+        except Exception as exc:  # noqa: BLE001 - 声明结构坏掉时记成问题，不许崩掉门禁
+            problems.append(
+                "工具 %r 的声明本身抛了非 GateError 异常：%s: %s"
+                % (getattr(s, "name", "<无 name>"), type(exc).__name__, str(exc)[:200])
+            )
         if s.name in names:
             problems.append("工具名重复：%r" % s.name)
         names.add(s.name)

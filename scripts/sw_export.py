@@ -95,7 +95,7 @@ def export_to_stl(model, output_path, quality="fine"):
       **改完永不还原** ⇒ 别人装一次我们的工具，他的 STL 导出精细度就被永久改掉。
       ⇒ ★ 现在走 `sw_preference_guard`：**读旧值 → 设 → 用完在 `finally` 里还原** ✓
     ⚠ ★ **偏好号 78 的官方名字未核实**：仓内注释写的是 `swSTLQuality`，而
-      ★ 两套官方源（`C:\swapi\enums\swUserPreferenceIntegerValue_e.md` 的 Value 列是**描述**、
+      ★ 两套官方源（`C:\\swapi\\enums\\swUserPreferenceIntegerValue_e.md` 的 Value 列是**描述**、
       `_raw/enum_values_pref.txt`）在本机都**查不到 `swSTLQuality` 与数值的对应**
       ⇒ ★ 按铁律 5 **不改号、也不声称名字**：沿用既有的 `78`（★ 行为与改动前**完全一致**，
       只是**用完还回去**）✓

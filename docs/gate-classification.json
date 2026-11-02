@@ -619,6 +619,16 @@
       "environment": "offline-static",
       "owner": "executing-agent",
       "runs_in": "release_check"
+    },
+    {
+      "gate": "check_file_audit.py",
+      "runner": "_run_file_audit_gate",
+      "kind": "release_static",
+      "reason": "**硬门禁**（2026-11-02 业主指令）：判「逐文件诊断台账是否真的覆盖了每一个入库文件」——① 入册文件零 `pending`；② 每条裁决的 `verdict` 在枚举内；③ 入册文件的 `evidence` ≥12 字符，且 `reviewed` 必须以 `deep:`/`skim:` 开头（区分精读与浏览）并带 `round` 与 `checked_by`。★★ 动因：业主明说「不然你就容易骗我说『我看完了』，实际上根本没看」⇒ 把「看完了」变成**可核的覆盖率数字**。★ 反例自证：`check_file_audit.py` 的 `selftest()` 造 pending / 证据过短 / verdict 越枚举三条坏行，必须全部被抓出。",
+      "environment": "offline-static",
+      "owner": "executing-agent",
+      "runs_in": "release_check",
+      "note": "台账 `docs/state/file-audit.jsonl` 由 `scripts/gen_file_audit.py` 生成（幂等，保留既有裁决）；批量机械裁决只许走 `scripts/audit_bulk.py`，product-code 类必须逐文件读后走 `scripts/merge_audit_patches.py` 合并。"
     }
   ]
 }

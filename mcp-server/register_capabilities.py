@@ -1423,6 +1423,14 @@ BATCH_MODULES = (
     #:   既有 solidworks_hole_wizard 只能放**面中心**（孔位由面选择器决定），
     #:   而首件板要 4 个孔在指定坐标 ⇒ 新增 solidworks_hole_wizard_at_point。
     "tool_specs_batch117",
+    #: ★ 2026-11-02（本轮）：把「模型标注插进工程图视图」接出来。
+    #:   `capabilities.yaml` 的 `drawing_dimension_insertion` 原记 `not_implemented`，理由
+    #:   「实现层没有对应函数」——★ 经核是**搜错成员名**：真正干活的是
+    #:   `IDrawingDoc::InsertModelAnnotations4`（8 参），子技能
+    #:   `drawing_workflow.insert_dimensions` 早已实现，缺的只是**工具层暴露**。
+    #:   ★ 本批不新增任何 verified 声称：实现与工具都在，但**未真机建出非空插入** ⇒ 台账
+    #:   该条取 `stitched`。
+    "tool_specs_batch118",
 )
 
 

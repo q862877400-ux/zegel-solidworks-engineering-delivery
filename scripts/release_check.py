@@ -1211,6 +1211,38 @@ def _run_fact_provenance_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_file_audit_gate() -> dict[str, object]:
+    """@brief 跑「逐文件诊断台账必须零 pending」门禁（scripts/check_file_audit.py）。
+
+    ★ 来源：业主 2026-11-02 指令「一个文件一个文件地诊断……多轮带机械门禁地自动进行，
+      不然你就容易骗我说『我看完了』，实际上根本没看」。
+    ★ 判据：`docs/state/file-audit.jsonl` 里**每一个入册文件**都必须有 `verdict`
+      （枚举内）与 `evidence`（入册 ≥12 字符；`reviewed` 还必须以 `deep:`/`skim:`
+      开头并带 `round` 与 `checked_by`）；任何 `pending` 即红。
+    ★ 「看完了」因此变成**可核的覆盖率数字**，而不是一句自述。
+    ★ 本门禁**自带负例自证**（见 check_file_audit.py 的 selftest()）。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_file_audit.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "逐文件诊断门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_assumption_ledger_gate() -> dict[str, object]:
     """@brief 跑「假设台账自洽」门禁（scripts/check_assumption_ledger.py）。
 
@@ -3325,6 +3357,14 @@ def run_release_check() -> dict[str, object]:
             "量化断言出处门禁未通过（有断言没有可追溯出处）：\n"
             + str(fp.get("output", ""))
         )
+    # ⚑ **逐文件诊断台账门禁**（硬门禁）：★ 来源 业主 2026-11-02 指令。
+    #   ★ 判据：入册文件零 pending，每条裁决带证据；`reviewed` 须标 deep:/skim:。
+    fa = _run_file_audit_gate()
+    if fa.get("status") == "fail":
+        raise AssertionError(
+            "逐文件诊断台账未通过（有文件没审 / 证据不全）：\n"
+            + str(fa.get("output", ""))
+        )
     # ⚑ **假设台账门禁**（硬门禁）：★ 来源 `docs/text-to-cad-lessons-verdict.md` §6.3
     #   —— 经验⑤「不追问但记录」的改造后采纳形态。
     #   ★ 核心判据：`open` 的假设不得充当 `verified` 能力的证据
@@ -3677,6 +3717,7 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
         #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
         "fact_provenance": fp,
+            "file_audit": fa,
         "assumption_ledger": al,
         "tools_index_fresh": tix,
         #: ★ 2026-10-12（业主「那 60 条语料的标签给我打开」）：**评审稿编号门禁**
@@ -3805,6 +3846,7 @@ def run_release_check() -> dict[str, object]:
         #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
         #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
         "fact_provenance": fp,
+            "file_audit": fa,
         "assumption_ledger": al,
         "tools_index_fresh": tix,
         "missing": [],

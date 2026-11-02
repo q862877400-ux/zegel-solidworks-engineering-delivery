@@ -46,8 +46,8 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `level` | 条数 | 含义 |
 |---|---|---|
 | `verified` | 100 | **有我们自己的运行证据**（`evidence` 非空） |
-| `stitched` | 37 | 已缝合，**缺我们自己的运行证据** |
-| `not_implemented` | 3 | 明确未实现 |
+| `stitched` | 38 | 已缝合，**缺我们自己的运行证据** |
+| `not_implemented` | 2 | 明确未实现 |
 
 | `source` | 条数 | 含义 |
 |---|---|---|
@@ -225,7 +225,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `pack_and_go` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录（无 sw_guard / 轮次 / PASS 字样）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `assembly_and_mates` | `stitched` | `mixed` | ⚠⚠⚠ 2026-10-25（第 22 轮）**真机实测：`IAssemblyDoc.AddComponent5` 回 `None`，三种前置都排除了** —— ①零件路径在子进程可见（`os.path.exists`=True、78351 字节）；②装配文档 `GetType`=**2**（`swDocASSEMBLY`）且是**活动文档**；③装配**已保存**（`SaveAs` 成功、`Ge |
 | `motion_study` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_sw_motion_audit.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `drawing_dimension_insertion` | `not_implemented` | `mixed` | ★★ 2026-10-01（轮 290）**核了实现在哪 —— 结论是"实现层没有对应函数"**：
+| `drawing_dimension_insertion` | `stitched` | `mixed` | ★★ 2026-10-01（轮 290）**核了实现在哪 —— 结论是"实现层没有对应函数"**：
 ★ 全仓搜 `InsertModelDimensions` ⇒ ★ **只在 `scripts/sw_api_sldworks.py` 里**（★ 那是**签名索引**，
 不是实现）；★ `sw_drawing_view.py` 的 12 个函数**全是读 + `set_view_scale`**， |
 | `drawings_and_bom` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
@@ -340,7 +340,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **65** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **66** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -367,6 +367,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_evidence_freshness.py` | ✅ |
 | `scripts/check_fact_provenance.py` | ✅ |
 | `scripts/check_fact_single_home.py` | ✅ |
+| `scripts/check_file_audit.py` | ✅ |
 | `scripts/check_gate_wiring.py` | ✅ |
 | `scripts/check_interface_member_ownership.py` | ✅ |
 | `scripts/check_internal_length_units.py` | ✅ |

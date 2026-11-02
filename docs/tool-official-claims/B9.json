@@ -1,0 +1,86 @@
+{
+ "batch": "B9",
+ "note": "2026-11-02 逐文件诊断轮新增：补 drawing_dimension_insertion 的工具层缺口。人工读官方页后填写 claim 与锚点（level=human）；运行时未验证。",
+ "records": [
+  {
+   "tool": "solidworks_drawing_insert_model_annotations",
+   "impl": "scripts/sw_drawing_annotations.py:insert_model_annotations_report",
+   "claim": "Insert model annotations into drawing views and read the counts back.",
+   "claim_evidence": {
+    "kind": "official",
+    "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations4.md",
+    "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+   },
+   "members": [
+    {
+     "interface": "IDrawingDoc",
+     "member": "InsertModelAnnotations4",
+     "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations4.md",
+     "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "InsertModelAnnotations3",
+     "path": "C:/swapi/types/IDrawingDoc/InsertModelAnnotations3.md",
+     "anchor": "Inserts model annotations into this drawing document's currently selected drawing view."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "InsertModelDimensions",
+     "path": "C:/swapi/types/IDrawingDoc/InsertModelDimensions.md",
+     "anchor": "Inserts model dimensions into the selected drawing view according to the option specified."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "GetCurrentSheet",
+     "path": "C:/swapi/types/IDrawingDoc/GetCurrentSheet.md",
+     "anchor": "Gets the currently active drawing sheet."
+    },
+    {
+     "interface": "IDrawingDoc",
+     "member": "ActivateView",
+     "path": "C:/swapi/types/IDrawingDoc/ActivateView.md",
+     "anchor": "Activates the specified drawing view."
+    },
+    {
+     "interface": "ISheet",
+     "member": "GetViews",
+     "path": "C:/swapi/types/ISheet/GetViews.md",
+     "anchor": "Gets the drawing views on this sheet."
+    },
+    {
+     "interface": "IView",
+     "member": "GetAnnotationCount",
+     "path": "C:/swapi/types/IView/GetAnnotationCount.md",
+     "anchor": "Gets the number of annotations in this view."
+    },
+    {
+     "interface": "IModelDocExtension",
+     "member": "SelectByID2",
+     "path": "C:/swapi/types/IModelDocExtension/SelectByID2.md",
+     "anchor": "Selects the specified entity."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "ClearSelection2",
+     "path": "C:/swapi/types/IModelDoc2/ClearSelection2.md",
+     "anchor": "Clears the selection list."
+    },
+    {
+     "interface": "IModelDoc2",
+     "member": "Extension",
+     "path": "C:/swapi/types/IModelDoc2/Extension.md",
+     "anchor": "Gets the [[IModelDocExtension]] object, which also allows access to the model document."
+    }
+   ],
+   "allowed_non_com": [],
+   "verified": {
+    "by": "lead",
+    "at": "2026-11-02",
+    "method": "read official page",
+    "level": "human",
+    "notes": "逐页读了 C:/swapi/types 下 IDrawingDoc::InsertModelAnnotations4 / -3 / InsertModelDimensions、IDrawingDoc::GetCurrentSheet / ActivateView、ISheet::GetViews、IView::GetAnnotationCount、IModelDocExtension::SelectByID2、IModelDoc2::ClearSelection2 / Extension 共 10 页，锚点逐字取自各页首段；并核过官方示例 examples/Insert_Model_Annotations_Example_CSharp.md 的调用序（SelectByID2 → ActivateView → ClearSelection2 → InsertModelAnnotations4）。⚠ 运行时**未验证**：本机至今未建出非空插入，故能力台账只取 stitched。"
+   }
+  }
+ ]
+}
