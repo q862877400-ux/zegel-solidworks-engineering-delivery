@@ -388,6 +388,18 @@ python -B scripts\check_survey_cards.py
 
 这是 `release_check` 的 `survey_cards` 硬门禁同一判据。**收口前曾 26 处红**（D 线 5 张卡的量化断言行没有可追溯引用形态），已逐行补齐 `来源：`/`文件:行` 形态后转绿；B 线两张由我补写的卡也同样过门。
 
+**全仓门禁**（`python -B scripts\release_check.py`，2026-11-02 收口时实跑）：
+
+```
+EXIT=0    missing: []
+```
+
+两条非 `pass` 的读数，如实列出：
+- `provenance` = `skipped`（本轮改动不触发该门）；
+- `fact_single_home` = `hits`，**告警级不拦（exit 0）**：`docs\dead-ends.md` 逐字复述事实 230、`specs\202-user-coverage-gaps\recon\verify50\vd50-A-surface.md` 逐字复述事实 303 —— **两处都是本轮之前就存在的文件，不是本次改动引入**。
+
+⚠ **一个环境坑（值得写进工具手册）**：`release_check` 在 **GBK 控制台**下会**假红**——它会调用 `check_s3_blockers.py`，而该脚本 `print("⇒")` 在 GBK 下抛 `UnicodeEncodeError`，父进程把子进程崩溃当成「门禁未通过」，报出「S3 拦截台门禁未通过（台账与验收报告不一致，丢证据了）」这种**完全误导**的结论。实测：同一棵树上 `check_s3_blockers.py` 单跑在 UTF-8 下是 **PASS**。⇒ **跑门禁前先设 `PYTHONIOENCODING=utf-8`**，否则会去查一个不存在的台账问题。
+
 ---
 
 ## 10. 交付物清单
