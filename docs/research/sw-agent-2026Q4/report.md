@@ -2,7 +2,7 @@
 
 > **窗口**：2026-08-01 → 2026-11-02（双轨：此后首次公开 **或** 近 90 天仍活跃）
 > **依据**：业主 2026-11-02 指令；任务书见 [`00-brief.md`](00-brief.md)；档位 L3（候选池 > 10，跨 5 层）
-> **状态**：**五线全部收口** —— A（10 卡）· B（4 卡 + 2 份实测分析）· C（2 卡）· D（5 卡）· E（台账复核）· 商业侧（2 条 JSONL）。新增 **21 张**卡片全部过 `check_survey_cards.py`；`release_check` exit 0。
+> **状态**：**五线全部收口** —— A（10 卡）· B（4 卡 + 2 份实测分析）· C（2 卡）· D（5 卡）· E（台账复核）· 商业侧（2 条 JSONL）。新增 **24 张**卡片全部过 `check_survey_cards.py`；`release_check` exit 0。含第三轮**低星重扫**（见 §11）。
 
 ---
 
@@ -210,14 +210,14 @@ gh api -X GET "search/repositories?q=<q>+in:name,description,readme+pushed:>2026
 
 ### 6.2 登记的里，`depth` 分布是什么？几个只到 `metadata`？
 
-`jsonl` 侧车 31 行（含 6 条非本批对象）的深度分布：
+`jsonl` 侧车 **36 行**（三轮累积：首轮 31 + 低星重扫补 5）的深度分布：
 
 | depth | 条数 | 占已登记 |
 |---|---:|---:|
-| `tested`（本机真跑过它的代码/单测） | **7** | 23% |
-| `source`（读了源码或官方文档） | **14** | 45% |
-| `readme`（只读 README 或媒体转述） | 4 | 13% |
-| `metadata`（只看星数/许可/最后提交） | **6** | 19% |
+| `tested`（本机真跑过它的代码/单测） | **7** | 19% |
+| `source`（读了源码或官方文档） | **17** | 47% |
+| `readme`（只读 README 或媒体转述） | 6 | 17% |
+| `metadata`（只看星数/许可/最后提交） | **6** | 17% |
 
 **只到 `metadata` 的 6 个，全部 `verdict=不适用` 或 `待核`**，没有一个被判「借鉴」——这符合协议的「`depth=metadata` 不得判借鉴」禁令，也说明**判「借鉴」的 14 条全部至少读到了源码**。
 
@@ -408,11 +408,110 @@ EXIT=0    missing: []
 |---|---|
 | [`docs/research/sw-agent-2026Q4/00-brief.md`](00-brief.md) | **L3 任务书七块**（问题、基线、产出格式、证据四档、已判死清单、分线规则、边界声明）|
 | [`docs/research/sw-agent-2026Q4/report.md`](report.md) | **本报告**（结论先行 → 分线发现 → 对不上的地方 → 待核 → 反证记录 → 两本账 → 建议）|
-| [`docs/research/sw-agent-2026Q4/projects.jsonl`](projects.jsonl) | **机器可读侧车**：**31 行**，6 个必填字段齐（`id`/`url`/`verdict`/`evidence_url`/`fetched`/`depth`），无重复 id，`depth=metadata` 无一条判「借鉴」|
-| `docs/survey/cards/sw-*.md` | **21 张新卡片**（A 10 · B 4 · C 2 · D 5），全部过 `check_survey_cards.py` |
+| [`docs/research/sw-agent-2026Q4/projects.jsonl`](projects.jsonl) | **机器可读侧车**：**36 行**，6 个必填字段齐（`id`/`url`/`verdict`/`evidence_url`/`fetched`/`depth`），无重复 id，`depth=metadata` 无一条判「借鉴」|
+| `docs/survey/cards/sw-*.md` | **24 张新卡片**（A 10 · B 4 · C 2 · D 5 · 低星重扫 3），全部过 `check_survey_cards.py` |
 | `D:\swagent-2026Q4\repos\` | **39 个克隆**（`--depth 1`，未进仓库，`C:\swprojects\` 零改动）|
 | `D:\swagent-2026Q4\dup-report.md` | B 线重复度实测（★ 其口径与哈希值经我复核改正，见 §7 第 8–10 条）|
 | `D:\swagent-2026Q4\token-cost.md` | skill 入口与 `tools/list` 的 token 成本实测（`cl100k_base`）|
 
-**判定分布**（`verdict`）：借鉴 **14** · 不适用 **7** · 可选 **7** · 待核 **3**。
-**证据深度**（`depth`）：`tested` **7** · `source` **14** · `readme` **4** · `metadata` **6**。
+**判定分布**（`verdict`）：借鉴 **17** · 可选 **8** · 不适用 **7** · 待核 **4**。
+**证据深度**（`depth`）：`source` **17** · `tested` **7** · `readme` **6** · `metadata` **6**。
+
+---
+
+## 11. 低星高质：按星数排序会系统性漏掉的东西
+
+> **业主 2026-11-02 追问**：「其他的比较新的项目呢，有没有哪个手搓大神、AI 大神，他其实已经做了，只是刚发出来没多久，还没人关注？」
+> 这一节是对第一轮方法的**自我纠错**。结论：**有，而且不止一个；最重的一个 41 星，技术含量在本轮所有对象里排前三。**
+
+### 11.1 第一轮为什么漏了它们（方法错误，不是运气问题）
+
+第一轮的候选排序是 **按 stars 降序**（`gh api search/repositories?...&sort=stars`）。这等于**用「有多少人已经发现」去筛「还没人发现的东西」**——方法本身与目标矛盾。
+
+第二轮换成**不看星的实体质量计分**：对所有克隆跑同一套扫描，统计
+
+| 指标 | 为什么它比星数可信 |
+|---|---|
+| 第一方代码行数（排除 `node_modules` / `third-party-patched` / `obj` / `dist`） | 星数可以刷、可以蹭热点；行数要人写 |
+| `verify/assert/tolerance/expected/oracle` 命中数 | 有没有把判据写进代码 |
+| `COM 坑` 命中数（`CommandInProgress` / `GetWhatsWrong` / `byref` / `LoadTypeLib` / `mark`） | 有没有真机踩过坑 |
+| `rollback/transaction/undo/checkpoint` 命中数 | 有没有事务式建模 |
+| `persistent/stable-id/reference` 命中数 | 有没有碰持久引用 |
+| **完整 git 历史跨度与提交数**（必须 `fetch --unshallow`，`--depth 1` 会把历史裁成 1 个提交） | 假项目不会有 2.5 个月的连续提交 |
+
+★ **最容易被漏掉的一步**：`--depth 1` 克隆让 `git rev-list --count HEAD` 恒为 1。**不 unshallow 就看不出「这是老手做了很久」还是「这是刚生成出来」**。
+
+### 11.2 结果：三个真正值得看的
+
+#### ★★★ 第一名：`fyjgtddco/DSH-SW-and-CAD` —— 41 星，2.5 个月，120 条 GB 规则
+
+**这是本轮最反常的发现，卡片见 [`docs/survey/cards/sw-fyjgtddco-dsh-sw-and-cad.md`](../survey/cards/sw-fyjgtddco-dsh-sw-and-cad.md)。**
+
+实测：**36 个提交 · 2026-08-19 → 2026-11-01 · 第一方 Python 73 个文件约 3.7 MB · `engineering/tools` 下第一方代码 81,862 行 · MIT**（来源：`git fetch --unshallow` 后 `git rev-list --count HEAD` 与本地行数统计，见卡片 §8）。它单文件体量：`swapi.py` **767.5 KB**、`sw_bridge.py` 402 KB、`mode_gate.py` 400.5 KB、`workflow_gate.py` 345.7 KB。
+
+**为什么它值得你亲自看**：它**独立走到了与我们同一套架构**，而且是**已落地**的形态——
+
+| 它的做法 | 对应我们项目里的哪件事 |
+|---|---|
+| `defense_gate.py`：**材料 / 物理 / 领域（GB）三道防线**，从「只写在提示词里、靠模型自觉」变成「代码级、到点自动执行、不通过不放行」 | 我们的「硬门禁」讨论 |
+| 每个交付物必须带凭据：`.material.json` / `reports/<room>.physics.json` / `reports/<room>.domain.json` | 我们「验证结论只活在会话里」的短板 |
+| 三道强制点：产物落盘 / room-end / 开总装前 / **宣告完成前** | 我们的「先验收后能力」 |
+| 绕行必须留痕到 `reports/defense_bypass.json`（「绝不静默」） | 我们还没有「例外审计」 |
+| `physics/` 14 个模块：FEA 求解器 58.9 KB、载荷工况 46 KB、**疲劳 20.2 KB**、材料库 33.6 KB、网格适配、几何门禁 | 我们的「物理在环」 |
+| `physics/rules/`：**19 个 JSON / 120 条规则 / 92 个标准号**，`severity` 18 BLOCKER + 15 CRITICAL | 我们的「规则包」 |
+| `domain_validator.py`：「**必须先定义"什么是好"，才能让 AI 去"生成"**」 | charter 的判定器先行 |
+| 42 个 `test_regression_*.py`，用**退出码**判、**锁死类型库行号**（`FeatureCut3` L22427-22443 → 26 参）+ **引官方 API Help 原文**、**假 COM 不启动 SolidWorks** | 铁律 4「三源互证」 + 我们「离线可测」的诉求 |
+
+**它离「能用」差什么**：**一步都没被我跑过**；120 条 GB 规则**一条条文都没核**（只读字段）；它是 DSH 预设形态，与我方 MCP 形态不同。⇒ **并入前必须先做两件事：核条文、核它是否真能拦住。**
+
+#### ★★ 第二名：`adinomyerson/FullyDefined-AI-for-SOLIDWORKS` —— **0 星**，7 天前发布
+
+卡片见 [`sw-adinomyerson-fullydefined.md`](../survey/cards/sw-adinomyerson-fullydefined.md)。实测 **86 个第一方文件 / 16,852 行、MIT、2026-10-24 创建、11-01 还在推**。
+
+**它是「没人关注」的教科书样本**（0 星），但代码里做了一件我们 E1 一直当「要求」写的事：`core/sketch.py:917` 有一条**自动修复通道**——「Fully define, from the origin, every sketch a new feature made for itself and left undefined」。而且它用的是真实枚举 `Status == 3`（完全定义），与我们已知事实一致。
+
+更值钱的是一个**对照表**：`RELATIONS` 里同一语义在「选线段」与「只选点」下枚举不同（`sgHORIZONTAL2D` vs `sgHORIZONTALPOINTS2D`）——这正是我们 `SKETCH_CONSTRAINT_TYPES` 最容易漏的一类。
+
+#### ★★ 第三名：`caoguanqiu1-alt/CAD-CAE-Agent` —— 1 星，但实验设计最讲究
+
+卡片见 [`sw-caoguanqiu1-cad-cae-agent.md`](../survey/cards/sw-caoguanqiu1-cad-cae-agent.md)。**MIT，派生自 `andrewbartels1`（已声明）**。
+
+它最该抄的**不是代码是实验设计**：`experiments/agent_workflow_benchmark.py:181` 把期望体积**故意改成 123 mm³**，用来证明「门禁真的会拦住错误结果」。⇒ **我方 E 判据现在有「通过」的记录，缺「必须失败」的记录**，这条直接补上。
+另有一条落到测试用例名里的原则：「A None 'verified' readback **is disclosed** in the message」——读不到回读值必须明说「未知」，不许当成功。
+
+### 11.3 还有几个「小但有点东西」的（未出卡，已记 JSONL）
+
+| 仓库 | 星 | 它的一点真东西 |
+|---|---:|---|
+| `jasonXiao422/drawing2sw` | **0** | DWG/DXF/PDF/图片 → 特征表 → STEP/SLDPRT；6,763 行、**有 CI badge**、有 `standards/` 与 `schema/` 目录、MIT |
+| `xiongQvQ/CadJSON-Studio` | 1 | **派生自我方上游**（README 明确声明 MIT 归属）：出自审查报告的 JSON → 引擎建模，「Agent 只写 JSON，引擎负责建模」 |
+| `coleas33/smart_SW` | 2 | C# add-in + Python 审查器，原则一句话：「**模型决定查什么并解释，永远不计算判定**」（AGPL，只读思想） |
+| `msmith297/solidworks-agent` | **0** | C# add-in（xCAD.NET）+ Task Pane WebView2；**对话存在 .sldprt 文件内部**；13,286 字符 README |
+| `ddhh1212/CAutoD` | 2 | 「From an idea to an editable CAD model. Inside SolidWorks.」v1.0.0 有发布 |
+
+### 11.4 一条可复用的判据：什么样的信号能在没有星的情况下预示质量
+
+我这轮在低星对象里观察到、且**在三个高质对象上同时成立**的信号（可作为以后筛选的清单）：
+
+1. **完整 git 历史有 1 个月以上的连续提交**（不是一次导入）；
+2. **测试/脚本的名字来自真实事故**（`test_regression_bug12_select_sketch` / 「15 小时会话、100 分钟零产物」）；
+3. **引官方原文或类型库行号**，而不是「我记得要这么传」；
+4. **有「必须失败」的负例**；
+5. **有 doctor / 自检 / 安装校验**（说明作者被环境坑过）；
+6. **README 写明自己不做什幺**（边界感）；
+7. **规则/判据带 `source_url`** 指到官方发布页。
+
+反过来，**星数、fork 数、README 里的 GIF** 都不在这份清单里。
+
+### 11.5 这对我方意味着什么（要说实话）
+
+1. **「没人做过」这个前提是错的。** 至少 `fyjgtddco` 一个人 2.5 个月就把「三道硬门禁 + GB 规则 + 物理在环」走通了一遍，还是 MIT。**我们该做的不是从零论证这套架构，而是去核他的规则对不对、门禁真不真。**
+2. **但「他做完了」也不成立。** 他没跑过真机验证给我们看、规则条文没核、无第三方复现。**所以并入路径是「核 → 借 → 补」，不是「拿来就用」。**
+3. **最该马上做的一件**：把 `fyjgtddco` 的 120 条 GB 规则**逐条与标准原文比对**。这件事无论我们最后用不用他的代码都得做——**因为我们自己的规则包也要过这一关**，而他给了我们一个可对照的起点（92 个标准号 + 每个的官方 `source_url`）。
+
+### 11.6 覆盖自查（本节）
+
+- **重扫范围**：已克隆 42 个仓库全量计分（`D:\swagent-2026Q4\substance.json`）+ 7 组新检索命中 **143 个从未克隆的仓库**，按 `size` 与关键词筛出 8 个送 README 分拣，**clone 并读码 3 个**。
+- **新增卡片 3 张**（均已过 `check_survey_cards.py`），JSONL 增 5 行。
+- **未深挖但已具名**：`Coleas33/smart_SW`（AGPL，只读思想）、`msmith297/solidworks-agent`、`ddhh1212/CAutoD`、`jasonXiao422/drawing2sw`、`xiongQvQ/CadJSON-Studio`、`oce-projects/oce-solid-agent-mcp`、`AlchemistCache/alchemist-solidworks-mcp`、`PatrickMcKenzier/*` 与 `tan000tan/*`（疑似我方上游的 fork，未核）。
+- **仍然可能漏**：GitHub 搜索只能按元数据筛；**没有写 README、没有打 solidworks 关键词的低星项目我搜不到**。这是本节方法的天花板，如实写明。
