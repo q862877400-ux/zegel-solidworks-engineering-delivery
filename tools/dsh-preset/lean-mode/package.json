@@ -1,0 +1,36 @@
+{
+  "name": "@local/dsh-lean-mode",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.mjs",
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "cordis.patch.yml",
+    "skills",
+    "docs",
+    "tools",
+    "README.md",
+    "README.zh.md",
+    "LICENSE",
+    "THIRD-PARTY.md"
+  ],
+  "description": "让 AI 用更精简的方式调用工具，省 token、反应更快。",
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "plugin",
+    "tools",
+    "context"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import sys
 from pathlib import Path
@@ -70,6 +71,80 @@ def staged() -> list[tuple[str, int, int]]:
     return rows
 
 
+
+# ── 提交前置门禁（★ 2026-11-02 业主指令）──────────────────────────────────────
+# ★★★★★ **为什么把门装在这里**：业主原话——
+#   「我们不是已经写了机械门禁吗？问题是你压根就不走门，你直接把门给绕过了……
+#     你并没有按照之前设计的路径去走啊」
+# ★★ 实测结论：本仓门禁**全部装在下游**（`ToolSpec` 层 / `_unit_guard` 运行时出口 /
+#   `release_check` 发布前），而**一次性脚本（`tools/` 里手写、`tools/` 外临时文件）
+#   从不经过任何一道**。⇒ 门再好，只要不需要"进门"就等于不存在。
+# ★★★ 因此把**唯一提交入口**变成必经之门：
+#   ① 新文件必须在 `docs/state/file-audit.jsonl` 里有**非 pending 裁决**
+#   ② 改动过的 `.py` 必须过语法/SyntaxWarning 门禁
+#   不满足就**拒绝提交**（不是警告）。★ `--no-gate` 可显式跳过，但会打印醒目提示。
+LEDGER = ROOT / "docs" / "state" / "file-audit.jsonl"
+
+
+def _ledger_verdicts() -> dict:
+    """⇒ {路径: 裁决}（读不到台账回空表，**不静默放行**）。"""
+    if not LEDGER.is_file():
+        return {}
+    out: dict = {}
+    try:
+        for line in LEDGER.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            rec = json.loads(line)
+            out[rec.get("path", "")] = rec.get("verdict", "")
+    except Exception:  # noqa: BLE001
+        return {}
+    return out
+
+
+def _gate(paths: list[str], rows: list[tuple[str, int, int]]) -> int:
+    """★ 提交前门禁：新增文件必须有裁决 + 改动的 .py 必须过语法门。"""
+    head = set(_tracked_files())
+    staged_names = [n for n, _a, _d in rows]
+    verdicts = _ledger_verdicts()
+
+    problems: list[str] = []
+    new_files = [n for n in staged_names if n not in head]
+    for n in new_files:
+        v = verdicts.get(n)
+        if v is None:
+            problems.append("%s —— 新文件，台账里**没有**它（先跑 `python -B scripts/gen_file_audit.py`）" % n)
+        elif v == "pending":
+            problems.append("%s —— 新文件，台账裁决仍是 `pending`（必须给出 deep:/skim: 证据）" % n)
+
+    if problems:
+        print()
+        print("★★ 提交前置门禁未通过（新增文件没有台账裁决，%d 项）：" % len(problems))
+        for p_ in problems:
+            print("   %s" % p_)
+        print("   ⇒ ★ 这是 2026-11-02 业主指令装的**必经之门**：不许绕过门禁直接提交。")
+        return 9
+
+    #: ② 语法/SyntaxWarning（只对**.py**，整仓扫很快）
+    pys = [n for n in staged_names if n.endswith(".py")]
+    if pys:
+        gate = ROOT / "scripts" / "check_python_syntax.py"
+        if gate.is_file():
+            r = subprocess.run(
+                (sys.executable, "-B", str(gate)),
+                cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                text=True, encoding="utf-8", errors="replace",
+            )
+            if r.returncode != 0:
+                print()
+                print("★★ 提交前置门禁未通过（.py 语法/SyntaxWarning）：")
+                tail = (r.stdout or "").strip().splitlines()[-6:]
+                for ln in tail:
+                    print("   %s" % ln)
+                return 10
+    return 0
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(
         description="★ 只提交自己这一线的文件（★ 先 reset 再只 add 点名的）"
@@ -81,6 +156,11 @@ def main(argv: list[str] | None = None) -> int:
         help="★ 确实要删文件时才开（★ 默认拦：与事实 61 同族）",
     )
     ap.add_argument("--dry-run", action="store_true", help="★ 只看会提交什么，不提交")
+    ap.add_argument(
+        "--no-gate",
+        action="store_true",
+        help="★ 跳过提交前置门禁（★ 默认**不跳**；跳了会在末端醒目提示）",
+    )
     ap.add_argument(
         "-m",
         "--message-file",
@@ -167,6 +247,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 6
 
+    # ★★★ 必经之门（2026-11-02）：新增文件必须有台账裁决；改动 .py 必须过语法门
+    if not a.no_gate:
+        rc = _gate(a.paths, rows)
+        if rc:
+            return rc
+
     if a.dry_run or not a.message_file:
         print()
         print(
@@ -183,6 +269,8 @@ def main(argv: list[str] | None = None) -> int:
     if commit.returncode != 0:
         print("★ 提交失败：%s" % (commit.stderr or "").strip())
         return 8
+    if a.no_gate:
+        print("⚠⚠ **本次跳过了提交前置门禁（--no-gate）** —— ★ 请务必自行跑 `release_check`")
     print("★ 提交成功：%s" % (commit.stdout or "").strip().splitlines()[0])
     print("★ 本次提交的文件：")
     for name in (

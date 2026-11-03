@@ -42,11 +42,17 @@ for _p in (str(_REPO), str(_REPO / "scripts")):
 
 from scripts import sw_connect as c  # noqa: E402
 from scripts import sw_drawing as d  # noqa: E402
+from scripts import sw_units as U  # noqa: E402
 
 
 def _mm(value) -> float:
-    """★ 毫米 → 米（**整个仓库里这一处**负责工程图坐标的换算）。"""
-    return float(value) / 1000.0
+    """★ 毫米 → 米（工程图侧别名）。
+
+    ★★ 换算真源在 `sw_units.mm_to_m` —— 2026-11-04 仓库统一化体检（⑤ 跨文件同函数体组
+      77 > 上界 76）抓到本函数与它**同体重复** ⇒ 按 AGENTS.md §十四之四「同一个东西只许
+      有一个名字」，这里改成**委托**，调用点（12 处）不动。
+    """
+    return U.mm_to_m(value)
 
 
 def _selection_count(model) -> int:

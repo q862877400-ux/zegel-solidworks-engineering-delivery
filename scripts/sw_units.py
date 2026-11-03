@@ -241,3 +241,127 @@ def dimension_reading(dim, relation_type_int) -> dict:
     if relation_type_int in ANGLE_RELATION_TYPES:
         return {"value_rad": round(v, 6), "value_deg": rad_to_deg(v)}
     return {"raw_system_value": round(v, 6), "unit_unverified": True}
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ★★★ 单位契约真源（★ 2026-11-02 业主指令：按官方文档把全项目的量纲口径钉死）
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# ★★★★★ **官方总纲（逐字）** —— `C:\swapi\docs\Programming with the SOLIDWORKS
+#   API\Units.md`：
+#   「**Unless otherwise stated, all SOLIDWORKS API functions use metric units.
+#     Specifically, the SOLIDWORKS API accepts or returns values as meters, radians,
+#     kilograms, square meters, or cubic meters.**」
+#
+# ★★★ **为什么官方这样设计**（`IModelDoc2::SetUnits` 的说明逐字）：
+#   「Sets the units used by the **end-user** for the model.」
+#   ⇒ ★★ **文档单位是「给终端用户看的显示属性」，API 层是固定的 SI 米制契约**。
+#     这是**有意的分层**：同一份宏在毫米文档 / 英寸文档里跑出同样的几何。
+#   ⇒ ★ **因此「把文档单位改成米」并不能让 API 不再需要换算** —— API 本来就是米，
+#     改的只是 UI 显示；而换算关系（我们的 `_mm` 包装 ↔ API 米）一点没消失。
+#
+# ★★★ **四个不同口径（必须分别对齐，混用即 1000× 错）**：
+#   ┌──────────────────────────────┬──────────┬───────────────────────────────┐
+#   │ 边界                          │ 口径      │ 依据                           │
+#   ├──────────────────────────────┼──────────┼───────────────────────────────┤
+#   │ 几何 API 默认（含方程式曲线、  │ **米**    │ 官方 Units.md 总纲             │
+#   │ FeatureExtrusion3 的 D1 等）  │          │ + 事实 517 之补（D1 吃米）      │
+#   │ GetSystemValue3 / SetSystem-  │ **文档     │ 事实 517（真机）               │
+#   │ Value3（尺寸值）              │  单位**   │                               │
+#   │ IBody2.GetBodyBox             │ **毫米**  │ 事实 71（官方未写，实测）       │
+#   │ 本仓 `sketch_*` 包装           │ **毫米**  │ AGENTS.md §十四之二 既有约定    │
+#   └──────────────────────────────┴──────────┴───────────────────────────────┘
+#
+# ★★ **所以「不被量纲影响」的官方答案不是某个开关，而是**：
+#   ① 默认一律按米（总纲）· ② 例外必须被**显式记录**（「unless otherwise stated」）
+#   ③ 工程落地 = **单位进名字 + 单一换算点**（AGENTS.md §十四之二 的根因解法）
+#   ⇒ ★ 换算不能被消灭，只能被**收敛到一处并让门禁看得见**。
+#
+#: ★★ **这不是第二真源，是索引**（AGENTS.md §十四之四「同一个东西只许有一个名字」）：
+#:   权威正文在 `specs/212-unit-discipline/`（判据 C1–C7 · 25 个任务全 [x]）
+#:   + `docs/unit-conflicts.md`（「官方声明 vs 真机读数」冲突台账）
+#:   + `docs/known-facts.md` 事实 71 / 517；运行时守卫在 `mcp-server/server.py::_unit_guard`。
+#:   ⇒ ★ 口径若与上述任一处冲突，**以那三处为准**，改这里不算数。
+#: ★ 用途单一：给**几何包装函数**一个查表入口，避免每次现场判断（规格 212 的中心思想）。
+UNIT_CONTRACT_INDEX = {
+    "api_geometry_default": "m",
+    "ISketchManager.CreateEquationSpline2": "m",     #: 官方总纲；2026-11-02 实测 0.01→直径20mm
+    "IFeatureManager.FeatureExtrusion3.D1": "m",     #: 事实 517 之补
+    "IModelDocExtension.GetSystemValue3": "document",  #: 事实 517
+    "IBody2.GetBodyBox": "mm",                       #: 事实 71（官方未写，实测）
+    "sw_part.sketch_circle/sketch_line": "mm",        #: AGENTS.md §十四之二
+}
+
+
+def mm_to_m(value_mm: float) -> float:
+    """**毫米 → 米**（★ 进 API 几何口时用；与 `m_to_mm` 互逆）。"""
+    return float(value_mm) / 1000.0
+
+
+def length_scale_to_mm(model) -> float:
+    """★ **文档单位 → 毫米** 的倍数（事实 517 的 `_document_length_unit_scale` 同精神）。
+
+    :returns: 1.0（`swMM`）· 10.0（`swCM`）· 1000.0（`swMETER`）· 25.4（`swINCHES`）…
+               读不到文档单位回 `None`，**不猜**。
+    """
+    rep = read_units_report(model)
+    lu = rep.get("length_unit")
+    return {
+        0: 1.0,          # swMM
+        1: 10.0,         # swCM
+        2: 1000.0,       # swMETER
+        3: 25.4,         # swINCHES
+        4: 304.8,        # swFEET
+        6: 1e-7,         # swANGSTROM
+        7: 1e-6,         # swNANOMETER
+        8: 1e-3,         # swMICRON
+        9: 0.0254,       # swMIL
+        10: 25.4,        # swUIN
+    }.get(lu)
+
+
+def meters_expr(expr_mm: str) -> str:
+    """★ 把**以毫米为系数**的表达式整体换算成**米**（用于方程式曲线）。
+
+    ★ 为什么可以整体乘：表达式里的长度都出现在**系数位**，参数 `t` 是无量纲的
+      ⇒ `0.001*(expr)` 就是一次干净的 mm→m 换算（2026-11-02 实测：`0.01*cos(t)`
+      得到直径 20 mm，即表达式吃米）。
+    """
+    return "0.001*(%s)" % expr_mm
+
+
+def equation_curve_mm(model, x_expr_mm, y_expr_mm, t_start, t_end, *,
+                      z_expr_mm="", is_angle_range=False):
+    """★ **名字带单位的方程曲线**：表达式按**毫米**给，内部一次性转米后调 SW。
+
+    ★★ 为什么需要它：`CreateEquationSpline2` 吃**米**（官方总纲），而本仓建模一律
+      **毫米**；直接在调用点写 `*0.001` 就会渗到十几处，混用即成 1000× 错
+      （2026-11-02 实测：同一草图里两条曲线一个按毫米一个按米写 ⇒ 轮廓永远接不上 ⇒
+      拉伸静默回 `None`）。⇒ 换算只在这一处发生。
+
+    :param model: `IModelDoc2`，且**必须已在活动草图中**
+    :param x_expr_mm: x 关于 `t` 的表达式，**长度系数按毫米写**
+    :param y_expr_mm: y 关于 `t` 的表达式，**长度系数按毫米写**
+    :param t_start: 参数起点（★ 无量纲，或角度见 `is_angle_range`）
+    :param t_end: 参数终点
+    :param z_expr_mm: 3D 曲线的 z 表达式（可选）
+    :param is_angle_range: True 时范围按弧度解释
+    :returns: `ISketchSpline`；**调用方仍须回读段数**才能判定是否真的进了草图
+              （★ 该接口失败时**不抛异常**，只静默不成段）。
+    """
+    sm = get_com_member(model, "SketchManager")
+    return get_com_member(
+        sm,
+        "CreateEquationSpline2",
+        meters_expr(x_expr_mm),
+        meters_expr(y_expr_mm),
+        meters_expr(z_expr_mm) if z_expr_mm else "",
+        "%r" % t_start,
+        "%r" % t_end,
+        bool(is_angle_range),
+        0.0,
+        0.0,
+        0.0,
+        True,
+        True,
+    )
