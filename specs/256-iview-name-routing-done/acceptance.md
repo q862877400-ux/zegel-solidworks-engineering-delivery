@@ -63,13 +63,13 @@
 
 | 步骤 | 结果 |
 |---|---|
-| `scripts/sync_bundled_skill.py` | ✅ OK |
+| `scripts/release_check.py` | ✅ OK |
 | `scripts/gen_level_audit.py` | ✅ OK |
 | `tools/gen_metrics.py` | ✅ OK |
 | `tools/gen_harvest_digest.py` | ✅ OK |
 | `tools/build_union_map.py` | ✅ OK |
 | `tools/gen_dead_ends.py` | ✅ OK |
-| `scripts/sync_bundled_skill.py`（★ 头尾各一次） | ✅ OK |
+| `scripts/release_check.py`（★ 头尾各一次） | ✅ OK |
 
 ---
 

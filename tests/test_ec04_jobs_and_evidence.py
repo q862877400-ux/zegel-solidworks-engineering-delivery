@@ -315,8 +315,8 @@ def test_v7_test_file_itself_does_not_import_com():
 
 def test_v8_reuse_targets_exist():
     """★★ V8：★ 计划 §5 EC04 点名的**复用目标必须存在**（★ 不另建）。"""
-    for rel in ("apps/desktop/cad_workbench/queue_worker.py",
-                "apps/desktop/cad_workbench/reviewer_gate.py",
-                "apps/desktop/cad_workbench/engineering_orchestrator.py",
+    for rel in ("scripts/cad_workbench/queue_worker.py",
+                "scripts/cad_workbench/reviewer_gate.py",
+                "scripts/cad_workbench/engineering_orchestrator.py",
                 "tools/sw_guard.py"):
         assert (ROOT / rel).is_file(), "★★ 复用目标不见了：%s" % rel

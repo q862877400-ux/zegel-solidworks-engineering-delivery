@@ -47,7 +47,7 @@ S5  逐张插 10 行声明（FR-003）
 S6  跑判据 ⇒ 全绿
 S7  跑门禁本体 ⇒ 未表态 = 0 · exit 0
 S8  回归 223 / 224 两份判据 ⇒ 仍绿
-S9  scripts/sync_bundled_skill.py（打包副本同步）→ 跑打包新鲜度判据
+S9  scripts/release_check.py（打包副本同步）→ 跑打包新鲜度判据
 S10 ★ scripts/release_check.py **用 3.14.7** ⇒ exit 0
 S11 更新 ROADMAP §一 / .specify/feature.json / memory / 交接单 / AUTO_RUN
 ```

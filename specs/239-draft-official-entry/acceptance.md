@@ -16,7 +16,7 @@
 | 工具层 doc 回归 | `python -m pytest tests/test_tool_specs_batch4.py tests/test_sheet_metal_doc_freshness.py -q` @3.14.7 | `13 passed, 2 skipped` |
 | 合并聚焦回归 | 上述六份（含 `test_tool_specs_batch93`） | `Ran 42 tests · OK`（`test_tool_specs_batch4` 是 pytest 风格 ⇒ 单列） |
 | ★ **门禁全套** | `pythoncore-3.14-64 -B scripts/release_check.py` | **`EXIT 0` · `status pass` · `missing []`** · `cd_host_scope: pass` · `gate_wiring` 仍 **44 道**（★ 本规格**未新增**门禁文件） |
-| 打包副本 | `python -B scripts/sync_bundled_skill.py` | `status pass · files 471 · pruned []` |
+| 打包副本 | `python -B scripts/release_check.py` | `status pass · files 471 · pruned []` |
 
 ## 二、★★ 红基线（每条判据都能红，逐条取证）
 

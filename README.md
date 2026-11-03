@@ -53,16 +53,14 @@ python scripts\cad_doctor.py
 
 **同一个机器上不要同时起多个 SolidWorks MCP。** 服务内部用全局锁串行执行 COM 调用，多进程抢同一个 COM 连接会死锁。
 
-## 四、四种用法
+## 四、三种用法
 
 | 入口 | 适合什么 | 怎么开始 |
 |---|---|---|
 | MCP Server | 你已经在用支持 MCP 的客户端，想让模型直接操作 SolidWorks | `python mcp-server\server.py`，由客户端作为子进程拉起 |
 | Skill | 客户端支持导入 skill 包 | 把仓库根目录作为一个 skill 加载，见 [SKILL.md](SKILL.md) |
-| 桌面端 | 想要图形界面：项目、任务队列、评审、预览、交付包 | [apps/workbench-ui](apps/workbench-ui)（React + Tauri，正式客户端，自带 Rust 后端 23 个命令；需自行 `npm install` 与 `cargo build`）· [apps/desktop](apps/desktop)（PySide6 原型，CAD 执行是 mock，只用来看界面设计） |
 | DSH preset | 用 DSH，且希望一个会话里直接拿到全部 544 个工具 | `python -B tools\dsh-preset\install_preset.py --apply`，见 [docs/dsh-preset-sw-engineer.md](docs/dsh-preset-sw-engineer.md) |
 
-> 桌面端的任务执行走它自己的本地 worker（通过 `codex` 命令行），**不经过 MCP Server**，两条路是并行的入口。想用同一套能力跑批处理，走 MCP；想要界面管理任务与交付包，走桌面端。
 
 ### 从零试一个零件
 
@@ -96,7 +94,6 @@ python scripts\cad_doctor.py
 | `tools/` | 命令行工具：真机护栏 `guard_run.py`、各种探针与生成器 |
 | `docs/` | 知识库与说明文档 |
 | `tests/` | 测试 |
-| `apps/` | 桌面端 |
 | `references/`、`subskills/`、`examples/` | 参考资料、子技能、示例 |
 | `AI Solidworks/` | 本机官方文档、模型、截图工作区（不入库） |
 

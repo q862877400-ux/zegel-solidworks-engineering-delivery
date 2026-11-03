@@ -19,13 +19,7 @@ from pathlib import Path
 #: 份名单里）。
 sys.stdout.reconfigure(encoding="utf-8")
 
-try:
-    from .sync_bundled_skill import collect_runtime_files
-except ImportError:
-    from sync_bundled_skill import collect_runtime_files
-
 ROOT = Path(__file__).resolve().parents[1]
-BUNDLED_SKILL = ROOT / "apps/workbench-ui/src-tauri/resources/skill"
 
 
 # ── 来源 ─────────────────────────────────────────────────────────────
@@ -143,38 +137,6 @@ def _version(path: Path, pattern: str) -> str:
     if not match:
         raise AssertionError(f"无法读取版本: {path}")
     return match.group(1)
-
-
-def find_bundled_skill_drift(
-    root: Path, bundled_skill: Path, expected_paths=None
-) -> list[str]:
-    """@brief 返回桌面内嵌 Skill 中缺少源文件或内容不一致的相对路径。"""
-    if not bundled_skill.is_dir():
-        return ["<bundled-skill-missing>"]
-    drift: list[str] = []
-    for bundled_path in sorted(
-        path for path in bundled_skill.rglob("*") if path.is_file()
-    ):
-        relative_path = bundled_path.relative_to(bundled_skill)
-        source_path = root / relative_path
-        relative_name = relative_path.as_posix()
-        if not source_path.is_file():
-            drift.append(f"missing-source:{relative_name}")
-        else:
-            try:
-                if not cmp(source_path, bundled_path, shallow=False):
-                    drift.append(relative_name)
-            except FileNotFoundError:
-                # Tauri build.rs 会原子性不足地重建 resources/skill；并行检查时
-                # 将瞬时消失稳定记录为缺失，而不是暴露底层文件系统异常。
-                drift.append(f"missing-bundle:{relative_name}")
-    for relative_path in sorted(
-        expected_paths or [], key=lambda value: Path(value).as_posix()
-    ):
-        relative = Path(relative_path)
-        if not (bundled_skill / relative).is_file():
-            drift.append(f"missing-bundle:{relative.as_posix()}")
-    return drift
 
 
 def _run_fact_single_home_gate() -> dict[str, object]:
@@ -2806,24 +2768,9 @@ def _gate_detail(res: dict) -> str:
 
 
 def run_release_check() -> dict[str, object]:
-    """@brief 校验应用版本、能力真源和必需发布文件。"""
-    ui_version = _version(
-        ROOT / "apps/workbench-ui/package.json", r'"version"\s*:\s*"([^"]+)"'
-    )
-    tauri_version = _version(
-        ROOT / "apps/workbench-ui/src-tauri/tauri.conf.json",
-        r'"version"\s*:\s*"([^"]+)"',
-    )
-    cargo_version = _version(
-        ROOT / "apps/workbench-ui/src-tauri/Cargo.toml", r'(?m)^version\s*=\s*"([^"]+)"'
-    )
-    app_version = _version(
-        ROOT / "apps/workbench-ui/src/App.tsx", r'const APP_VERSION\s*=\s*"([^"]+)"'
-    )
-    if len({ui_version, tauri_version, cargo_version, app_version}) != 1:
-        raise AssertionError(
-            f"版本不一致: npm={ui_version}, tauri={tauri_version}, cargo={cargo_version}, app={app_version}"
-        )
+    """@brief 校验版本、能力真源和必需发布文件。"""
+    #: ★ 2026-11-04：桌面工作台（apps/workbench-ui）已删除 ⇒ 版本真源改为 pyproject.toml。
+    ui_version = _version(ROOT / "pyproject.toml", r'(?m)^version\s*=\s*"([^"]+)"')
     manifest = json.loads((ROOT / "capabilities.yaml").read_text(encoding="utf-8"))
     capabilities = manifest.get("capabilities", [])
     ids = [item.get("id") for item in capabilities]
@@ -3565,32 +3512,6 @@ def run_release_check() -> dict[str, object]:
     # ⚑ 接口归属**诊断**（**不是门禁**，不拦发布）—— 放在所有硬门禁**之后**：
     #   诊断慢、且映射表有洞，放前面没意义。**假绿（检查量为 0）会在返回体里标出来。**
     ownership = _run_interface_ownership_probe()
-    expected_runtime_files = collect_runtime_files(ROOT)
-    bundled_drift = find_bundled_skill_drift(
-        ROOT, BUNDLED_SKILL, expected_runtime_files
-    )
-    if bundled_drift:
-        preview = ", ".join(bundled_drift[:10])
-        suffix = " ..." if len(bundled_drift) > 10 else ""
-        # ⚠ **把「该怎么办」写进报错里**（2026-10-01）：原来只报
-        #   `桌面内嵌 Skill 与根 Skill 不一致: <bundled-skill-missing>`，
-        # **看不出来那是一步**没跑的构建**（该目录在 `.gitignore` 里，是 `sync_bundled_s
-        # kill.py`
-        #   生成的产物）⇒ 新人会以为是代码 bug。
-        #   ⇒ 本分支现在**分开报两种情况**，并给出**可直接执行的修复命令**。
-        if bundled_drift == ["<bundled-skill-missing>"]:
-            raise AssertionError(
-                "桌面内嵌 Skill 快照**尚未生成**：%s 不存在。\n"
-                "  该目录在 .gitignore 里，是**构建产物**（不是源码）⇒ 跑一次：\n"
-                "      python scripts/sync_bundled_skill.py\n"
-                "  ⚠ 全新 clone 后必须先跑这一步，`release_check` 才可能通过。"
-                % BUNDLED_SKILL
-            )
-        raise AssertionError(
-            f"桌面内嵌 Skill 与根 Skill 不一致: {preview}{suffix}\n"
-            "  ⇒ 源码改了但快照没重生成 ⇒ 重跑：python scripts/sync_bundled_skill.py"
-        )
-    bundled_file_count = sum(1 for path in BUNDLED_SKILL.rglob("*") if path.is_file())
     # ⚑ **汇总所有门禁的状态**（2026-10-01 轮 74 加）—— **同一问题的第五层**。
     #   轮 71–73 依次解决了：接线了没 · 接线方式对不对 · 跳过时算不算数。
     #   本轮问第四问：**「跳过了」在结果里看得见吗？**
@@ -3798,7 +3719,6 @@ def run_release_check() -> dict[str, object]:
         "status": "pass",
         "version": ui_version,
         "capabilities": len(capabilities),
-        "bundled_skill_files": bundled_file_count,
         # ⚑ **13 个门禁的状态一次全列**（此前只列 4 个 ⇒ 其余是隐形的）
         "gates": gates,
         # ⚑ **每道门禁的明细**（轮 191 加）：优先 `output`（它说的是**扫了多少 / 跳过了

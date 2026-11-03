@@ -9,7 +9,7 @@ import time
 
 import pytest
 
-from apps.desktop.cad_workbench.agent_contracts import (
+from cad_workbench.agent_contracts import (
     DEFAULT_PROFILE,
     DANGEROUS_CAPABILITIES,
     codex_output_path,
@@ -18,8 +18,8 @@ from apps.desktop.cad_workbench.agent_contracts import (
     resolve_workspace,
     validate_codex_job,
 )
-from apps.desktop.cad_workbench.artifact_ledger import build_artifact_ledger
-from apps.desktop.cad_workbench.queue_worker import (
+from cad_workbench.artifact_ledger import build_artifact_ledger
+from cad_workbench.queue_worker import (
     JobCancelled,
     MOCK_HANDLERS,
     _run_command_with_runtime,
@@ -41,9 +41,9 @@ from apps.desktop.cad_workbench.queue_worker import (
     run_codex_job,
     write_job,
 )
-from apps.desktop.cad_workbench.engineering_orchestrator import build_engineering_plan
-from apps.desktop.cad_workbench.worker_health import read_worker_health
-from apps.desktop.cad_workbench.reviewer_gate import evaluate_ledger
+from cad_workbench.engineering_orchestrator import build_engineering_plan
+from cad_workbench.worker_health import read_worker_health
+from cad_workbench.reviewer_gate import evaluate_ledger
 
 
 def test_build_handlers_registers_real_agent_tasks() -> None:
@@ -804,9 +804,9 @@ def test_resolve_codex_command_uses_node_for_cmd_launcher(tmp_path: Path, monkey
     node_exe.write_text("", encoding="utf-8")
     monkeypatch.setenv("CODEX_BIN", str(codex_cmd))
     monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker._codex_windowsapps_candidates", lambda: [])
+    monkeypatch.setattr("cad_workbench.queue_worker._codex_windowsapps_candidates", lambda: [])
     monkeypatch.setattr(
-        "apps.desktop.cad_workbench.queue_worker.shutil.which",
+        "cad_workbench.queue_worker.shutil.which",
         lambda name: str(node_exe) if name in {"node", "node.exe"} else None,
     )
 
@@ -821,8 +821,8 @@ def test_resolve_codex_command_uses_path_exe(tmp_path: Path, monkeypatch) -> Non
     codex_exe.write_text("demo", encoding="utf-8")
     monkeypatch.delenv("CODEX_BIN", raising=False)
     monkeypatch.setenv("APPDATA", str(tmp_path / "appdata"))
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.shutil.which", lambda name: str(codex_exe) if name == "codex.exe" else None)
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker._codex_windowsapps_candidates", lambda: [])
+    monkeypatch.setattr("cad_workbench.queue_worker.shutil.which", lambda name: str(codex_exe) if name == "codex.exe" else None)
+    monkeypatch.setattr("cad_workbench.queue_worker._codex_windowsapps_candidates", lambda: [])
 
     command = resolve_codex_command()
 
@@ -831,7 +831,7 @@ def test_resolve_codex_command_uses_path_exe(tmp_path: Path, monkeypatch) -> Non
 
 def test_codex_executor_invokes_codex_exec_with_prompt(tmp_path: Path, monkeypatch) -> None:
     output_path = tmp_path / "codex-result.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
     job = _queued_job("job-6", "create_shell")
     job.update(
         {
@@ -876,7 +876,7 @@ def test_codex_executor_invokes_codex_exec_with_prompt(tmp_path: Path, monkeypat
 
 def test_codex_executor_fails_when_structured_output_is_missing(tmp_path: Path, monkeypatch) -> None:
     output_path = tmp_path / "missing.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
     job = _queued_job("job-no-result", "codex_task")
     job.update({"executor": "codex", "cwd": str(Path(__file__).resolve().parents[1]), "prompt": "不写结果"})
 
@@ -895,7 +895,7 @@ def test_codex_executor_parses_structured_artifacts(tmp_path: Path, monkeypatch)
     output_path = tmp_path / "codex-result.json"
     generated = tmp_path / "model.step"
     generated.write_text("ISO-10303-21;\nEND-ISO-10303-21;\n", encoding="utf-8")
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
     job = _queued_job("job-structured", "codex_task")
     job.update(
         {
@@ -937,8 +937,8 @@ def _evaluate_codex_artifact_run(
     mutate_artifacts,
 ) -> dict:
     output_path = tmp_path / "codex-result.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.validate_codex_job", lambda job: tmp_path)
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.validate_codex_job", lambda job: tmp_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
     job = _queued_job("job-artifact-proof", "codex_task")
     job.update(
         {
@@ -1056,7 +1056,7 @@ def test_codex_executor_rejects_artifact_outside_allowed_roots(tmp_path: Path, m
     rejected = tmp_path / "outside" / "old-model.step"
     rejected.parent.mkdir(parents=True)
     rejected.write_text("ISO-10303-21;\nEND-ISO-10303-21;\n", encoding="utf-8")
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
+    monkeypatch.setattr("cad_workbench.queue_worker.codex_output_path", lambda job, cwd: output_path)
     job = _queued_job("job-rejected-artifact", "codex_task")
     job.update(
         {

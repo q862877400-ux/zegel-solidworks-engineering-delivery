@@ -43,7 +43,7 @@ description: "Task list for feature implementation"
 - [x] T008 ★ 同步 `tests/test_deprecated_table_admission.py` 的 **5 处「4 条」正文**（★ 纪律 5：文档里的现状不会自己报错）
       → 验收: `grep -c "4 条" tests/test_deprecated_table_admission.py` ⇒ `0`
 - [x] T009 ★★ **跑生成器链**（★ 改了 `scripts/`）
-      → 验收: `"$PY" -B scripts/sync_bundled_skill.py && … && "$PY" -B scripts/sync_bundled_skill.py` ⇒ 7 步全跑、`pruned: []`
+      → 验收: `"$PY" -B scripts/release_check.py && … && "$PY" -B scripts/release_check.py` ⇒ 7 步全跑、`pruned: []`
 - [x] T010 互锁族回归
       → 验收: `"$PY314" -B -m pytest tests/test_deprecated_admissible_disposition.py tests/test_deprecated_table_admission.py tests/test_deprecated_entry_interlock.py tests/test_save_routing_interlock.py tests/test_obsolete_multi_successor.py tests/test_obsolete_multi_successor_impact.py tests/test_tool_specs_batch80.py -q` ⇒ `49 passed`
 - [x] T011 门禁全套 @3.14.7

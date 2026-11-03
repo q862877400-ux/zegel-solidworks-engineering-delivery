@@ -8,7 +8,7 @@
 | 新判据（实现之后） | 同上 | **`8 passed`** |
 | ★ **变异检验**（判据跑在 `HEAD` 旧实现上） | 见 tasks T4 | 旧实现 `deprecated_successor('Select2')` = **`'Select3'`**（★ **猜了**）⇒ 判据能红 ✓ |
 | 聚焦回归 | `pytest test_deprecated_table_admission test_deprecated_entry_interlock test_save_routing_interlock test_tool_specs_batch80 -q` | **`26 passed`** |
-| 打包副本 | `scripts/sync_bundled_skill.py` | `files 471 · pruned []` |
+| 打包副本 | `scripts/release_check.py` | `files 471 · pruned []` |
 | **门禁全套** @3.14.7 | `scripts/release_check.py` | **`EXIT 0` · `status pass` · `missing []`** |
 | `gate_wiring` | 同上 | **44 个**（★ 未新增门禁文件） |
 | `gate-classification.json` | — | **48**（★ 不变） |

@@ -18,7 +18,7 @@
 | 官方 | `C:\swapi\types\IFeatureManager\InsertMoldPartingSurface.md` | 存在（2015 B） |
 | 官方 | `C:\swapi\enums\swPartingSurfaceSmoothingType_e.md` | 存在（446 B） |
 
-⚠ **同名单副本已排除**：`apps\workbench-ui\src-tauri\resources\skill\scripts\sw_mold.py` 存在，但 SHA256 与 `scripts\sw_mold.py` **完全相同**（`0E50A52C6FB1C677…`）⇒ 是 `sync_bundled_skill.py` 的构建产物快照（已知事实 55），**不是另一份会漂移的源**，故以 `scripts/` 为准。
+⚠ **同名单副本已排除**：`apps\workbench-ui\src-tauri\resources\skill\scripts\sw_mold.py` 存在，但 SHA256 与 `scripts\sw_mold.py` **完全相同**（`0E50A52C6FB1C677…`）⇒ 是 `release_check.py` 的构建产物快照（已知事实 55），**不是另一份会漂移的源**，故以 `scripts/` 为准。
 
 ---
 

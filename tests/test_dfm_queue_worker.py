@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from apps.desktop.cad_workbench.queue_worker import process_job, read_job, run_dfm_review_job, write_job
+from cad_workbench.queue_worker import process_job, read_job, run_dfm_review_job, write_job
 
 
 def test_worker_runs_dfm_review_from_ui_configuration(tmp_path: Path) -> None:

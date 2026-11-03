@@ -46,13 +46,13 @@ C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B -m pytest t
 ## T-005 生成器链（★ 改了 `scripts/` 必须重跑）
 
 ```
-C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/sync_bundled_skill.py
+C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/release_check.py
 C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/gen_level_audit.py
 C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B tools/gen_metrics.py
 C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B tools/gen_harvest_digest.py
 C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B tools/build_union_map.py
 C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B tools/gen_dead_ends.py
-C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/sync_bundled_skill.py
+C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/release_check.py
 ```
 - [x] 读数：打包副本 `files 471 · pruned []` · level `verified 117 / stitched 20 / not_implemented 3` ·
       harvest `能力 140 条 · 门禁 44 道`。

@@ -50,7 +50,7 @@ S6  插 4 行（注释 + 声明）（FR-002）
 S7  跑判据 ⇒ 全绿（实测 9/9 OK）
 S8  跑门禁本体 ⇒ `已表态 55 · 未表态 0 · [PASS] 175 · exit 0`（四读数全不变）
 S9  回归 223 / 224 / 225 / 222 四份判据 ⇒ 仍绿
-S10 scripts/sync_bundled_skill.py（461 文件 · pruned=[]）→ 跑打包新鲜度判据 3/3
+S10 scripts/release_check.py（461 文件 · pruned=[]）→ 跑打包新鲜度判据 3/3
 S11 生成器 5 个 → ★ scripts/release_check.py **用 3.14.7** ⇒ exit 0
 S12 更新 ROADMAP §一 / .specify/feature.json / memory / 交接单 / AUTO_RUN
 ```

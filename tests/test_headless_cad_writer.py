@@ -5,7 +5,7 @@ from pathlib import Path
 
 import ezdxf
 
-from apps.desktop.cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
+from cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
 from scripts import headless_cad_writer
 from scripts.dxf_preview_scene import dxf_to_preview_scene
 from scripts.headless_cad_writer import export_headless
@@ -184,7 +184,7 @@ def test_headless_writer_refuses_dwg_and_does_not_fake_a_file(tmp_path: Path):
     ⚠ 判据比"返回 blocked"更强：**磁盘上不许出现任何 dwg 文件** ——
       一个"假装写了 DWG"的产物会让下游以为拿到了 DWG ⇒ 那是**诚信**问题（不只是格式问题）。
     """
-    from apps.desktop.cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
+    from cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
     from scripts.headless_cad_writer import export_headless
 
     document = NeutralCadDocument(
@@ -211,7 +211,7 @@ def test_headless_writer_does_not_modify_the_input_document(tmp_path: Path):
     """
     import hashlib
 
-    from apps.desktop.cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
+    from cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
     from scripts.headless_cad_writer import export_headless
 
     document = NeutralCadDocument(

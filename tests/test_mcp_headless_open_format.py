@@ -8,7 +8,7 @@ from pathlib import Path
 import ezdxf
 import pytest
 
-from apps.desktop.cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
+from cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
 
 ROOT = Path(__file__).resolve().parents[1]
 MCP_SERVER = ROOT / "mcp-server"

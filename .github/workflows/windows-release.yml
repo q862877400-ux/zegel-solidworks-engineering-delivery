@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: apps/workbench-ui/package-lock.json
+          cache-dependency-path: scripts/package-lock.json
       - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: "1.88.0"
@@ -33,7 +33,7 @@ jobs:
       - name: Verify Python runtime contracts
         run: python -c "import ezdxf; from mcp.server.fastmcp import FastMCP; print('ezdxf and MCP runtime imports passed')"
       - name: Generate bundled desktop skill
-        run: python scripts/sync_bundled_skill.py
+        run: python scripts/release_check.py
       - name: Run Python tests
         run: |
           python -m pytest -q
@@ -41,21 +41,21 @@ jobs:
           python scripts/validate_mcp.py
           python scripts/release_check.py
       - name: Install frontend dependencies
-        working-directory: apps/workbench-ui
+        working-directory: scripts
         run: npm ci
       - name: Build frontend
-        working-directory: apps/workbench-ui
+        working-directory: scripts
         run: |
           npm test
           npm run build
       - name: Test Rust backend
-        working-directory: apps/workbench-ui/src-tauri
+        working-directory: scripts/src-tauri
         run: |
           cargo fmt -- --check
           cargo test
           cargo clippy -- -D warnings
       - name: Configure updater signing key
-        working-directory: apps/workbench-ui
+        working-directory: scripts
         env:
           RELEASE_SIGNING_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           RELEASE_SIGNING_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -84,7 +84,7 @@ jobs:
       - name: Verify updater release contract
         run: powershell -File scripts/verify_updater_release.ps1
       - name: Install Playwright browser
-        working-directory: apps/workbench-ui
+        working-directory: scripts
         run: npx playwright install chromium
       - name: Test portable and installer packages
         run: |

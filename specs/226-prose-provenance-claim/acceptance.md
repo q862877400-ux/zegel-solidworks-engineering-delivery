@@ -91,7 +91,7 @@ exit 0
 | `tests/test_gate_boundary_transparency.py`（223） | **7/7 passed** |
 | `tests/test_relation_enum_alignment.py`（222） | **18/18 OK** |
 | `tests/test_pattern_enum_alignment.py`（222） | **12/12 passed** |
-| `tests/test_bundled_skill_enum_freshness.py` | **3/3 passed**（`sync_bundled_skill` 461 文件 · `pruned=[]`） |
+| `tests/test_rule2_length_suffix_is_enforced.py` | **3/3 passed**（`sync_bundled_skill` 461 文件 · `pruned=[]`） |
 | `scripts/release_check.py`（★ **@3.14.7**） | **exit 0** · `"missing": []` |
 
 ★ 224 的 `BASELINE_BLIND=44` 与 225 的 `BASELINE_BLIND=54` 都是**下界断言** ⇒ 55 ≥ 54 ≥ 44 不假红。

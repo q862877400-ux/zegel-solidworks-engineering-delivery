@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from apps.desktop.cad_workbench.core import create_project, read_json, write_json
-from apps.desktop.cad_workbench.mock_runner import run_mock, validate_parameters
+from cad_workbench.core import create_project, read_json, write_json
+from cad_workbench.mock_runner import run_mock, validate_parameters
 
 
 def test_mock_runner_creates_review_and_delivery(tmp_path: Path) -> None:

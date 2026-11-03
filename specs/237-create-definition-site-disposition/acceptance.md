@@ -12,7 +12,7 @@
 | 声明 | `scripts/sw_motion.py` · `sw_sheet_metal.py` · `sw_sweep.py`(×2) · `sw_weldment.py` | **5 行纯插入零删除** |
 | 接线 | `scripts/release_check.py` | 改：`_run_cd_site_disposition_gate` + `raise` 判据 + `_gate_results` 登记 |
 | 登记 | `docs/gate-classification.json` | 改：`classification` **46 → 47** |
-| 打包副本 | `apps/**`（由 `sync_bundled_skill.py` 同步） | `files 470 · pruned []` |
+| 打包副本 | `apps/**`（由 `release_check.py` 同步） | `files 470 · pruned []` |
 | 规格 | `spec.md` / `plan.md` / `tasks.md` / `acceptance.md` | 四件齐 |
 | 探针（**不进仓库代码**） | `output/_probe237_ownership.py` · `_probe237b_literal.py` · `_probe237c_cd_sites.py` | 先量用 |
 
@@ -29,7 +29,7 @@
 | 229–237 合并回归 | `python -B -m unittest tests.test_dispatch_* tests.test_cd_site_disposition` | 见 §三 |
 | **门禁全套** `release_check.py` @**3.14.7** | `C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe scripts/release_check.py` | `EXIT 0` · `status pass` · `missing []` · `gates` **45 → 46** · `cd_site_disposition: pass` |
 | 登记条目 | 同上次 | `classification` **46 → 47**（★ 两套口径**都 +1**） |
-| 打包副本新鲜度 | `scripts/sync_bundled_skill.py` | `files 470 · pruned []` |
+| 打包副本新鲜度 | `scripts/release_check.py` | `files 470 · pruned []` |
 
 ## 三、★ 核心结论
 

@@ -5,8 +5,8 @@ import urllib.error
 
 import pytest
 
-from apps.desktop.cad_workbench.agent_contracts import compile_codex_prompt, policy_reasons
-from apps.desktop.cad_workbench.knowledge_retrieval import (
+from cad_workbench.agent_contracts import compile_codex_prompt, policy_reasons
+from cad_workbench.knowledge_retrieval import (
     build_job_knowledge_context,
     retrieve_cloud_knowledge,
     retrieve_local_knowledge,
@@ -123,7 +123,7 @@ def test_cloud_rag_disables_authorized_redirects(monkeypatch) -> None:
             raise urllib.error.HTTPError(request.full_url, 302, "redirect blocked", {}, None)
 
     monkeypatch.setattr(
-        "apps.desktop.cad_workbench.knowledge_retrieval.urllib.request.build_opener",
+        "cad_workbench.knowledge_retrieval.urllib.request.build_opener",
         lambda handler: FakeOpener(),
     )
 

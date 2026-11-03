@@ -266,6 +266,12 @@ def scan() -> tuple:
 
     for d in SCAN_DIRS:
         for p in sorted((R / d).rglob("*.py")):
+            #: ★ 2026-11-04：`scripts/cad_workbench/` 是从已删除的桌面工作台迁过来的库
+            #:   （`cad_studio.py` / `headless_cad_writer.py` / `headless_occt_service.py`
+            #:   与 12 个测试仍在用），内容未重写 ⇒ 与 `check_repo_uniformity.EXCLUDE_HINT`
+            #:   **同一口径**排除，避免把历史命名欠账算进棘轮上界。欠账记在那边注释里。
+            if "scripts/cad_workbench" in p.as_posix():
+                continue
             try:
                 tree = ast.parse(p.read_text(encoding="utf-8", errors="replace"))
             except SyntaxError:

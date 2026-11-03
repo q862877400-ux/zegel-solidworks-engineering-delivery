@@ -59,7 +59,11 @@ def _tracked_files() -> list[str]:
 
 def staged() -> list[tuple[str, int, int]]:
     """★ 列出索引里的文件及 `(新增行, 删除行)`（★ 二进制给 `-` ⇒ 记 0）。"""
-    out = _git("diff", "--cached", "--numstat")
+    #: ★ 2026-11-04 修（重命名场景下 `_gate` 会误判）：不加 `--no-renames` 时，
+    #:   git 会把一次重命名折叠成 `{apps/desktop => scripts}/cad_workbench/x.json`
+    #:   这种**简写路径**，台账里记的是新路径全名 ⇒ 两者永远对不上，门禁报“新文件没裁决”。
+    #:   ⇒ 用 `--no-renames` 拿到**展开后的**增/删明细（删除记 0 新增行）。
+    out = _git("diff", "--cached", "--numstat", "--no-renames")
     rows = []
     for line in (out.stdout or "").splitlines():
         parts = line.split("\t")

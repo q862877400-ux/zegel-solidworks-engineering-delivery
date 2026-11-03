@@ -64,13 +64,13 @@ J. 恢复后复跑核心判据                    ⇒ ③④⑧ GREEN ✓
 ### 5. ★ 生成器链（T009 —— 改了 `scripts/`）
 
 ```
-scripts/sync_bundled_skill.py   ⇒ files 471 · pruned []
+scripts/release_check.py   ⇒ files 471 · pruned []
 scripts/gen_level_audit.py      ⇒ 140 条能力 · level {verified 117, stitched 20, not_implemented 3}
 tools/gen_metrics.py            ⇒ docs/metrics.md
 tools/gen_harvest_digest.py     ⇒ docs/harvest-digest.md（344 行）· 门禁 44 道
 tools/build_union_map.py        ⇒ 并集 808 操作 / 本仓缺 310
 tools/gen_dead_ends.py          ⇒ 「死路」75 条 / 46 能力
-scripts/sync_bundled_skill.py   ⇒ files 471 · pruned []
+scripts/release_check.py   ⇒ files 471 · pruned []
 ```
 
 ### 6. 门禁全套（T011）@3.14.7

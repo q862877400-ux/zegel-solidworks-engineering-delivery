@@ -26,7 +26,7 @@
 | **T-011** | `tests/test_gate_boundary_transparency.py`（223） | `OK`（7） | **7/7 passed** | ✅ |
 | **T-012** | `test_relation_enum_alignment.py` + `test_pattern_enum_alignment.py`（222） | 都 `OK` | **18/18** + **12/12** | ✅ |
 | **T-013** | 声明为纯插入 | 删除行 = 0 | 含 `#: enum-gate:` 的 hunk 中**同含删除行 = 0**（§二） | ✅ |
-| **T-014** | `tests/test_bundled_skill_enum_freshness.py` | `OK` | 首跑 2/3 → 同步后 **3/3**（`pruned=[]`） | ✅ |
+| **T-014** | `tests/test_rule2_length_suffix_is_enforced.py` | `OK` | 首跑 2/3 → 同步后 **3/3**（`pruned=[]`） | ✅ |
 | 附加 | `scripts/release_check.py`（18 门禁，@3.14.7） | exit 0 | **exit 0** | ✅ |
 
 ★ 收口时**唯一**的红是 T-009 的负例（判红文案不含 spec 用语「未表态」）——已在门禁侧修正（见 §二）。

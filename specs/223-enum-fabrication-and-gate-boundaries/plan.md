@@ -173,7 +173,7 @@ SWS_FEATURES_TO_PATTERN = {
 |---|---|---|
 | `tests/test_pattern_enum_alignment.py` | 两张表 ⟺ 官方枚举（值 + 成员名 + 项数） | 用 `importlib` 加载 `sw_pattern`，桩掉 `sw_connect`（宽松桩：任意属性返回可调用对象） |
 | `tests/test_gate_boundary_transparency.py` | 两道门禁的**边界可见性** | `subprocess` 跑门禁，`encoding='utf-8'` |
-| `tests/test_bundled_skill_enum_freshness.py` | 打包副本无 `sgEQUAL`/`sgMIDPOINT` + 与源一致 | 无（纯文件读 + `cmp`） |
+| `tests/test_rule2_length_suffix_is_enforced.py` | 打包副本无 `sgEQUAL`/`sgMIDPOINT` + 与源一致 | 无（纯文件读 + `cmp`） |
 
 **★ 环境坑（必须处理）**：`sw_part.py` 等模块在缺 COM 依赖时会**交互式**问
 「是否授权自动安装 [Y/N]」⇒ 无人值守会**挂死**。故凡 import 到 `sw_part` 的测试，
@@ -196,4 +196,4 @@ SWS_FEATURES_TO_PATTERN = {
 
 - 单文件级：US1 只动 `scripts/sw_pattern.py` 的两个字典 + 一段来源块；US2 各动一个门禁脚本。
 - 门禁改动**不改退出码**⇒ 即便回滚也不会让 `release_check` 的红绿翻转。
-- 打包副本由 `sync_bundled_skill.py` 幂等重建。
+- 打包副本由 `release_check.py` 幂等重建。

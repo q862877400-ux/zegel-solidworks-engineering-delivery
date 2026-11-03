@@ -34,7 +34,7 @@ description: "Task list for feature implementation"
 - [x] T004 [P] [US2] 写判据：`check_undefined_names.py` 输出须列出被跳过文件与原因 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_gate_boundary_transparency.py"`
       **改动前实测：2/6 passed ⇒ 4 FAIL**（无「跳过」段 · 无覆盖清单 · 无扩面 · 两张表未覆盖）
 - [x] T005 [P] [US2] 写判据：`check_enum_values_vs_reflection.py` 须打印覆盖清单（计数自洽） → 验收: 同上文件 `-k enum_gate_reports_coverage_inventory`
-- [x] T006 [P] [US3] 写判据：打包副本无「非官方 sg 名当合法值」且与源一致 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_bundled_skill_enum_freshness.py"`
+- [x] T006 [P] [US3] 写判据：打包副本无「非官方 sg 名当合法值」且与源一致 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_rule2_length_suffix_is_enforced.py"`
       **改动前实测：0/2 passed**（副本含 `sgEQUAL` · 4 处漂移）
 
 **Checkpoint**: 三份新测试各至少一红（读数见 `acceptance.md`）✓
@@ -71,7 +71,7 @@ description: "Task list for feature implementation"
 - [x] T014 [US4] `REF_PLANE_CONSTRAINTS` 两个值按反射订正（1028→1024 · 2056→2048）+ 补注释 → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_pattern_enum_alignment.py" -k ref_plane`
 - [x] T015 [US4] `HEM_POSITIONS` 按铁律 4 取反射（1/2 → 0/1）+ 补注释 + 写明两源冲突 → 验收: `... -k hem_positions`
 - [x] T016 [US4] 同步耦合面：`tests/test_tool_specs_batch93.py` 与 `mcp-server/tool_specs_batch93.py` 的 `position` 描述 → 验收: `"C:/Users/Zegel/AppData/Local/Microsoft/WindowsApps/python.exe" -m pytest tests/test_tool_specs_batch93.py -q -p no:cacheprovider` ⇒ passed
-- [x] T017 [US4] `references/part-modeling.md` 的清单行只许列官方名（222 漏掉的文档） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_bundled_skill_enum_freshness.py" -k doc`
+- [x] T017 [US4] `references/part-modeling.md` 的清单行只许列官方名（222 漏掉的文档） → 验收: `"C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe" -B "tests/test_rule2_length_suffix_is_enforced.py" -k doc`
 - [x] T018 [US4] 补**永久负例**（1028/2056 与 md 的 1/2 必须不通过） → 验收: `... -k negative_case`
 
 **⚠ 诚实性说明**：T014–T018 的**值订正发生在判据之前**（先修后写）⇒ 未取得「改前红」的读数。

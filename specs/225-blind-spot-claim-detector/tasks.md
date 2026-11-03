@@ -115,8 +115,8 @@ for t in test_enum_table_disposition test_gate_boundary_transparency test_relati
 ## T-008 · 打包副本同步 + 新鲜度
 
 ```bash
-C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/sync_bundled_skill.py
-C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B tests/test_bundled_skill_enum_freshness.py
+C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/release_check.py
+C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B
 ```
 
 - [x] `sync_bundled_skill` → `{"status":"pass","files":461,"pruned":[]}`（★ **未删任何文件**）

@@ -79,14 +79,14 @@
 | ★ `all_specs()` | **472**（★ 459 → 463 → 467 → 469 → **472**）|
 | ★ 本批 3 个 | ★ `solidworks_linear_pattern_report`（特征阵列）· `solidworks_insert_mate_reference`（配合参考）· `solidworks_assembly_iter_feature_tree`（装配特征树遍历）|
 | ★ 三件套 | ★ batch106 · ★ 台账三处认领（`pattern_and_mirror` · `assembly_and_mates` 与 `assembly_read` **两条都挂**——★ 本仓既有做法，如 `drawing_list_views` 就被两条认领）· ★ 契约测试 **6 项**（★ 四批合起来 **28 passed**）✓ |
-| ★ `release_check` | ★ **exit 0** ✓（★ 修完漏参 + 跑 `sync_bundled_skill.py` 之后）|
+| ★ `release_check` | ★ **exit 0** ✓（★ 修完漏参 + 跑 `release_check.py` 之后）|
 
 ### ★★ 本轮门禁**第二次**尽职地拦下我自己的东西（★ 两次都真）
 
 | # | 门禁 | ★ 抓到什么 |
 |---|---|---|
 | 1 | ★ **参数绑定门禁** | ★★ `linear_pattern_report` 需要 `feature_name`/`spacing_mm`/`count`、`insert_mate_reference` 需要 `name`，★ 而我**声明了空 `params`** ⇒ ★ 若不管，调用时就是 `TypeError: missing N required positional arguments` ✗ |
-| 2 | ★ **内嵌 Skill 一致性**（事实 55）| ★ 改了运行时文件却没跑 `sync_bundled_skill.py` ⇒ ★ `release_check` 直接报出**解法** ⇒ 跑完即绿 ✓ |
+| 2 | ★ **内嵌 Skill 一致性**（事实 55）| ★ 改了运行时文件却没跑 `release_check.py` ⇒ ★ `release_check` 直接报出**解法** ⇒ 跑完即绿 ✓ |
 
 ★★ **教训（写进本规格）**：★ **声明 `ToolSpec` 之前，必须先用 `inspect.signature` 读目标函数的签名**
   —— ★ 这正是 `AGENTS.md §十七`「按 `ToolSpec` 的契约调」要防的，★ 而我**漏做了自查**，

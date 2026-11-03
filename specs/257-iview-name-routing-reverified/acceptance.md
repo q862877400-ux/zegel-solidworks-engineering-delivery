@@ -66,7 +66,7 @@
 
 | 步骤 | 结果 |
 |---|---|
-| `scripts/sync_bundled_skill.py` → `gen_level_audit.py` → `tools/gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `sync_bundled_skill.py` | ✅ **7/7 OK** |
+| `scripts/release_check.py` → `gen_level_audit.py` → `tools/gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `release_check.py` | ✅ **7/7 OK** |
 
 ---
 

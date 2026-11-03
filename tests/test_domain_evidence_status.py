@@ -1,4 +1,4 @@
-from apps.desktop.cad_workbench.queue_worker import _domain_evidence_status
+from cad_workbench.queue_worker import _domain_evidence_status
 
 
 def test_domain_evidence_blocks_environment_failures():

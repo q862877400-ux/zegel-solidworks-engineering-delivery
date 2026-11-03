@@ -49,7 +49,7 @@ ERROR ⑥⑦⑩ AttributeError: module 'sw_weldment' has no attribute 'SW_MATE_P
 | `tests/test_cd_site_disposition.py` | **15/15 OK** |
 | `pytest tests/test_extended_modules_contract.py tests/test_mate_official_entry.py -q` @3.14.7 | **25 passed** |
 | 门禁全套 `release_check.py` @**3.14.7** | **EXIT 0 · status pass · missing [] · gates 44**（★ 未新增门禁文件） |
-| 打包副本 `sync_bundled_skill.py` | `files 471 · pruned []` |
+| 打包副本 `release_check.py` | `files 471 · pruned []` |
 
 ## 四、★ 三处棘轮**正当下调**（每处都补了**内容断言**）
 

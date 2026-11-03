@@ -66,7 +66,7 @@
 
 | 步骤 | 结果 |
 |---|---|
-| `sync_bundled_skill.py` → `gen_level_audit.py` → `gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `sync_bundled_skill.py` | **7/7 `exit 0`** |
+| `release_check.py` → `gen_level_audit.py` → `gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `release_check.py` | **7/7 `exit 0`** |
 
 ★ 改完**先 `ast.parse`**（★ 282 的教训：★ 语法错会被下游门禁伪装成别的错）。
 

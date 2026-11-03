@@ -13,7 +13,7 @@ if ($resolvedReleaseRoot -ne $expectedReleaseRoot) {
     throw "Unsafe updater verification path: $resolvedReleaseRoot"
 }
 
-$tauriRoot = Join-Path $repoRoot "apps\workbench-ui\src-tauri"
+$tauriRoot = Join-Path $repoRoot "scripts\src-tauri"
 $tauriConfigPath = Join-Path $tauriRoot "tauri.conf.json"
 $tauriConfig = Get-Content -LiteralPath $tauriConfigPath -Raw | ConvertFrom-Json
 $version = [string]$tauriConfig.version

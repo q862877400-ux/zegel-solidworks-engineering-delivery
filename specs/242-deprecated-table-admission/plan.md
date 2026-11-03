@@ -43,5 +43,5 @@
 | 风险 | 处置 |
 |---|---|
 | `deprecated_successor` 是**公开 MCP 工具** ⇒ 改签名会影响工具输出 | ★ 新形参有默认值；★ `check_param_binding` 已核（479 个工具 `[PASS]`） |
-| 打包副本（`apps/workbench-ui/.../skill/scripts/sw_com_traps.py`）会过期 | ★ 跑 `scripts/sync_bundled_skill.py`（头尾各一次） |
+| 打包副本（`apps/workbench-ui/.../skill/scripts/sw_com_traps.py`）会过期 | ★ 跑 `scripts/release_check.py`（头尾各一次） |
 | 索引文件在 `specs/202-*/recon/` ⇒ 判据**跨规格依赖** | ★ 只读、不写；★ 用规模下界（≥1600 条）钉住它不许缩水 |

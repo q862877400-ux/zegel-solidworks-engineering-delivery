@@ -32,7 +32,7 @@
 | R5 | 每批一个 commit（**仅本地**）· 两个仓库 clean | 红线（不 push / 不建远端 / 不发 release）+ Git 规则 | `git status --porcelain` 空 |
 | R6 | **不做的东西写清原因** | 硬约束⑥「验不过的回退、不许留在柜台上」的反面：**该说不做的要说不做** | `docs/union-gap-evidence-based.md` + `plan-24h-v2.md` §四 |
 | R7 | 新文件带**六字段来源块** | 硬约束⑨（`release_check` 的出处门禁会拦） | `check_python_syntax.py` + `release_check.py` 绿 |
-| R8 | 改运行时文件后**重跑** `sync_bundled_skill.py` | 硬约束⑩（事实 55） | `release_check.py` 的「桌面内嵌 Skill 一致性」段 |
+| R8 | 改运行时文件后**重跑** `release_check.py` | 硬约束⑩（事实 55） | `release_check.py` 的「桌面内嵌 Skill 一致性」段 |
 | R9 | 高风险写操作**不碰** | 硬约束⑦ | 段内自查：不出现保存/另存/删除调用 |
 | R10 | 判据**先找后搓**且**来源行带 license** | 铁律 6 + 宪法 | 来源表逐行 `owner/repo` + 许可 |
 

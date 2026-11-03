@@ -79,7 +79,7 @@ sketch_line(model, mm(30), 0.0, mm(30), mm(25))     ⇒   sketch_line(model, 30,
 
 | 步骤 | 结果 |
 |---|---|
-| `sync_bundled_skill.py` → `gen_level_audit.py` → `gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `sync_bundled_skill.py` | **7/7 `exit 0`** |
+| `release_check.py` → `gen_level_audit.py` → `gen_metrics.py` → `gen_harvest_digest.py` → `build_union_map.py` → `gen_dead_ends.py` → `release_check.py` | **7/7 `exit 0`** |
 
 ## 七、门禁全套 @3.14.7
 

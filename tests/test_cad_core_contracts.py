@@ -1,7 +1,7 @@
 """双入口、双后端公共 CAD Core 契约测试。"""
 from pathlib import Path
 
-from apps.desktop.cad_workbench.cad_core_contracts import (
+from cad_workbench.cad_core_contracts import (
     EvidenceEdge,
     EvidenceGraph,
     EvidenceNode,

@@ -14,7 +14,7 @@
 | ③ | 高危/写盘（`SaveAs3` · `create_draft` · `create_profile_center_mate`） | `actionable` | ★ 业主已授权 C 级 |
 | ④ | `create_hem` 的行为证据 | `actionable` | ★ **真机实录**：`sw_sheet_metal.py:154-165` —— **2026-10-06 · SW 2026 SP4.1 · 五种形态全回 `None`** |
 | ⑤ | 223 的 8 条 `HEAD` 即红既有失败 | `needs-owner` | ★ 权属不明 ⇒ 只登记不动 |
-| ⑥ | 发版前同步打包副本 | `gated` | ★ **前置 = 发版**：`scripts/sync_bundled_skill.py` 同步桌面内嵌快照；★ 不发版就没有可同步的对象 |
+| ⑥ | 发版前同步打包副本 | `gated` | ★ **前置 = 发版**：`scripts/release_check.py` 同步桌面内嵌快照；★ 不发版就没有可同步的对象 |
 
 ⇒ ★★ **本轮不删任何一条** —— ★ 与 258 的区别：258 核销的是**伪待办**（前提不成立），
 ★ 这里 6 条**前提都成立** ⇒ ★ **不为了缩表而删**。

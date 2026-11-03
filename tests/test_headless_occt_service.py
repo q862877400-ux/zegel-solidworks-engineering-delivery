@@ -9,7 +9,7 @@ import pytest
 pytest.importorskip("OCP")
 pytest.importorskip("trimesh")
 
-from apps.desktop.cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
+from cad_workbench.cad_core_contracts import NeutralCadDocument, NeutralFeature, write_json_contract
 from scripts.headless_occt_service import export_occt
 
 

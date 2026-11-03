@@ -246,7 +246,7 @@ def scan() -> tuple[list[dict], int]:
                 or "node_modules" in p.parts
             ):
                 continue
-            #: ★★ 跳过**内嵌快照**（`apps/workbench-ui/src-tauri/resources/skill/**`）——
+            #: ★★ 跳过**内嵌快照**（`scripts/cad_workbench（已无内嵌快照）/**`）——
             #: ★ 它是 `scripts/sync_bundled_skill.py` 的**生成物**（在 `.gitignore` 里）
             #: ，
             #:   逐字是源码的副本 ⇒ ★ 扫它只会把同一处命中**报两遍**（★ 且它不在源码树里，

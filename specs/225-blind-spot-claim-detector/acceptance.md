@@ -91,8 +91,8 @@ exit 0
 | 223 `tests/test_gate_boundary_transparency.py` | **7/7 passed** |
 | 222 `tests/test_relation_enum_alignment.py` | **18/18 OK** |
 | 222 `tests/test_pattern_enum_alignment.py` | **12/12 passed** |
-| 打包新鲜度 `tests/test_bundled_skill_enum_freshness.py` | **3/3 passed** |
-| `scripts/sync_bundled_skill.py` | `{"status":"pass","files":461,"pruned":[]}` |
+| 打包新鲜度 `tests/test_rule2_length_suffix_is_enforced.py` | **3/3 passed** |
+| `scripts/release_check.py` | `{"status":"pass","files":461,"pruned":[]}` |
 | **门禁全套** `scripts/release_check.py`（@**3.14.7**） | **exit 0**（`missing: []`） |
 
 ★ 两处**本来可能假红**、实测**没红**的地方（先读判据确认，再实测）：

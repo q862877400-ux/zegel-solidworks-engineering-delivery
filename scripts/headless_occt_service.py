@@ -23,9 +23,9 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-DESKTOP = ROOT / "apps" / "desktop"
-if str(DESKTOP) not in sys.path:
-    sys.path.insert(0, str(DESKTOP))
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
 class UnsupportedFeatureError(ValueError):

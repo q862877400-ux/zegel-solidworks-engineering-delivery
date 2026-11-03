@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from apps.desktop.cad_workbench.queue_worker import process_job, read_job, write_job
+from cad_workbench.queue_worker import process_job, read_job, write_job
 
 
 def test_worker_promotes_drawing_and_bom_evidence_to_job(tmp_path: Path):

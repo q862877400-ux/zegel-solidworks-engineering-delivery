@@ -120,8 +120,8 @@ $P -B tests/test_pattern_enum_alignment.py        # 222
 ## T-009 · 打包副本同步 + 新鲜度
 
 ```bash
-C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/sync_bundled_skill.py
-C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B tests/test_bundled_skill_enum_freshness.py
+C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/release_check.py
+C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B
 ```
 
 - [x] `{"status": "pass", "files": 461, "pruned": []}`

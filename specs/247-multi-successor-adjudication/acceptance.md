@@ -53,7 +53,7 @@ I. 恢复后复跑核心判据                                    ⇒ ⑤⑦⑧ 
   tests/test_obsolete_multi_successor.py                  4
   tests/test_obsolete_multi_successor_impact.py           7
   tests/test_tool_specs_batch80.py                        9
-  tests/test_bundled_skill_enum_freshness.py + test_sync_bundled_skill.py  5
+  + test_sync_bundled_skill.py  5
 ```
 
 ### 5. ★ 生成器链（T011 —— 改了 `scripts/`）

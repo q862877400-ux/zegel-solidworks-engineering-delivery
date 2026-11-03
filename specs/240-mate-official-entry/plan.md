@@ -51,9 +51,9 @@
 ## 五、收尾链
 
 ```
-生成器：scripts/sync_bundled_skill.py → scripts/gen_level_audit.py → tools/gen_metrics.py
+生成器：scripts/release_check.py → scripts/gen_level_audit.py → tools/gen_metrics.py
         → tools/gen_harvest_digest.py → tools/build_union_map.py → tools/gen_dead_ends.py
-        → scripts/sync_bundled_skill.py
+        → scripts/release_check.py
 门禁全套（★ 必须 3.14.7）：C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -B scripts/release_check.py
 聚焦判据：3.13.12 unittest + 3.14.7 pytest（`test_extended_modules_contract.py` 是 pytest 风格）
 ```

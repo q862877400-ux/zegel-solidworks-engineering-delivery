@@ -45,7 +45,7 @@
 
 - [x] **T8 · 同步打包副本 + 回归**
   ```bash
-  cd D:/AI/SW && C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/sync_bundled_skill.py
+  cd D:/AI/SW && C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe -B scripts/release_check.py
   cd D:/AI/SW && C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -m pytest tests/test_no_uncalled_helpers.py tests/test_uncalled_exempt_has_reason.py -q -p no:cacheprovider
   ```
   实测：打包 **462 文件 · pruned=[]**；未调用助手 **7 passed**（232 s）。

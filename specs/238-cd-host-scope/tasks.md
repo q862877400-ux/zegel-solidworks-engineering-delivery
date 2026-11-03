@@ -42,4 +42,4 @@
   ```
   pwsh -File D:\AI\SW\tools\round_chain.ps1 -Tests tests/test_cd_host_scope.py
   ```
-- [x] **T9** 打包副本同步（`scripts/sync_bundled_skill.py`，发版前才必须，本轮随收尾链跑）
+- [x] **T9** 打包副本同步（`scripts/release_check.py`，发版前才必须，本轮随收尾链跑）

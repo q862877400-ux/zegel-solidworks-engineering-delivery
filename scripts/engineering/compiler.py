@@ -5,7 +5,7 @@
 # 文件:   `output/ENGINEERING_CONSTRUCTION_PLAN.md` **§5 EC03**（★ T01–T08 逐字）
 #         `specs/305-ec03-method-library-and-ir/spec.md`（★ 8 FR · 10 V）
 #         `golden-workflows.yaml`（★ **复用** —— 10 个 workflow）
-#         `apps/desktop/cad_workbench/engineering_orchestrator.py`（★ **复用** —— 八阶段 DAG）
+#         `scripts/cad_workbench/engineering_orchestrator.py`（★ **复用** —— 八阶段 DAG）
 #         `scripts/engineering_contract.py`（★ EC01 的 `EngineeringContract` —— ★ **只吃它**）
 # 定位:   ★ **EC03** 的编译器。★★★ 计划 §5 EC03 验收逐字：「★ 两模型生成的合法意图都通
 #           过**同一编译器**；★ 编译器能拒绝**越权/欠约束/循环依赖**； ★ **不需要 COM 即

@@ -69,7 +69,7 @@ sys.stdout.reconfigure(encoding="utf-8")
 ROOT = Path(__file__).resolve().parents[1]
 
 #: 扫哪些目录（**只扫真正会被执行的代码**）
-SCAN_DIRS = ("scripts", "tools", "mcp-server", "tests", "apps/desktop")
+SCAN_DIRS = ("scripts", "tools", "mcp-server", "tests", "scripts/cad_workbench")
 
 #: `subprocess` 的对端：必须显式给编码
 SUBPROCESS_CALL = re.compile(r"subprocess\.(run|Popen|check_output|check_call)\s*\(")
@@ -230,7 +230,7 @@ FALSY_ZERO_BASELINE = ROOT / "docs" / "falsy-zero-baseline.txt"
 #: 测）。
 #: ⇒ 检查③ 只针对**生产取值代码**（运行时真的会调 COM 的那些）。
 #: ⚠ ①（subprocess 编码）与 ②（盘根）**仍然扫 `tests/`** —— 那两类在测试里同样是真代码。
-FALSY_ZERO_DIRS = ("scripts", "tools", "mcp-server", "apps/desktop")
+FALSY_ZERO_DIRS = ("scripts", "tools", "mcp-server", "scripts/cad_workbench")
 
 
 def _strip_comments_only(text: str) -> str:

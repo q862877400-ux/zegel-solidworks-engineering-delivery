@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 #: ★ 白名单：打包器顶层文件 + 仓库门面 + 被活代码 import 的（★ 见 spec §二）
 ALLOWED_ROOT_FILES = {
-    # ── 打包器 `sync_bundled_skill.TOP_LEVEL_FILES` ──
+    # ── 打包器 TOP_LEVEL_FILES（打包器已随桌面端删除） ──
     "README.md", "SKILL.md", "SUBSKILLS.md", "capabilities.yaml", "golden-workflows.yaml",
     "requirements.txt", "requirements-mesh.txt", "requirements-occt.txt", "requirements-pdf.txt",
     # ── 仓库门面 / 许可 / 贡献 / 构建 ──

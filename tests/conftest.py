@@ -103,3 +103,10 @@ def input_log():
     """给需要断言「发了哪些键」的测试用：清空并返回记录列表。"""
     input_injection_log.clear()
     return input_injection_log
+
+# ── 2026-11-04：`cad_workbench` 从 `apps/desktop/` 移到 `scripts/`；
+#    桌面工作台已删除，这批库现在是 scripts 层的一部分 ⇒ 测试直接从这里 import。
+import sys as _sys
+import pathlib as _pathlib
+
+_sys.path.insert(0, str(_pathlib.Path(__file__).resolve().parents[1] / "scripts"))

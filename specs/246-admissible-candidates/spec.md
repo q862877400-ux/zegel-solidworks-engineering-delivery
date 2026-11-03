@@ -98,7 +98,7 @@
 | SC-2 | 判据**是绿的** | `tests/test_deprecated_admissible_disposition.py` **8/8 通过** |
 | SC-3 | 靶子表扩容**不破互锁族** | 互锁族 **49 passed**（含 246 的 8） |
 | SC-4 | 门禁全套不破 | `release_check.py` @3.14.7 `exit 0` · `missing []` |
-| SC-5 | 生成器链已跑 | `scripts/sync_bundled_skill.py` 等 7 步全跑（★ 改了 `scripts/`） |
+| SC-5 | 生成器链已跑 | `scripts/release_check.py` 等 7 步全跑（★ 改了 `scripts/`） |
 | SC-6 | 生成器未改 | `git status --short tools/build_obsolete_index.py` 无输出 |
 
 ## 五、未过门（本轮不做，如实登记）

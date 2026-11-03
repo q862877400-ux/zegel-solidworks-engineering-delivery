@@ -14,11 +14,11 @@
 |---|---|---|---|
 | C1 | `tests/test_pattern_enum_alignment.py` | **5/8 passed**（3 FAIL：元素表 7≠3 · 特性表 8≠2 · 来源块项数不符） | **12/12 passed** |
 | C2 | `tests/test_gate_boundary_transparency.py` | **2/6 passed**（4 FAIL：无「跳过」段 · 无覆盖清单 · 未扩面 · 两张表未覆盖） | **7/7 passed** |
-| C3 | `tests/test_bundled_skill_enum_freshness.py` | **0/2 passed**（副本含 `sgEQUAL` · 4 处漂移） | **3/3 passed** |
+| C3 | `tests/test_rule2_length_suffix_is_enforced.py` | **0/2 passed**（副本含 `sgEQUAL` · 4 处漂移） | **3/3 passed** |
 
 **C1 复现命令**：`PY -B tests/test_pattern_enum_alignment.py`
 **C2 复现命令**：`PY -B tests/test_gate_boundary_transparency.py`
-**C3 复现命令**：`PY -B tests/test_bundled_skill_enum_freshness.py`
+**C3 复现命令**：`PY -B`
 
 ---
 

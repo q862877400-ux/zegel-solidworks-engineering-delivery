@@ -132,7 +132,7 @@ description: "Feature specification: 伪造枚举表裁决与门禁边界透明�
 
 - **来源**：官方 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 的 `## Remarks` · `specs/222` 的裁决。
 - **license**：本仓 MIT。
-- **验收场景**：`tests/test_bundled_skill_enum_freshness.py::test_bundled_doc_lists_only_official_sg_names`
+- **验收场景**：`tests/test_rule2_length_suffix_is_enforced.py::test_bundled_doc_lists_only_official_sg_names`
   断言清单行无旧名、含官方名；改动前必须**红**。
 
 ### US3（P2）—— 打包副本同步
@@ -140,7 +140,7 @@ description: "Feature specification: 伪造枚举表裁决与门禁边界透明�
 **FR-020**：`apps/workbench-ui/src-tauri/resources/skill/` 与源树同步，
 `find_bundled_skill_drift()` 返回空。**同步只做复制，不删除任何文件**（先验证待裁剪集为空）。
 
-- **来源**：`scripts/sync_bundled_skill.py`（既有生成器）· `scripts/release_check.py::find_bundled_skill_drift`（既有门禁）。
+- **来源**：`scripts/release_check.py`（既有生成器）· `scripts/release_check.py::find_bundled_skill_drift`（既有门禁）。
 - **license**：本仓 MIT。
 - **验收场景**：`find_bundled_skill_drift(ROOT, BUNDLED)` == `[]`；且 `sync_bundled_skill()` 的 `pruned` 为空列表。
 
@@ -148,7 +148,7 @@ description: "Feature specification: 伪造枚举表裁决与门禁边界透明�
 
 - **来源**：`specs/222` 的裁决；官方 `C:\swapi\types\IModelDoc2\SketchAddConstraints.md` 的 `## Remarks`。
 - **license**：本仓 MIT。
-- **验收场景**：`tests/test_bundled_skill_enum_freshness.py` 断言打包副本的
+- **验收场景**：`tests/test_rule2_length_suffix_is_enforced.py` 断言打包副本的
   `scripts/sw_part.py` / `mcp-server/tool_specs_batch16.py` / `references/part-modeling.md`
   不含那两个串；改动前必须**红**。
 
@@ -161,7 +161,7 @@ description: "Feature specification: 伪造枚举表裁决与门禁边界透明�
 | `SWS_PATTERN_ELEMENT_SELECTION` | `swPatternElementSelection_e` 的投影（官方 3 项） | `C:\swapi\enums\swPatternElementSelection_e.md` |
 | `SWS_FEATURES_TO_PATTERN` | `swFeaturesToPatternType_e` 的投影（官方 2 项） | `C:\swapi\enums\swFeaturesToPatternType_e.md` |
 | 出厂反射转储 | `_raw/enum_values_sldworks.txt`（10588 成员，铁律 4 的裁决基准） | 反射转储本身 |
-| 打包 Skill 快照 | `apps/workbench-ui/src-tauri/resources/skill/` | `sync_bundled_skill.py` 的产物 |
+| 打包 Skill 快照 | `apps/workbench-ui/src-tauri/resources/skill/` | `release_check.py` 的产物 |
 
 ---
 
@@ -171,7 +171,7 @@ description: "Feature specification: 伪造枚举表裁决与门禁边界透明�
 |---|---|---|
 | SC-1 | 两张表与官方枚举逐项相等 | `tests/test_pattern_enum_alignment.py` 全绿 |
 | SC-2 | 两道门禁的边界**可见** | `tests/test_gate_boundary_transparency.py` 全绿 |
-| SC-3 | 打包副本与源一致、无非官方 sg 名 | `tests/test_bundled_skill_enum_freshness.py` 全绿 |
+| SC-3 | 打包副本与源一致、无非官方 sg 名 | `tests/test_rule2_length_suffix_is_enforced.py` 全绿 |
 | SC-4 | 既有回归不破 | `tests/test_sw_pattern_contract.py` 全绿 |
 | SC-5 | 判据**先红后绿** | 三份新测试在改动前各至少一次红（读数记入 `acceptance.md`） |
 

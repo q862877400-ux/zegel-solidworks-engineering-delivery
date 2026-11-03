@@ -107,7 +107,7 @@ def check_skill_frontmatter():
 
 def check_python_syntax():
     """检查主脚本、桌面后端、MCP、测试和全部子技能 Python 语法。"""
-    roots = ["scripts", "examples", "tests", "apps/desktop", "mcp-server", "subskills"]
+    roots = ["scripts", "examples", "tests", "scripts/cad_workbench", "mcp-server", "subskills"]
     targets = sorted(
         path
         for relative in roots
@@ -124,13 +124,13 @@ def check_python_syntax():
 def check_json_files():
     """检查任务契约、输出契约和设计计划 Schema 是否为有效 JSON。"""
     targets = [
-        ROOT / "apps/desktop/cad_workbench/schemas/automation_job.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/codex_final_response.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/neutral_cad_document.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/preview_manifest.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/evidence_graph.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/fea_analysis.schema.json",
-        ROOT / "apps/desktop/cad_workbench/schemas/advanced_geometry.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/automation_job.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/codex_final_response.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/neutral_cad_document.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/preview_manifest.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/evidence_graph.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/fea_analysis.schema.json",
+        ROOT / "scripts/cad_workbench/schemas/advanced_geometry.schema.json",
         ROOT / "subskills/solidworks-vibecad/schemas/design_plan.schema.json",
         ROOT
         / "subskills/solidworks-engineering-drawing/schemas/drawing_spec.schema.json",

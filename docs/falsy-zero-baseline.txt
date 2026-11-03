@@ -6,9 +6,9 @@
 # 且每一处都要判断「那个成员的 0 是否有意义」。
 # ⚠ 成因与判别：见 `check_env_pitfalls.py` 里 `FALSY_ZERO_PAT` 上面的注释。
 
-apps/desktop/cad_workbench/engineering_orchestrator.py:max_attempts   # L181(or 1)
-apps/desktop/cad_workbench/engineering_orchestrator.py:revision   # L198(or 1)
-apps/desktop/cad_workbench/knowledge_retrieval.py:topK   # L182(or 6), L233(or 6)
+scripts/cad_workbench/engineering_orchestrator.py:max_attempts   # L181(or 1)
+scripts/cad_workbench/engineering_orchestrator.py:revision   # L198(or 1)
+scripts/cad_workbench/knowledge_retrieval.py:topK   # L182(or 6), L233(or 6)
 scripts/sketch_relations.py:CurveDegree   # L342(or -1)
 scripts/sketch_relations.py:CurveType   # L343(or -1)
 scripts/sketch_relations.py:GetRelationType   # L274(or -1)

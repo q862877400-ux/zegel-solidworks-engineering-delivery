@@ -12,7 +12,7 @@
 
 1. `scripts/capabilities.py` 的 `unattended_allowed()` —— 唯一有名字的那个；
 2. `scripts/sw_capability_probe.py` 内联的 `ready_for_unattended_use`（按 `level == "verified"` 算）；
-3. `apps/desktop/cad_workbench/engineering_orchestrator.py` 读 (2) 的结论来**降级**
+3. `scripts/cad_workbench/engineering_orchestrator.py` 读 (2) 的结论来**降级**
    （`ready_for_unattended_use is False and level == VERIFIED` ⇒ 降成 `PILOT`）。
 
 把 `pilot` 迁成 `verified` 时，(2) 会对那 13 条**立刻翻成 True**，

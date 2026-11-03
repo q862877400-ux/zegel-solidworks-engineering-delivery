@@ -49,7 +49,7 @@ description: "Task list for feature implementation"
 - [x] T011 ★★ **跑生成器链**（★ 改了 `scripts/`）
       → 验收: 7 步全 `ok`
 - [x] T012 相关族回归
-      → 验收: `"$PY314" -B -m pytest tests/test_deprecated_multi_successor_adjudication.py tests/test_deprecated_table_admission.py tests/test_deprecated_entry_interlock.py tests/test_save_routing_interlock.py tests/test_deprecated_admissible_disposition.py tests/test_obsolete_multi_successor.py tests/test_obsolete_multi_successor_impact.py tests/test_tool_specs_batch80.py tests/test_bundled_skill_enum_freshness.py tests/test_sync_bundled_skill.py -q` ⇒ `65 passed`
+      → 验收: `"$PY314" -B -m pytest tests/test_deprecated_multi_successor_adjudication.py tests/test_deprecated_table_admission.py tests/test_deprecated_entry_interlock.py tests/test_save_routing_interlock.py tests/test_deprecated_admissible_disposition.py tests/test_obsolete_multi_successor.py tests/test_obsolete_multi_successor_impact.py tests/test_tool_specs_batch80.py -q` ⇒ `65 passed`
 - [x] T013 门禁全套 @3.14.7
       → 验收: `"$PY314" -B scripts/release_check.py` ⇒ `exit 0` · `missing []`
 

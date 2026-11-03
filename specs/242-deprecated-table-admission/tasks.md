@@ -46,9 +46,9 @@ C:/Users/Zegel/AppData/Local/Python/pythoncore-3.14-64/python.exe -m pytest test
 ## T7 生成器链（★ 改了 `scripts/` 与 `mcp-server/` 必须跑）
 ```bash
 cd /d/AI/SW && PY=C:/Users/Zegel/.workbuddy-ai/binaries/python/versions/3.13.12/python.exe && \
-$PY -B scripts/sync_bundled_skill.py && $PY -B scripts/gen_level_audit.py && $PY -B tools/gen_metrics.py && \
+$PY -B scripts/release_check.py && $PY -B scripts/gen_level_audit.py && $PY -B tools/gen_metrics.py && \
 $PY -B tools/gen_harvest_digest.py && $PY -B tools/build_union_map.py && $PY -B tools/gen_dead_ends.py && \
-$PY -B scripts/sync_bundled_skill.py
+$PY -B scripts/release_check.py
 ```
 - [x] 打包副本 `files 471 · pruned []`
 

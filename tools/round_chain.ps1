@@ -82,7 +82,6 @@ function Step([string]$Name, [scriptblock]$Body) {
 }
 
 Write-Output '── ① 生成器（门禁查的是它们的产物，必须先跑）──'
-Step 'sync_bundled_skill' { python scripts/sync_bundled_skill.py *> $null }
 Step 'gen_level_audit'    { python scripts/gen_level_audit.py     *> $null }
 Step 'gen_metrics'        { python tools/gen_metrics.py           *> $null }
 Step 'gen_harvest_digest' { python tools/gen_harvest_digest.py    *> $null }
@@ -92,7 +91,6 @@ Step 'build_union_map'    { python tools/build_union_map.py       *> $null }
 Step 'gen_dead_ends'      { python tools/gen_dead_ends.py          *> $null }
 Step 'gen_com_member_index' { python tools/gen_com_member_index.py *> $null }
 # ★ 生成器可能有副作用（重写 metrics 等）⇒ 再同步一次快照（★ 0.3 s，便宜且必要）
-Step 'sync_bundled_skill²' { python scripts/sync_bundled_skill.py *> $null }
 
 Write-Output ''
 Write-Output '── ② release_check（★ 内部已含 18 道门禁，**不必再单独跑**它们）──'

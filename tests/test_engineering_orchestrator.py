@@ -6,7 +6,7 @@ from dataclasses import replace
 
 import pytest
 
-from apps.desktop.cad_workbench.engineering_orchestrator import (
+from cad_workbench.engineering_orchestrator import (
     CapabilityLevel,
     EngineeringPlan,
     PhaseStatus,

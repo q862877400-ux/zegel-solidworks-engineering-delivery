@@ -8,9 +8,9 @@ import subprocess
 
 import pytest
 
-from apps.desktop.cad_workbench.agent_providers import AgentProvider, build_provider_command, parse_provider_result, resolve_provider
-from apps.desktop.cad_workbench.engineering_orchestrator import build_engineering_plan
-from apps.desktop.cad_workbench.queue_worker import record_provider_verification, run_agent_job
+from cad_workbench.agent_providers import AgentProvider, build_provider_command, parse_provider_result, resolve_provider
+from cad_workbench.engineering_orchestrator import build_engineering_plan
+from cad_workbench.queue_worker import record_provider_verification, run_agent_job
 
 
 def test_codex_prefers_npm_node_entry_over_windowsapps_alias(tmp_path: Path, monkeypatch) -> None:
@@ -106,7 +106,7 @@ def test_claude_agent_job_uses_selected_provider(tmp_path: Path, monkeypatch) ->
     """@brief executor=agent 时不得回退到 Codex 命令。"""
     repo = Path(__file__).resolve().parents[1]
     output = tmp_path / "agent-result.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
+    monkeypatch.setattr("cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
     job = {
         "id": "agent-claude-test",
         "kind": "agent_task",
@@ -157,7 +157,7 @@ def test_complex_agent_job_injects_auditable_engineering_dag(tmp_path: Path, mon
     """@brief 综合任务必须生成 DAG 证据，简单 Provider 协议仍保持不变。"""
     repo = Path(__file__).resolve().parents[1]
     output = tmp_path / "complex-agent-result.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
+    monkeypatch.setattr("cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
     job = {
         "id": "complex-agent-test",
         "kind": "agent_task",
@@ -196,7 +196,7 @@ def test_follow_up_agent_job_replans_previous_dag_locally(tmp_path: Path, monkey
     }
     (queue / f"{source_id}.json").write_text(json.dumps(source_job, ensure_ascii=False), encoding="utf-8")
     output = tmp_path / "follow-up-result.json"
-    monkeypatch.setattr("apps.desktop.cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
+    monkeypatch.setattr("cad_workbench.queue_worker.agent_output_path", lambda job, cwd: output)
     current_path = queue / "job-follow-up.json"
     job = {
         "id": "job-follow-up",

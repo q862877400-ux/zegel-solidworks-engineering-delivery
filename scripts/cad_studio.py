@@ -20,11 +20,11 @@ from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS = ROOT / "scripts"
-DESKTOP = ROOT / "apps" / "desktop"
+SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
-if str(DESKTOP) not in sys.path:
-    sys.path.insert(0, str(DESKTOP))
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 from cad_diagnostics import create_diagnostic_bundle  # noqa: E402
 from cad_doctor import run_doctor  # noqa: E402
