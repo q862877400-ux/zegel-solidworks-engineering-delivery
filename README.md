@@ -1,4 +1,7 @@
-# SolidWorks 工程交付系统（DeepSeek 能力库）
+# Zegel-SWE · SolidWorks 工程交付系统（DeepSeek 能力库）
+
+> 唯一标识 **Zegel-SWE**（维护者 **Zegel**）。本项目与其它名称相近的 SolidWorks 自动化/skill 项目
+> **不是同一个项目**，也不是它们的镜像或分支仓库；来源关系与许可口径见 [第六节](#六来源与许可)。
 
 把**中国机械设计的规范、判据与建模方法**编译成 DeepSeek 能调用、能被机器验收的能力，
 使一条指令产出的 SolidWorks 模型达到机械工程师的可交付水准：
@@ -21,8 +24,9 @@
 | 真机基线 | **SolidWorks 2024**、**SolidWorks 2026 SP01.1**、**AutoCAD 2024** |
 | 兼容目标（未回归） | SolidWorks 2025 及其它未回归组合 |
 | 能力真源 | [`capabilities.yaml`](capabilities.yaml)：`verified` 有自有运行证据，`stitched` 只是移植+静态核对，`not_implemented` 明确没做 |
-| 模型可见工具面 | **543** 条 MCP 工具（498 条声明式 + 45 条手写），真握手 `tools/list` 实测 |
-| 工具语义出处 | 其中 **523** 条有「官方 API 页 + 逐字锚点」的依据台账（`docs/tool-official-claims/`），其余 20 条是已登记缺陷（`specs/353-mcp-tool-official-audit/defects.md`） |
+| 模型可见工具面 | **544** 条 MCP 工具（499 条声明式 + 45 条手写），真握手 `tools/list` 实测
+（`python -B tools/probe_mcp_stdio_handshake.py` ⇒ 531 `solidworks_*` + 13 `cadstudio_*`）|
+| 工具语义出处 | 其中 **524** 条有「官方 API 页 + 逐字锚点」的依据台账（`docs/tool-official-claims/`），其余 20 条是已登记缺陷（`specs/353-mcp-tool-official-audit/defects.md`） |
 
 ★ 没验证过的能力**不会**被包装成「已完成」。受控 `pilot` 的域（配置族、钣金 U 型轮廓法兰/展开 DXF、
 HSS 矩形焊接框架/切割清单、Simulation/FEA、Routing、复杂曲面、模具）在 `capabilities.yaml` 里逐条标注，
@@ -37,6 +41,7 @@ HSS 矩形焊接框架/切割清单、Simulation/FEA、Routing、复杂曲面、
 | **MCP Server** | 本地 `stdio` MCP，暴露 SolidWorks COM 白名单工具与无 CAD 的开放格式工具 | `python mcp-server\server.py`（由 MCP 客户端作为子进程拉起） |
 | **Skill** | 支持 skill 导入的客户端直接加载本仓库根目录 | 见 [`SKILL.md`](SKILL.md) |
 | **桌面端** | CAD Studio 图形界面：项目 / 对话 / 任务 / 预览 / 交付 | [`apps/desktop`](apps/desktop)、[`apps/workbench-ui`](apps/workbench-ui) |
+| **DSH preset**（可选） | 让 DSH 会话直接拿到全部 544 个工具的模式「Lean 模式（SW工程师）」。仓库内置插件与安装器，换机器不用手改 profile | `python -B tools\dsh-preset\install_preset.py --apply`，详见 [`docs/dsh-preset-sw-engineer.md`](docs/dsh-preset-sw-engineer.md) |
 
 ### 最小可跑（MCP）
 
@@ -82,7 +87,7 @@ python scripts\cad_doctor.py
 ## 四、质量与验收（不是「我觉得没问题」）
 
 ```powershell
-# 全量门禁（65 道：五统一、签名、单位、证据、门禁接线、工具契约、官方依据台账 …）
+# 全量门禁（66 道：五统一、签名、单位、证据、门禁接线、工具契约、官方依据台账 …）
 python -B scripts\release_check.py
 
 # 一轮收尾链（生成器 + release_check + 聚焦测试，约 3–5 分钟）
