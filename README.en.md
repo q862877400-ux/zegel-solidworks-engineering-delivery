@@ -59,8 +59,10 @@ After connecting, call `solidworks_health_check` once to confirm this machine ca
 |---|---|---|
 | MCP Server | You already use an MCP-capable client and want the model to drive SolidWorks directly | `python mcp-server\server.py`, launched as a child process by the client |
 | Skill | Your client can import a skill package | Load the repository root as a skill, see [SKILL.md](SKILL.md) |
-| Desktop | You want a GUI: projects, conversation, tasks, preview, delivery | [apps/desktop](apps/desktop) (older PySide6 build) or [apps/workbench-ui](apps/workbench-ui) (Tauri plus web, current build) |
+| Desktop | You want a GUI: projects, task queue, review, preview, delivery packages | [apps/workbench-ui](apps/workbench-ui) (React + Tauri, the real client, with a 23-command Rust backend; you build it yourself with `npm install` and `cargo build`) or [apps/desktop](apps/desktop) (PySide6 prototype, CAD execution is mocked, useful only to look at the UI design) |
 | DSH preset | You use DSH and want all 544 tools in one session | `python -B tools\dsh-preset\install_preset.py --apply`, see [docs/dsh-preset-sw-engineer.md](docs/dsh-preset-sw-engineer.md) |
+
+> The desktop app runs its tasks through its own local worker (the `codex` command line) and **does not go through the MCP server**; the two are parallel entry points. Use MCP to batch-run the same capabilities; use the desktop app to manage tasks and delivery packages with a GUI.
 
 ### A first part from scratch
 
