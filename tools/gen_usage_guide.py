@@ -47,8 +47,7 @@ DOMAIN_MODULES: dict[str, str] = {
     "应用与会话": "`scripts/sw_connect.py`（连接/模板/凭据）、`sw_session.py`、`sw_preflight.py`、"
     "`sw_addin_host.py`（Add-in 宿主）、`sw_macro_guard.py`",
     "草图": "`scripts/sw_part.py`（草图实体与约束）、`subskills/solidworks-threaded-holes`",
-    "零件特征": "`scripts/sw_part.py`（extrude / revolve / fillet / chamfer / pattern / rib）、"
-    "`scripts/sw_gear.py`",
+    "零件特征": "`scripts/sw_part.py`（extrude / revolve / fillet / chamfer / pattern / rib）",
     "孔与螺纹": "`scripts/sw_hole_features.py`、`subskills/solidworks-threaded-holes`",
     "钣金": "`scripts/sw_sheet_metal.py` —— 5 个特征："
     "`create_base_flange` / `create_one_bend` / `create_edge_flange` / "

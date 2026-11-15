@@ -1,0 +1,338 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "分系统方法层 · 整体技术路径",
+    "subtitle": "不重造几何，先把「买 / 造 / 放」分开，再让每个参数都查得到现行国标",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "output": ".archify/workflow-tech-path-20261105-151500/tech-path.html"
+  },
+  "lanes": [
+    {
+      "id": "intent",
+      "label": "意图与澄清"
+    },
+    {
+      "id": "route",
+      "label": "需求与分流"
+    },
+    {
+      "id": "reuse",
+      "label": "可复用来源"
+    },
+    {
+      "id": "gate",
+      "label": "核验与计划"
+    },
+    {
+      "id": "out",
+      "label": "执行与交付"
+    }
+  ],
+  "phases": [
+    {
+      "id": "p_intake",
+      "label": "① 问对问题",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "p_route",
+      "label": "② 分流",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "p_src",
+      "label": "③ 取现成",
+      "fromCol": 4,
+      "toCol": 4
+    },
+    {
+      "id": "p_build",
+      "label": "④ 计划与执行",
+      "fromCol": 5,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "groups": [
+    {
+      "id": "g_reuse",
+      "label": "能借就借，不重造",
+      "lane": "reuse",
+      "fromCol": 4,
+      "toCol": 4,
+      "variant": "emphasis"
+    },
+    {
+      "id": "g_gate",
+      "label": "国标硬门：先查现行版",
+      "lane": "gate",
+      "fromCol": 4,
+      "toCol": 4,
+      "variant": "security"
+    }
+  ],
+  "mainPath": [
+    "lay",
+    "ask",
+    "spec",
+    "triage",
+    "math",
+    "plan",
+    "exe",
+    "deliver"
+  ],
+  "nodes": [
+    {
+      "id": "eng",
+      "lane": "intent",
+      "col": 0,
+      "type": "external",
+      "label": "机械工程师",
+      "sublabel": "直接给术语与数值",
+      "yOffset": -70
+    },
+    {
+      "id": "lay",
+      "lane": "intent",
+      "col": 0,
+      "type": "external",
+      "label": "非专业用户",
+      "sublabel": "说不清参数",
+      "yOffset": 70
+    },
+    {
+      "id": "ask",
+      "lane": "intent",
+      "col": 1,
+      "type": "frontend",
+      "label": "参数语义层",
+      "sublabel": "L4→L0 逐级降级",
+      "tag": "不知道 ≠ 你定"
+    },
+    {
+      "id": "spec",
+      "lane": "intent",
+      "col": 2,
+      "type": "backend",
+      "label": "需求对象",
+      "sublabel": "2~3 个必答项",
+      "tag": "任意参数可锁定"
+    },
+    {
+      "id": "deliver",
+      "lane": "intent",
+      "col": 5,
+      "type": "frontend",
+      "label": "交付",
+      "sublabel": "模型 + 溯源表 + 未覆盖"
+    },
+    {
+      "id": "triage",
+      "lane": "route",
+      "col": 3,
+      "type": "security",
+      "label": "分流器",
+      "sublabel": "买 / 造 / 放一放 / 非零件",
+      "tag": "53 项已分完"
+    },
+    {
+      "id": "park",
+      "lane": "route",
+      "col": 4,
+      "type": "security",
+      "label": "已知缺口",
+      "sublabel": "登记，不硬画",
+      "yOffset": 120
+    },
+    {
+      "id": "buy",
+      "lane": "reuse",
+      "col": 4,
+      "type": "database",
+      "label": "标准件库",
+      "sublabel": "Toolbox·MISUMI·嘉立创FA",
+      "tag": "330 个 GB 件",
+      "yOffset": -105
+    },
+    {
+      "id": "math",
+      "lane": "reuse",
+      "col": 4,
+      "type": "backend",
+      "label": "前人数学",
+      "sublabel": "cq_gears·pylinkage·mechanism",
+      "tag": "Apache / MIT",
+      "yOffset": 5
+    },
+    {
+      "id": "gb",
+      "lane": "reuse",
+      "col": 4,
+      "type": "database",
+      "label": "国标数据表",
+      "sublabel": "1356·1357·11361·3452.3",
+      "tag": "65 个号已取",
+      "yOffset": 110
+    },
+    {
+      "id": "ver",
+      "lane": "gate",
+      "col": 4,
+      "type": "security",
+      "label": "标准号核验",
+      "sublabel": "std.samr 查现行版",
+      "tag": "实测错 1.4%"
+    },
+    {
+      "id": "plan",
+      "lane": "gate",
+      "col": 5,
+      "type": "backend",
+      "label": "FeaturePlan",
+      "sublabel": "实体+特征+预期体积",
+      "tag": "纯数据，不碰 COM"
+    },
+    {
+      "id": "exe",
+      "lane": "out",
+      "col": 5,
+      "type": "backend",
+      "label": "执行器",
+      "sublabel": "全项目唯一碰 COM"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "eng",
+      "to": "ask",
+      "label": "术语直给",
+      "variant": "default"
+    },
+    {
+      "id": "e2",
+      "from": "lay",
+      "to": "ask",
+      "label": "人话描述",
+      "variant": "default"
+    },
+    {
+      "id": "e3",
+      "from": "ask",
+      "to": "spec",
+      "label": "定下参数",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e4",
+      "from": "spec",
+      "to": "triage",
+      "variant": "default",
+      "role": "main"
+    },
+    {
+      "id": "e5",
+      "from": "triage",
+      "to": "buy",
+      "label": "买",
+      "variant": "default"
+    },
+    {
+      "id": "e6",
+      "from": "triage",
+      "to": "math",
+      "label": "造",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e7",
+      "from": "triage",
+      "to": "park",
+      "label": "放一放",
+      "variant": "security",
+      "role": "error"
+    },
+    {
+      "id": "e8",
+      "from": "gb",
+      "to": "ver",
+      "label": "标准号",
+      "variant": "default"
+    },
+    {
+      "id": "e10",
+      "from": "ver",
+      "to": "plan",
+      "label": "现行版口径",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e11",
+      "from": "math",
+      "to": "plan",
+      "label": "轮廓算法",
+      "variant": "default"
+    },
+    {
+      "id": "e12",
+      "from": "plan",
+      "to": "exe",
+      "label": "按计划建",
+      "variant": "emphasis",
+      "role": "main"
+    },
+    {
+      "id": "e13",
+      "from": "exe",
+      "to": "deliver",
+      "label": "L3 体积 / L4 三视图",
+      "variant": "emphasis",
+      "role": "return"
+    },
+    {
+      "id": "e14",
+      "from": "buy",
+      "to": "deliver",
+      "label": "直取模型插入",
+      "variant": "dashed",
+      "role": "branch"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "三个不变量",
+      "items": [
+        "几何只许来自前人代码或国标表，不许自己推公式",
+        "每个参数必须能追到：问的 / 算的 / 选的 / 查的 / 锁的 / 假设的",
+        "没算的东西写进交付最后一屏，不许悄悄变成「设计完成」"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "国标硬门怎么过",
+      "items": [
+        "凡引用标准，先查现行版再取数（GB/T 1239.6 已废止 → 23935-2009）",
+        "嘉立创手册好用但版本滞后；本机 5725 份国标里机械类只覆盖 30%",
+        "采标件正文被封（1356/5782/1800 全封），缺口与采标 100% 重合"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "现在到哪一步",
+      "items": [
+        "已通：需求→参数→计划（24 条测试，纯离线）",
+        "未做：execute 接真机 → 这是让首个族从 stitched 变 verified 的唯一一步",
+        "买件路径只到「知道去哪」，选型→取件→插入还没建"
+      ]
+    }
+  ]
+}

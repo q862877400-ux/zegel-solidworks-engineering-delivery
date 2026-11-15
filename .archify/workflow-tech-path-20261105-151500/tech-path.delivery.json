@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "47923753-06b9-46b8-983c-649239fb5423",
+  "status": "current",
+  "command": "deliver",
+  "type": "workflow",
+  "input": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\candidate.json",
+  "output": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\tech-path.html",
+  "specification": {
+    "sha256": "1a577ffb1202cd0ef6ae47e981ca1925f2b8a273436081bc651cc7d7765f4a59",
+    "bytes": 7698
+  },
+  "artifact": {
+    "sha256": "7a88a731bb4362368b556acc3fd2d9123cda9109fda6ff071734019496031d26",
+    "bytes": 856836
+  }
+}

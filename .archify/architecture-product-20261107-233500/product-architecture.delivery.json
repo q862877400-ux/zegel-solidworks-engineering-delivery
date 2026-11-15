@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "e9943038-6a07-4941-af48-c97e2f8b37a3",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\candidate.json",
+  "output": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\product-architecture.html",
+  "specification": {
+    "sha256": "2afb21dc2b840c5d38e5ae175f6bb11e9346aa5bbed1b96d66ebc49e2d9a3fd5",
+    "bytes": 8364
+  },
+  "artifact": {
+    "sha256": "154c7dd819dd719aae146d1fcf8e21236bd1bb4a21f3ea2ae7dcd9ad24fc8c14",
+    "bytes": 875538
+  }
+}

@@ -1,0 +1,417 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "我们 vs 上游：同一血统，分叉在哪",
+    "subtitle": "左：上游独有 · 中：两边都有 · 右：我们独有 · 下：等级对不上与两个缺口",
+    "output": ".archify/architecture-vs-upstream-20261107-235500/vs-upstream.html",
+    "quality_profile": "showcase",
+    "locale": "zh-CN"
+  },
+  "components": [
+    {
+      "id": "studio",
+      "type": "frontend",
+      "label": "CAD Studio 桌面端",
+      "sublabel": "PySide6 界面 · 安装包 · Releases",
+      "tag": "我们仓库里整个 apps/ 目录都没有",
+      "pos": [40, 80],
+      "size": [250, 76]
+    },
+    {
+      "id": "subskills",
+      "type": "backend",
+      "label": "5 个自包含子技能",
+      "sublabel": "vibecad·CNC·螺纹孔·工程图·AutoCAD",
+      "tag": "各带 SKILL.md + 示例",
+      "pos": [40, 198],
+      "size": [250, 76]
+    },
+    {
+      "id": "fea",
+      "type": "backend",
+      "label": "仿真链路",
+      "sublabel": "fea_analysis / fea_convergence",
+      "tag": "我们连这两个脚本都没有",
+      "pos": [40, 316],
+      "size": [250, 76]
+    },
+    {
+      "id": "ocp",
+      "type": "backend",
+      "label": "OCP 高级几何与曲面",
+      "sublabel": "advanced_geometry / surface",
+      "tag": "放样与平滑曲面走 OCCT",
+      "pos": [40, 434],
+      "size": [250, 76]
+    },
+    {
+      "id": "dfm",
+      "type": "backend",
+      "label": "DFM 审查 + 供应商画像",
+      "sublabel": "dfm_review / dfm_profiles",
+      "tag": "按供应商能力判可造性",
+      "pos": [40, 552],
+      "size": [250, 76]
+    },
+    {
+      "id": "pilot",
+      "type": "security",
+      "label": "pilot 中间档",
+      "sublabel": "能跑 · 受控 · 不承诺无人值守",
+      "tag": "他们的第三档状态",
+      "pos": [40, 670],
+      "size": [250, 76]
+    },
+    {
+      "id": "smithery",
+      "type": "cloud",
+      "label": "Smithery / npx 分发",
+      "sublabel": "MCP 市场一键装",
+      "tag": "Skill 市场导入",
+      "pos": [40, 788],
+      "size": [250, 76]
+    },
+    {
+      "id": "entry_skill",
+      "type": "frontend",
+      "label": "Skill 包入口",
+      "sublabel": "导入支持 skills 的客户端",
+      "pos": [380, 80],
+      "size": [260, 70]
+    },
+    {
+      "id": "entry_mcp",
+      "type": "backend",
+      "label": "MCP Server 入口",
+      "sublabel": "Codex · Claude · Cursor 直连",
+      "pos": [380, 198],
+      "size": [260, 70]
+    },
+    {
+      "id": "backends",
+      "type": "external",
+      "label": "10 个执行后端",
+      "sublabel": "COM · Add-in · C++ · OCCT · AutoCAD",
+      "tag": "两边清单逐字相同",
+      "pos": [380, 316],
+      "size": [260, 76]
+    },
+    {
+      "id": "caps28",
+      "type": "database",
+      "label": "28 条同名能力",
+      "sublabel": "同一套 schema、同一批 ID",
+      "tag": "上游独有能力 = 0 条",
+      "pos": [380, 434],
+      "size": [260, 70]
+    },
+    {
+      "id": "gates",
+      "type": "security",
+      "label": "release_check 出厂门禁",
+      "sublabel": "两边都有同一个入口",
+      "pos": [380, 552],
+      "size": [260, 70]
+    },
+    {
+      "id": "golden",
+      "type": "database",
+      "label": "golden-workflows",
+      "sublabel": "黄金工作流回归",
+      "pos": [380, 670],
+      "size": [260, 70]
+    },
+    {
+      "id": "scripts40",
+      "type": "backend",
+      "label": "40 个同名脚本",
+      "sublabel": "sw_part · sw_assembly · sw_drawing",
+      "pos": [380, 788],
+      "size": [260, 70]
+    },
+    {
+      "id": "schema",
+      "type": "database",
+      "label": "清单结构一致",
+      "sublabel": "同 5 个顶层键 + 版本与限制",
+      "pos": [380, 906],
+      "size": [260, 70]
+    },
+    {
+      "id": "e17",
+      "type": "database",
+      "label": "E1–E7 工程验收判据",
+      "sublabel": "全约束 · 可重建 · 可编辑 · 自由度闭合",
+      "tag": "判据不是工具条数",
+      "pos": [720, 80],
+      "size": [290, 76]
+    },
+    {
+      "id": "gbt",
+      "type": "database",
+      "label": "中国国标合规层",
+      "sublabel": "GB/T 齿形 · 图样 · 公差",
+      "tag": "上游不做这一层",
+      "pos": [720, 198],
+      "size": [290, 76]
+    },
+    {
+      "id": "levels5",
+      "type": "security",
+      "label": "五级状态枚举",
+      "sublabel": "比上游多两档，但恰好少了 pilot",
+      "pos": [720, 316],
+      "size": [290, 76]
+    },
+    {
+      "id": "caps140",
+      "type": "database",
+      "label": "140 条能力",
+      "sublabel": "verified 100 · stitched 38 · 缺 2",
+      "tag": "比上游多 112 条",
+      "pos": [720, 434],
+      "size": [290, 76]
+    },
+    {
+      "id": "evid",
+      "type": "database",
+      "label": "每条能力带证据字段",
+      "sublabel": "evidence · source · source_evidence",
+      "tag": "上游条目没有这三个",
+      "pos": [720, 552],
+      "size": [290, 76]
+    },
+    {
+      "id": "method",
+      "type": "backend",
+      "label": "分系统方法层",
+      "sublabel": "参数六来源 · 溯源表 · 未覆盖清单",
+      "pos": [720, 670],
+      "size": [290, 76]
+    },
+    {
+      "id": "gates70",
+      "type": "security",
+      "label": "70 道门禁 + 折线禁令",
+      "sublabel": "check_no_polyline 自动拦截",
+      "pos": [720, 788],
+      "size": [290, 76]
+    },
+    {
+      "id": "specs",
+      "type": "database",
+      "label": "规格驱动 2449 文件",
+      "sublabel": "specs/ 先写判据再施工",
+      "pos": [720, 906],
+      "size": [290, 76]
+    },
+    {
+      "id": "scale",
+      "type": "backend",
+      "label": "593 脚本 · 1040 测试",
+      "sublabel": "上游同口径 49 脚本 · 81 测试",
+      "pos": [720, 1024],
+      "size": [290, 76]
+    },
+    {
+      "id": "miss_pilot",
+      "type": "security",
+      "label": "缺口一：没有 pilot 档",
+      "sublabel": "38 条 stitched 里混着两种东西",
+      "tag": "外面看不出区别",
+      "pos": [40, 1160],
+      "size": [310, 84]
+    },
+    {
+      "id": "conflict_a",
+      "type": "security",
+      "label": "上游 verified，我们 stitched",
+      "sublabel": "5 条：装配配合 · 图样标注 · 交付复核 · 需求规划 · Add-in",
+      "tag": "我们更保守",
+      "pos": [380, 1160],
+      "size": [310, 84]
+    },
+    {
+      "id": "conflict_b",
+      "type": "security",
+      "label": "我们 verified，上游只敢 pilot",
+      "sublabel": "5 条：属性BOM · 参数更新 · 钣金 · 仿真 · 焊件",
+      "tag": "我们更激进",
+      "pos": [720, 1160],
+      "size": [310, 84]
+    },
+    {
+      "id": "risk_evid",
+      "type": "messagebus",
+      "label": "缺口二：2 条 verified 证据是空的",
+      "sublabel": "仿真缺证据文件与实现 · 钣金自认不构成运行证据",
+      "tag": "按 A4 这两条不该是 verified",
+      "pos": [380, 1290],
+      "size": [310, 84]
+    }
+  ],
+  "connections": [
+    {
+      "id": "skill-mcp",
+      "from": "entry_skill",
+      "to": "entry_mcp",
+      "label": "另一入口"
+    },
+    {
+      "id": "mcp-backends",
+      "from": "entry_mcp",
+      "to": "backends",
+      "label": "同一套能力"
+    },
+    {
+      "id": "backends-caps28",
+      "from": "backends",
+      "to": "caps28",
+      "label": "清单是真源",
+      "variant": "emphasis"
+    },
+    {
+      "id": "caps28-gates",
+      "from": "caps28",
+      "to": "gates",
+      "label": "发布前校验"
+    },
+    {
+      "id": "gates-golden",
+      "from": "gates",
+      "to": "golden",
+      "label": "回归用"
+    },
+    {
+      "id": "golden-scripts40",
+      "from": "golden",
+      "to": "scripts40",
+      "label": "脚本承载"
+    },
+    {
+      "id": "scripts40-schema",
+      "from": "scripts40",
+      "to": "schema",
+      "label": "同结构"
+    },
+    {
+      "id": "e17-gbt",
+      "from": "e17",
+      "to": "gbt",
+      "label": "国标口径"
+    },
+    {
+      "id": "gbt-levels5",
+      "from": "gbt",
+      "to": "levels5",
+      "label": "同一份清单"
+    },
+    {
+      "id": "levels5-caps140",
+      "from": "levels5",
+      "to": "caps140",
+      "label": "细化"
+    },
+    {
+      "id": "caps140-evid",
+      "from": "caps140",
+      "to": "evid",
+      "label": "带证据"
+    },
+    {
+      "id": "evid-method",
+      "from": "evid",
+      "to": "method",
+      "label": "溯源到参数"
+    },
+    {
+      "id": "method-gates70",
+      "from": "method",
+      "to": "gates70",
+      "label": "出厂校验"
+    },
+    {
+      "id": "gates70-specs",
+      "from": "gates70",
+      "to": "specs",
+      "label": "判据先行"
+    },
+    {
+      "id": "specs-scale",
+      "from": "specs",
+      "to": "scale",
+      "label": "规模"
+    },
+    {
+      "id": "entry_skill-studio",
+      "from": "entry_skill",
+      "to": "studio",
+      "label": "上游做成桌面端"
+    },
+    {
+      "id": "backends-fea",
+      "from": "backends",
+      "to": "fea",
+      "label": "外部求解器"
+    },
+    {
+      "id": "caps28-caps140",
+      "from": "caps28",
+      "to": "caps140",
+      "label": "细化成 140",
+      "variant": "emphasis"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "上游独有 —— 我们没有的",
+      "wraps": ["studio", "subskills", "fea", "ocp", "dfm", "pilot", "smithery"]
+    },
+    {
+      "kind": "region",
+      "label": "同一血统 —— 两边都有",
+      "wraps": ["entry_skill", "entry_mcp", "backends", "caps28", "gates", "golden", "scripts40", "schema"]
+    },
+    {
+      "kind": "region",
+      "label": "我们独有 —— 上游没有的",
+      "wraps": ["e17", "gbt", "levels5", "caps140", "evid", "method", "gates70", "specs", "scale"]
+    },
+    {
+      "kind": "region",
+      "label": "要纠正的地方 —— 等级对不上 + 我们这两个缺口",
+      "wraps": ["miss_pilot", "conflict_a", "conflict_b", "risk_evid"]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "一句话结论",
+      "items": [
+        "不是两套架构，是同一套架构的两条分支：10 个后端逐字相同、28 条能力 ID 完全相同、上游独有能力 0 条",
+        "他们往「广度 + 产品化」走：桌面端、仿真、DFM、OCP 曲面、第三方市场分发",
+        "我们往「深度 + 可验收」走：140 条细化能力、每条带证据、70 道门禁、E1–E7 判据、国标口径"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "他们做对了、我们该补的三件",
+      "items": [
+        "中间档状态：pilot 表示「能跑、受控、不承诺无人值守」。我们只有 verified/stitched 二分，38 条 stitched 里两种东西混在一起，外面分不出",
+        "桌面交付台：用户能自己看项目、任务、预览、交付，不必走命令行",
+        "工程链后端：仿真、DFM 供应商画像、OCP 放样与平滑曲面 —— 我们连实现脚本都没有，一共 8 个"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "我们要自己认的账",
+      "items": [
+        "仿真标了 verified，但证据文件不在仓里，连 fea_analysis.py 都没有",
+        "钣金标了 verified，但自己的证据里写着「都不构成我们自己的运行证据」",
+        "等级口径不统一：10 处和上游方向相反（5 处更保守、5 处更激进）—— 不是谁更严，是两把尺子"
+      ]
+    }
+  ]
+}

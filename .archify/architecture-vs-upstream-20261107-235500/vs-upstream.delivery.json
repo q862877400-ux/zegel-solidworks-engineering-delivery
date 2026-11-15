@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "1b1c7f91-85a3-4bac-904a-7dc87789f87e",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-vs-upstream-20261107-235500\\candidate.json",
+  "output": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-vs-upstream-20261107-235500\\vs-upstream.html",
+  "specification": {
+    "sha256": "f3c204e4c5a961480fa453782294bbb20724f108af8e09c167c453b592b9b570",
+    "bytes": 11558
+  },
+  "artifact": {
+    "sha256": "d9cd699173c72464b03c7e9793f2040bb032b9c4869c5117373810cc85bd3928",
+    "bytes": 890344
+  }
+}

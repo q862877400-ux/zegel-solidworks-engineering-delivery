@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "机械零件「造」环节产品架构",
+    "subtitle": "四层分工：AI 翻译 · 方法层出参数 · 几何层建模 · 验收层判定",
+    "output": ".archify/architecture-product-20261107-233500/product-architecture.html",
+    "quality_profile": "showcase",
+    "locale": "zh-CN"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "用户",
+      "sublabel": "不懂机械术语",
+      "pos": [400, 40],
+      "size": [220, 64]
+    },
+    {
+      "id": "ai",
+      "type": "frontend",
+      "label": "AI 理解层",
+      "sublabel": "意图 → 需求对象 · 措辞降级 L4–L0",
+      "tag": "可换 · 不保证确定性",
+      "pos": [400, 160],
+      "size": [240, 76]
+    },
+    {
+      "id": "request",
+      "type": "backend",
+      "label": "需求对象 Request",
+      "sublabel": "2~3 个必答项",
+      "pos": [400, 292],
+      "size": [240, 70]
+    },
+    {
+      "id": "triage",
+      "type": "security",
+      "label": "分流器",
+      "sublabel": "判 买 / 造 / 放一放",
+      "tag": "造不出来就登记，不硬画",
+      "pos": [400, 418],
+      "size": [240, 76]
+    },
+    {
+      "id": "derive",
+      "type": "backend",
+      "label": "参数推导 derive()",
+      "sublabel": "参数图 + 校核 + 无解诊断",
+      "tag": "能推的不许问",
+      "pos": [400, 550],
+      "size": [240, 80]
+    },
+    {
+      "id": "plan",
+      "type": "backend",
+      "label": "FeaturePlan",
+      "sublabel": "纯数据 · 5 种几何原语",
+      "tag": "全程唯一单位出口",
+      "pos": [400, 686],
+      "size": [240, 76]
+    },
+    {
+      "id": "execute",
+      "type": "backend",
+      "label": "execute()",
+      "sublabel": "全项目唯一碰 COM 的地方",
+      "pos": [400, 818],
+      "size": [240, 76]
+    },
+    {
+      "id": "sw",
+      "type": "external",
+      "label": "SOLIDWORKS 2026",
+      "sublabel": "特征树 · 实体 · B-Rep",
+      "pos": [400, 950],
+      "size": [240, 76]
+    },
+    {
+      "id": "verify",
+      "type": "database",
+      "label": "verify()",
+      "sublabel": "L3 体积·包围盒 + L4 三视图",
+      "tag": "机器判据 ≠ 验收过",
+      "pos": [400, 1082],
+      "size": [240, 80]
+    },
+    {
+      "id": "deliver",
+      "type": "cloud",
+      "label": "交付物三件套",
+      "sublabel": "方法模块 · 溯源表 · 未覆盖清单",
+      "pos": [400, 1218],
+      "size": [240, 76]
+    },
+    {
+      "id": "buy",
+      "type": "external",
+      "label": "买",
+      "sublabel": "选型 → 取件 → 插入",
+      "pos": [40, 418],
+      "size": [240, 70]
+    },
+    {
+      "id": "park",
+      "type": "messagebus",
+      "label": "放一放",
+      "sublabel": "登记为已知缺口",
+      "pos": [40, 510],
+      "size": [240, 70]
+    },
+    {
+      "id": "rows",
+      "type": "database",
+      "label": "溯源表 rows",
+      "sublabel": "参数·含义·值·来源·依据·怎么改",
+      "tag": "六来源：问算选查锁假设",
+      "pos": [700, 550],
+      "size": [260, 80]
+    },
+    {
+      "id": "uncovered",
+      "type": "messagebus",
+      "label": "未覆盖清单",
+      "sublabel": "明确写出我没算什么",
+      "pos": [700, 660],
+      "size": [260, 70]
+    },
+    {
+      "id": "evidence",
+      "type": "database",
+      "label": "evidence 判据",
+      "sublabel": "体积偏差 <1% · 包围盒 <0.5mm",
+      "pos": [700, 1082],
+      "size": [260, 76]
+    },
+    {
+      "id": "fail",
+      "type": "security",
+      "label": "FailureRecord",
+      "sublabel": "现场 JSON + 截图，落盘留证",
+      "pos": [40, 1082],
+      "size": [240, 76]
+    },
+    {
+      "id": "cap",
+      "type": "database",
+      "label": "capabilities.yaml",
+      "sublabel": "level：stitched / verified",
+      "tag": "无自有真机证据不许 verified",
+      "pos": [700, 1218],
+      "size": [260, 70]
+    },
+    {
+      "id": "gate",
+      "type": "security",
+      "label": "release_check",
+      "sublabel": "68 道门禁，含折线禁令",
+      "pos": [700, 1330],
+      "size": [260, 76]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-ai",
+      "from": "user",
+      "to": "ai",
+      "label": "2~3 句人话",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ai-request",
+      "from": "ai",
+      "to": "request",
+      "label": "填结构化 Request"
+    },
+    {
+      "id": "request-triage",
+      "from": "request",
+      "to": "triage",
+      "label": "先判买造放"
+    },
+    {
+      "id": "triage-buy",
+      "from": "triage",
+      "to": "buy",
+      "label": "标准件"
+    },
+    {
+      "id": "triage-park",
+      "from": "triage",
+      "to": "park",
+      "label": "非标·多解"
+    },
+    {
+      "id": "triage-derive",
+      "from": "triage",
+      "to": "derive",
+      "label": "几何由参数唯一决定",
+      "variant": "emphasis"
+    },
+    {
+      "id": "derive-rows",
+      "from": "derive",
+      "to": "rows",
+      "label": "每参数标来源"
+    },
+    {
+      "id": "derive-uncovered",
+      "from": "derive",
+      "to": "uncovered",
+      "label": "随产物输出"
+    },
+    {
+      "id": "derive-plan",
+      "from": "derive",
+      "to": "plan",
+      "label": "参数集",
+      "variant": "emphasis"
+    },
+    {
+      "id": "plan-execute",
+      "from": "plan",
+      "to": "execute",
+      "label": "计划不碰 COM",
+      "variant": "emphasis"
+    },
+    {
+      "id": "execute-sw",
+      "from": "execute",
+      "to": "sw",
+      "label": "建草图 · 建特征",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sw-verify",
+      "from": "sw",
+      "to": "verify",
+      "label": "回读质量属性",
+      "variant": "emphasis"
+    },
+    {
+      "id": "verify-evidence",
+      "from": "verify",
+      "to": "evidence",
+      "label": "L3 数值 + L4 图"
+    },
+    {
+      "id": "verify-fail",
+      "from": "verify",
+      "to": "fail",
+      "label": "判据不过"
+    },
+    {
+      "id": "verify-deliver",
+      "from": "verify",
+      "to": "deliver",
+      "label": "三判据全绿",
+      "variant": "emphasis"
+    },
+    {
+      "id": "evidence-cap",
+      "from": "evidence",
+      "to": "cap",
+      "label": "有真机证据才升级"
+    },
+    {
+      "id": "deliver-cap",
+      "from": "deliver",
+      "to": "cap",
+      "label": "登记能力"
+    },
+    {
+      "id": "cap-gate",
+      "from": "cap",
+      "to": "gate",
+      "label": "发布前校验"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "AI 层 —— 可换、不保证确定性",
+      "wraps": ["user", "ai"]
+    },
+    {
+      "kind": "region",
+      "label": "分系统方法层 —— 确定性·纯计算·可单测·不碰 COM",
+      "wraps": ["request", "triage", "derive", "plan", "buy", "park", "rows", "uncovered"]
+    },
+    {
+      "kind": "region",
+      "label": "几何层 —— 真机，唯一碰 COM",
+      "wraps": ["execute", "sw"]
+    },
+    {
+      "kind": "region",
+      "label": "验收层 —— 机器判据 + 人工目视",
+      "wraps": ["verify", "evidence", "fail"]
+    },
+    {
+      "kind": "region",
+      "label": "交付与门槛 —— 状态只在有证据时上升",
+      "wraps": ["cap", "gate"]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "每一级的硬判据",
+      "items": [
+        "方法层：无来源的值 = 违规；能推的不许问",
+        "几何层：带量纲形参必须带单位后缀（_mm/_m）",
+        "验收层：机器绿 ≠ 验收过，人工目视另算一步"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "三条不许越的线",
+      "items": [
+        "AI 只翻译，不改几何内核（I1）",
+        "不许用折线/多段直线段逼近曲线（业主 2026-11-07 令）",
+        "未真机验证的能力一律 stitched，不许写 verified（A7）"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "当前实测状态",
+      "items": [
+        "轴族：真机通过（体积偏差 0.00%、包围盒三向 0.000、三视图 4/4）",
+        "齿轮族：无可用生成器——折线实现已删，真曲线路线尚在攻",
+        "release_check 全绿：70 门禁，含折线禁令 no_polyline=pass"
+      ]
+    }
+  ]
+}

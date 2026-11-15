@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\candidate.json",
+    "sha256": "2afb21dc2b840c5d38e5ae175f6bb11e9346aa5bbed1b96d66ebc49e2d9a3fd5",
+    "bytes": 8364
+  },
+  "artifact": {
+    "path": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\product-architecture.html",
+    "sha256": "154c7dd819dd719aae146d1fcf8e21236bd1bb4a21f3ea2ae7dcd9ad24fc8c14",
+    "bytes": 875538
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\product-architecture.finalize.json",
+    "summaryReceipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\product-architecture.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\architecture-product-20261107-233500\\product-architecture.browser-check.json"
+  },
+  "update": {
+    "status": "current",
+    "installedVersion": "3.2.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": null,
+    "checkedAt": "2026-11-07T15:35:44.063Z",
+    "source": "cache",
+    "noticeRequired": false,
+    "noticeText": null
+  },
+  "visualReview": "not-requested",
+  "durationMs": 13134,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  },
+  "visualReviewRecommendation": {
+    "action": "inspect-route-readability",
+    "signals": {
+      "routesOverSuggestedBends": 2
+    },
+    "reason": "Automated gates passed, but crossings or detours still need perceptual review before claiming visual quality.",
+    "affectedRoutes": {
+      "crossings": [],
+      "detours": [
+        {
+          "relationship": {
+            "id": "derive-rows",
+            "from": "derive",
+            "to": "rows",
+            "label": "每参数标来源",
+            "collectionIndex": 6,
+            "artifactIndex": 7
+          },
+          "bends": 3,
+          "stretch": 1.234
+        },
+        {
+          "relationship": {
+            "id": "verify-evidence",
+            "from": "verify",
+            "to": "evidence",
+            "label": "L3 数值 + L4 图",
+            "collectionIndex": 12,
+            "artifactIndex": 13
+          },
+          "bends": 3,
+          "stretch": 1.237
+        }
+      ],
+      "truncated": false
+    },
+    "hints": [
+      "derive → rows needs 3 bends: move node derive or rows so they share a row or column with matching centers, or sit diagonally with a clear corner.",
+      "verify → evidence needs 3 bends: move node verify or evidence so they share a row or column with matching centers, or sit diagonally with a clear corner."
+    ],
+    "repair": "Trace these relationships at the desktop viewport. For Architecture, use references/architecture-layout-repair.md: reflow a blocked main path or tangled connected scene, and repair an isolated defect locally only when the surrounding composition is accepted. Preserve all semantic content and user-fixed geometry. Rerun finalize once after the edit."
+  }
+}

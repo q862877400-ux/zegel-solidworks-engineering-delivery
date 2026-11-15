@@ -88,6 +88,10 @@ tools/sw_screenshot.py。
 - **名单**：[docs/existing-assets.md](docs/existing-assets.md) —— 元素名 / 定义状态 / 单位 /
   几何读取 / 特征参数 / 选择 / 装配 / 图样分别落在哪个模块，以及先看哪几个名字。
   只挂名单，正文留在各模块 docstring。
+- **出问题先查 Debug 模块**：[`scripts/sw_debug.py`](scripts/sw_debug.py) 的
+  `diagnose(model, sw)` 一次跑完 SW 自带诊断（草图合法性 / 约束状态 / 特征错误码 /
+  实体有效性 / **会话错误日志**），每条结论都带修法表 `SKETCH_REMEDIES`。
+  ★ 别靠猜参数、别反复新建零件试错 —— 先让诊断说出问题，再按它给的修法改。
 - **同一个东西只许有一个名字**：草图元素与关系用 `SKETCH_RELATION_ENTITY_TYPES` /
   `SKETCH_CONSTRAINT_TYPES`，非草图元素用 `ENTITY_KINDS`，定义状态用 `sw_sketch_status`，
   官方枚举用 `scripts/sw_enums.py`（生成物），数值换算用 `sw_units.dimension_reading`。
@@ -96,6 +100,29 @@ tools/sw_screenshot.py。
 - 实测代价（2026-10-26，三处均为「手搓替代既有」）：手写「草图点/草图线段」对不上
   `point/line`；手写 `{2:欠定义,3:完全定义}` 漏掉过定义(4)/无解(5)/无效解(6)；
   `ISketchArc` 的半径真名是 `GetRadius` 而 `Radius` 根本不存在 ⇒ 圆没有半径。
+
+## 十四之五、禁止折线模拟曲线（业主 2026-11-07 指令）
+
+**★★★★★ 全项目禁止用折线（或分段圆弧 / 采样点列）逼近任何曲线。**
+
+业主原话：「像什么直接用直线去逼近曲线这种野路子，你就全部都改掉」；
+2026-11-07 复令：「把所有折线模拟曲线的功能删除」。
+
+- **禁止形态**：把渐开线 / 摆线 / 齿顶齿根圆弧 / 样条采样成一串点，再逐段用
+  `sketch_line` 连起来；`involute_segments` / `tip_arc_segments` /
+  `root_arc_segments` / `polyline_chord_approximation` / `outline_points_m`
+  这类「离散成 N 段」的实现与字段一律不许出现在**活跃**功能里。
+  理由：齿面不再是共轭渐开线、齿根不是真实摆线、段数可调会让同一规格建出不同齿形。
+- **合法形态**：真曲线 = 方程式驱动曲线 `CreateEquationSpline2` / 真样条 / 真圆弧；
+  真直线 = 轴半剖轮廓、矩形、中心线（这些几何本来就是直线，不属「模拟曲线」）。
+  正解实现见 [`scripts/gear_geometry.py`](scripts/gear_geometry.py)。
+- **唯一例外是追溯**：`archive/`、`docs/history/`、`specs/*/recon/` 按铁律 3「只搬不删」
+  保留旧折线实现作历史，但**不得被任何活跃代码 import、不得作为实现来源**；
+  归档 `archive/inherited-methods/scripts/sw_gear.py` 已加封禁标记。
+- **★★ 发现即停机溯源**：任何时候在活跃产物/文档里又看到折线拟合方案，**立刻停止当前
+  工作**，先查「这个折线方案哪来的」——是抄了归档、外部库、还是新写的？定位来源并记进
+  报告，再按本条把它删掉。不许「先凑合用、以后再说」。
+  复发由硬门禁 `scripts/check_no_polyline.py`（接入 `release_check`）自动拦截。
 
 ## 十五、真机命令一律走弹窗护栏
 

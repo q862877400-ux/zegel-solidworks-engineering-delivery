@@ -555,11 +555,11 @@
     "pywin32"
    ],
    "limitations": [
+    "★★ 2026-11-07 业主令：本条**没有可用实现**。历史证据全部来自 archive/inherited-methods/scripts/sw_gear.py 的折线实现 —— 它把渐开线采样成点列再逐段 sketch_line 连起来，属「折线模拟曲线」，全项目禁止（AGENTS.md 十四之五）。该实现已无活跃引用、不得再作为可交付能力依据；真曲线路线 scripts/gear_geometry.py 的整圈闭合与单齿阵列均未通过真机验收。level 保持 stitched，且**不得**再升 verified。",
     "★ 2026-10-18 修订：mcp_tools 由 2 个清空 —— 按业主架构指令（tool_specs_batch41.py L52–L61）齿轮属【方法】不属【工具】，两个工具已移除、scripts/sw_gear.py 已移入 archive/inherited-methods/。本条保留为「方法能力」记录，不再对外暴露工具。",
     "★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」，且两个齿轮工具已按业主架构指令移除（sw_gear.py 已移入 archive/inherited-methods/）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。",
-    "SW2026 SP1.1 已真机验证 m2/z24/20°/齿宽10/孔10 的 SLDPRT、STEP、四视图、重开和 B-Rep 尺寸回读",
+    "SW2026 SP1.1 曾真机验证 m2/z24/20°/齿宽10/孔10 的 SLDPRT、STEP、四视图、重开和 B-Rep 尺寸回读 —— 但那是折线实现的产物，按 2026-11-07 令不再算数",
     "当前仅支持标准全齿高外啮合直齿轮；齿根为径向过渡+齿根圆弧，不是滚刀生成的精确 trochoid",
-    "齿廓在 SolidWorks 中为弦线离散近似；高采样密度会显著增加建模、导出和 B-Rep 复核时间",
     "不包含斜齿、锥齿、内齿、齿条、蜗轮蜗杆、变位、侧隙、修形、公差、材料或强度校核",
     "轮 281 填实（本条原本 verified 却 0 工具）：sw_gear 有 4 个公开函数。calculate_external_spur_gear 是**纯几何计算**（判据对解析式，不对眼睛）；create_external_spur_gear 建实体（判特征树变化）"
    ],

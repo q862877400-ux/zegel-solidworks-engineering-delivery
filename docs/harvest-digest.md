@@ -221,7 +221,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 |---|---|---|---|
 | `requirements_planning` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 pytest tests/test_engineering_orchestrator.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `solidworks_addin_host` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_cad_reliability.py；该文件来源块自述「未在本机实测 SolidWorks」。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
-| `external_spur_gear_geometry` | `stitched` | `upstream` | ★ 2026-10-18 修订：mcp_tools 由 2 个清空 —— 按业主架构指令（tool_specs_batch41.py L52–L61）齿轮属【方法】不属【工具】，两个工具已移除、scripts/sw_gear.py 已移入 archive/inherited-methods/。本条保留为「方法能力」记录，不再对外暴露工具。 |
+| `external_spur_gear_geometry` | `stitched` | `upstream` | ★★ 2026-11-07 业主令：本条**没有可用实现**。历史证据全部来自 archive/inherited-methods/scripts/sw_gear.py 的折线实现 —— 它把渐开线采样成点列再逐段 sketch_line 连起来，属「折线模拟曲线」，全项目禁止（AGENTS.md 十四之五）。该实现已无活跃引用、不得再作为可交付能力依据；真曲线路线 scripts/gear_ge |
 | `pack_and_go` | `stitched` | `upstream` | ★ 2026-10-18 降级 verified→stitched：evidence 为两个 pytest 文件；未给出真机运行记录（无 sw_guard / 轮次 / PASS 字样）。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
 | `assembly_and_mates` | `stitched` | `mixed` | ⚠⚠⚠ 2026-10-25（第 22 轮）**真机实测：`IAssemblyDoc.AddComponent5` 回 `None`，三种前置都排除了** —— ①零件路径在子进程可见（`os.path.exists`=True、78351 字节）；②装配文档 `GetType`=**2**（`swDocASSEMBLY`）且是**活动文档**；③装配**已保存**（`SaveAs` 成功、`Ge |
 | `motion_study` | `stitched` | `mixed` | ★ 2026-10-18 降级 verified→stitched：evidence 仅 tests/test_sw_motion_audit.py；该测试不 import sw_connect、无真机调用。按 AGENTS.md 铁律 2 / 停止条件 #6 / A7 处置；补真机证据后可重新升回 verified。 |
@@ -340,7 +340,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 
 ## 五 门禁栈（**方法论沉淀**：把判定交给机器，而不是靠人记得）
 
-`scripts/check_*.py` 共 **66** 道；其中接进 `release_check.py`（发布前硬失败）的：
+`scripts/check_*.py` 共 **67** 道；其中接进 `release_check.py`（发布前硬失败）的：
 
 | 门禁 | 接进 `release_check`？ |
 |---|---|
@@ -378,6 +378,7 @@ git log --format=%s -400 | sed 's/(.*//;s/:.*//' | sort | uniq -c | sort -rn  # 
 | `scripts/check_member_names.py` | ✅ |
 | `scripts/check_member_owner_interface.py` | — |
 | `scripts/check_negative_input_selfproof.py` | ✅ |
+| `scripts/check_no_polyline.py` | ✅ |
 | `scripts/check_official_md_claims.py` | ✅ |
 | `scripts/check_official_source_defects.py` | — |
 | `scripts/check_param_binding.py` | ✅ |

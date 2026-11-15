@@ -41,6 +41,8 @@
 
 | 模块 | 用途 | 先看这些名字 |
 |---|---|---|
+| [`sw_debug.py`](../scripts/sw_debug.py) | **排错第一站**：跑 SW 自带诊断（草图合法性 / 约束状态 / 特征错误码 / 实体有效性 / 会话错误日志），每条结论带**修法** | `diagnose · DebugReport.text() · check_sketch · check_features · check_bodies · session_messages · SKETCH_REMEDIES` |
+| [`sw_sketch_check.py`](../scripts/sw_sketch_check.py) | 「检查草图合法性」单项（等价 SW 工具 Check Sketch for Feature Usage），24 个特征类型 × 24 个状态码 | `check_sketch · FEATURE_TYPES · STATUS · check_all_sketches` |
 | [`sw_sketch_modify_ops.py`](../scripts/sw_sketch_modify_ops.py) | 草图整体变换（移动/旋转/缩放/拉伸/翻转） | `sketch_move · sketch_rotate · sketch_scale · sketch_stretch` |
 | [`sw_feature_readback.py`](../scripts/sw_feature_readback.py) | 特征**回读**（参数/深度/存在性/包围盒）—— 读特征先看这里 | `feature_readback · extrude_params · hole_params · pattern_params · fillet_params · feature_present` |
 | [`sw_part.py`](../scripts/sw_part.py) | 零件级操作与草图起止 | `start_sketch · end_sketch · PLANE_NAME_ALIASES` |

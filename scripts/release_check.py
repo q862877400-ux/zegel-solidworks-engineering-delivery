@@ -1425,6 +1425,37 @@ def _run_python_syntax_gate() -> dict[str, object]:
     return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
 
 
+def _run_no_polyline_gate() -> dict[str, object]:
+    """@brief 跑「禁止折线模拟曲线」门禁（`scripts/check_no_polyline.py`）。
+
+    ★★ 依据：AGENTS.md「十四之五、禁止折线模拟曲线」（业主 2026-11-07 令
+    「把所有折线模拟曲线的功能删除」）。旧 `archive/inherited-methods/scripts/sw_gear.py`
+    把渐开线采样成点列再逐段 `sketch_line` 连起来 —— 齿面不再是共轭渐开线、
+    齿根不是真实摆线、段数可调会让同一规格建出不同齿形。
+    ★ 门禁用 AST 扫活跃 `.py`（注释/docstring 里解释「为什么折线是错的」不误报），
+    并带负例自证：喂一段已知折线代码必须被报出来，否则门禁假绿。
+    """
+    try:
+        proc = subprocess.run(
+            [
+                os.environ.get("PYTHON", "python"),
+                str(ROOT / "scripts" / "check_no_polyline.py"),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=180,
+            cwd=str(ROOT),
+            stdin=subprocess.DEVNULL,
+        )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        return {"status": "fail", "output": "禁止折线门禁无法执行: %s" % exc}
+    status = "pass" if proc.returncode == 0 else "fail"
+    return {"status": status, "output": (proc.stdout or "") + (proc.stderr or "")}
+
+
 def _run_server_side_tools_gate() -> dict[str, object]:
     """@brief 跑**服务端侧工具名门禁**（`tools/check_server_side_tools.py`）。
 
@@ -3258,6 +3289,16 @@ def run_release_check() -> dict[str, object]:
             ".py 语法门禁未通过（有文件不能 ast.parse）：\n"
             + str(py_syntax.get("output", ""))
         )
+    # ⚑ **禁止折线模拟曲线门禁**（硬门禁）：★ AGENTS.md「十四之五」（业主 2026-11-07 令
+    #   「把所有折线模拟曲线的功能删除」）。★ 与语法门禁**互补**：那道判"能不能 parse"，
+    #   本道判"有没有用采样点列逼近曲线"（语法完全合法、看起来也能建出齿轮，但那是假齿形）。
+    #   ★ 带负例自证；追溯区（archive/ docs/history/ recon/ output/）不扫。
+    nopoly = _run_no_polyline_gate()
+    if nopoly.get("status") == "fail":
+        raise AssertionError(
+            "禁止折线模拟曲线门禁未通过（活跃代码里又出现点列逼近曲线）：\n"
+            + str(nopoly.get("output", ""))
+        )
     # ⚑ **评审稿编号门禁**（硬门禁）：★ 评审稿里引用的 `L1-/L2-/L3-` 编号
     #   必须**真的存在**，且**括号里的描述要对得上**。
     #   ★ 触发它的是 2026-10-12（业主：「那 60 条语料的标签给我打开」）：
@@ -3635,6 +3676,9 @@ def run_release_check() -> dict[str, object]:
         #: 面**看不见**
         #:   （★ 静默跳过与没跑等价）」。★ **这条正是元门禁存在的意义**（轮 191 的定则）。
         "py_syntax": py_syntax,
+        #: ★ 2026-11-07（业主「把所有折线模拟曲线的功能删除」）：禁止折线门禁 ——
+        #:   两处必须同时加（元门禁在守：没进返回体 = 静默跳过与没跑等价）。
+        "no_polyline": nopoly,
         #: ★ 2026-10-19（text-to-cad 经验内化）：★ 两处必须同时加（元门禁在守）✓
         #:   经验① 量化断言出处 / 经验⑤ 假设台账 —— 见 docs/text-to-cad-lessons-verdict.md
         "fact_provenance": fp,
@@ -3770,6 +3814,8 @@ def run_release_check() -> dict[str, object]:
         "assumption_ledger": al,
         "tools_index_fresh": tix,
         "missing": [],
+        #: ★ 2026-11-07：禁止折线门禁的**第二处**（元门禁要的，两处必须同时加）✓
+        "no_polyline": nopoly,
     }
 
 

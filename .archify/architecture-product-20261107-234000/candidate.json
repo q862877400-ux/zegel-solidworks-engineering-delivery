@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "从你说一句话，到一个能加工的零件",
+    "subtitle": "四个环节：问清需求 · 定参数出参数表 · 在三维软件里建出来 · 复查合格才交付",
+    "output": ".archify/architecture-product-20261107-234000/product-flow.html",
+    "quality_profile": "showcase",
+    "locale": "zh-CN"
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "你",
+      "sublabel": "说人话就行",
+      "pos": [400, 40],
+      "size": [240, 64]
+    },
+    {
+      "id": "intake",
+      "type": "frontend",
+      "label": "问清需求",
+      "sublabel": "只问 2~3 个必须问的",
+      "tag": "能自己推出来的不问你",
+      "pos": [400, 160],
+      "size": [240, 76]
+    },
+    {
+      "id": "needsheet",
+      "type": "backend",
+      "label": "需求单",
+      "sublabel": "写清到底要做什么零件",
+      "pos": [400, 292],
+      "size": [240, 70]
+    },
+    {
+      "id": "route",
+      "type": "security",
+      "label": "先分清该怎么办",
+      "sublabel": "买现成 / 自己做 / 暂时做不了",
+      "tag": "做不了就说做不了",
+      "pos": [400, 418],
+      "size": [240, 76]
+    },
+    {
+      "id": "calc",
+      "type": "backend",
+      "label": "算参数",
+      "sublabel": "尺寸、规格、校核一次算完",
+      "tag": "同一个需求永远同一套数",
+      "pos": [400, 550],
+      "size": [240, 80]
+    },
+    {
+      "id": "plan",
+      "type": "backend",
+      "label": "定建模方案",
+      "sublabel": "先定怎么画，再动手",
+      "tag": "方案是数据，不动软件",
+      "pos": [400, 686],
+      "size": [240, 76]
+    },
+    {
+      "id": "build",
+      "type": "backend",
+      "label": "建模",
+      "sublabel": "在 SolidWorks 里做出三维模型",
+      "tag": "特征可改，不是死实体",
+      "pos": [400, 818],
+      "size": [240, 76]
+    },
+    {
+      "id": "model",
+      "type": "external",
+      "label": "三维模型",
+      "sublabel": "能改参数、能出图、能加工",
+      "pos": [400, 950],
+      "size": [240, 76]
+    },
+    {
+      "id": "check",
+      "type": "database",
+      "label": "自动复查",
+      "sublabel": "量体积 · 量外形 · 出三视图",
+      "tag": "软件自己量，不靠眼看",
+      "pos": [400, 1082],
+      "size": [240, 80]
+    },
+    {
+      "id": "deliver",
+      "type": "cloud",
+      "label": "交付",
+      "sublabel": "模型 + 参数表 + 未覆盖清单",
+      "pos": [400, 1218],
+      "size": [240, 76]
+    },
+    {
+      "id": "buy",
+      "type": "external",
+      "label": "买现成的",
+      "sublabel": "选型号 → 取官方模型 → 装进去",
+      "pos": [40, 418],
+      "size": [240, 70]
+    },
+    {
+      "id": "cantdo",
+      "type": "messagebus",
+      "label": "暂时做不了",
+      "sublabel": "如实登记，不硬凑一个",
+      "pos": [40, 510],
+      "size": [240, 70]
+    },
+    {
+      "id": "paramtable",
+      "type": "database",
+      "label": "参数表",
+      "sublabel": "每个数都标出处：算的/选的/查标准的/你定的",
+      "tag": "看得懂，也能拿去给人看",
+      "pos": [700, 550],
+      "size": [260, 80]
+    },
+    {
+      "id": "gaps",
+      "type": "messagebus",
+      "label": "我没算什么",
+      "sublabel": "强度、公差、工艺，逐条列清",
+      "pos": [700, 660],
+      "size": [260, 70]
+    },
+    {
+      "id": "result",
+      "type": "database",
+      "label": "复查结果",
+      "sublabel": "实测值对上应有值，差多少写明白",
+      "pos": [700, 1082],
+      "size": [260, 76]
+    },
+    {
+      "id": "reject",
+      "type": "security",
+      "label": "不合格",
+      "sublabel": "留档、停下分析，不硬交付",
+      "pos": [40, 1082],
+      "size": [240, 76]
+    },
+    {
+      "id": "known",
+      "type": "database",
+      "label": "哪些能做、哪些还不行",
+      "sublabel": "没亲自做成过的不算能做",
+      "tag": "不许拿\"应该可以\"充数",
+      "pos": [700, 1218],
+      "size": [260, 70]
+    },
+    {
+      "id": "final",
+      "type": "security",
+      "label": "交给你之前的最后检查",
+      "sublabel": "全项过一遍才放行",
+      "pos": [700, 1330],
+      "size": [260, 76]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-intake",
+      "from": "user",
+      "to": "intake",
+      "label": "一句话说需求",
+      "variant": "emphasis"
+    },
+    {
+      "id": "intake-needsheet",
+      "from": "intake",
+      "to": "needsheet",
+      "label": "只问必要问题"
+    },
+    {
+      "id": "needsheet-route",
+      "from": "needsheet",
+      "to": "route",
+      "label": "先判怎么办"
+    },
+    {
+      "id": "route-buy",
+      "from": "route",
+      "to": "buy",
+      "label": "标准件"
+    },
+    {
+      "id": "route-cantdo",
+      "from": "route",
+      "to": "cantdo",
+      "label": "非标·多解"
+    },
+    {
+      "id": "route-calc",
+      "from": "route",
+      "to": "calc",
+      "label": "能靠参数算出来",
+      "variant": "emphasis"
+    },
+    {
+      "id": "calc-paramtable",
+      "from": "calc",
+      "to": "paramtable",
+      "label": "每个数标出处"
+    },
+    {
+      "id": "calc-gaps",
+      "from": "calc",
+      "to": "gaps",
+      "label": "同时附上"
+    },
+    {
+      "id": "calc-plan",
+      "from": "calc",
+      "to": "plan",
+      "label": "参数定死",
+      "variant": "emphasis"
+    },
+    {
+      "id": "plan-build",
+      "from": "plan",
+      "to": "build",
+      "label": "照方案画",
+      "variant": "emphasis"
+    },
+    {
+      "id": "build-model",
+      "from": "build",
+      "to": "model",
+      "label": "生成实体",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model-check",
+      "from": "model",
+      "to": "check",
+      "label": "软件自己去量",
+      "variant": "emphasis"
+    },
+    {
+      "id": "check-result",
+      "from": "check",
+      "to": "result",
+      "label": "数值对照"
+    },
+    {
+      "id": "check-reject",
+      "from": "check",
+      "to": "reject",
+      "label": "对不上"
+    },
+    {
+      "id": "check-deliver",
+      "from": "check",
+      "to": "deliver",
+      "label": "三项都对得上",
+      "variant": "emphasis"
+    },
+    {
+      "id": "result-known",
+      "from": "result",
+      "to": "known",
+      "label": "有实测才算数"
+    },
+    {
+      "id": "deliver-known",
+      "from": "deliver",
+      "to": "known",
+      "label": "记进能力表"
+    },
+    {
+      "id": "known-final",
+      "from": "known",
+      "to": "final",
+      "label": "放行前校验"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "第一步 · 问清你到底要什么",
+      "wraps": ["user", "intake"]
+    },
+    {
+      "kind": "region",
+      "label": "第二步 · 定参数出表（这部分是算出来的，每次结果一样）",
+      "wraps": ["needsheet", "route", "calc", "plan", "buy", "cantdo", "paramtable", "gaps"]
+    },
+    {
+      "kind": "region",
+      "label": "第三步 · 在三维软件里真正建出来",
+      "wraps": ["build", "model"]
+    },
+    {
+      "kind": "region",
+      "label": "第四步 · 复查（软件量数 + 你眼睛看图）",
+      "wraps": ["check", "result", "reject"]
+    },
+    {
+      "kind": "region",
+      "label": "放行 · 只有实测合格的才允许交给你",
+      "wraps": ["known", "final"]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "你会拿到三样东西",
+      "items": [
+        "一张参数表：每个数字都标了是算的、选的、查标准的，还是你定的",
+        "一个能改的三维模型：改参数就重画，不是一张死图",
+        "一张“我没算什么”清单：强度、公差、工艺，缺什么写明什么"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "我们不打折的三条",
+      "items": [
+        "能自己推出来的参数，不拿来烦你",
+        "做不了就直说做不了，不硬凑一个看着像的",
+        "没亲手做成过的东西，不写成“能做”"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "现在能做到哪",
+      "items": [
+        "传动轴：已经能稳定做出来，软件量出来的数和应有值一致，三视图齐全",
+        "齿轮：还在攻——以前那种“用一堆小直线拼出齿形”的做法已明令废止，正在做真齿形",
+        "每一个交付件都过最后一道全项检查才放行"
+      ]
+    }
+  ]
+}

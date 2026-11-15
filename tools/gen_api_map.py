@@ -59,7 +59,7 @@ DOMAIN_OF_MODULE = {
     "sw_addin_host.py": "应用与会话",
     "sw_macro_guard.py": "应用与会话",
     "sw_part.py": "零件特征",
-    "sw_gear.py": "零件特征",
+    # ★ 2026-11-07 业主令：sw_gear.py 的折线实现已禁用并移出 scripts/，不再入表
     "sw_hole_features.py": "孔与螺纹",
     "sw_sheet_metal.py": "钣金",
     "sw_weldment.py": "焊件",

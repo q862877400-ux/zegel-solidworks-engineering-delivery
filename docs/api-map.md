@@ -18,7 +18,7 @@
 |---|---|---|
 | 其他/未归类 | **255** | — |
 | 质量属性与导出 | **33** | `sw_delivery.py`, `sw_export.py` |
-| 零件特征 | **31** | `sw_gear.py`, `sw_part.py` |
+| 零件特征 | **31** | `sw_part.py` |
 | 应用与会话 | **20** | `sw_addin_host.py`, `sw_connect.py`, `sw_macro_guard.py`, `sw_preflight.py`, `sw_session.py` |
 | 几何与拓扑 | **19** | `sw_review.py` |
 | 焊件 | **18** | `sw_weldment.py` |

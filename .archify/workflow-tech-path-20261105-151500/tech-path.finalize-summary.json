@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "workflow",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\candidate.json",
+    "sha256": "1a577ffb1202cd0ef6ae47e981ca1925f2b8a273436081bc651cc7d7765f4a59",
+    "bytes": 7698
+  },
+  "artifact": {
+    "path": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\tech-path.html",
+    "sha256": "7a88a731bb4362368b556acc3fd2d9123cda9109fda6ff071734019496031d26",
+    "bytes": 856836
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\tech-path.finalize.json",
+    "summaryReceipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\tech-path.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Agent-Studio\\Deepseek-Harness\\DSH-Data\\workspace\\SW\\.archify\\workflow-tech-path-20261105-151500\\tech-path.browser-check.json"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 16469,
+  "browserCheck": {
+    "requested": true,
+    "ran": true
+  }
+}
