@@ -34,9 +34,18 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 def _git(*args: str) -> subprocess.CompletedProcess:
-    """★ 跑一条 git（★ `encoding=` 必给 —— 事实 58：中文 Windows 上不给会 `UnicodeDecodeError`）。"""
+    """★ 跑一条 git（★ `encoding=` 必给 —— 事实 58：中文 Windows 上不给会 `UnicodeDecodeError`）。
+
+    ★★ 2026-11-16 修：一律带 `-c core.quotepath=false`。
+      起因：仓库里有中文名文件（`docs/marketing/01-竞品宣发拆解.md` 等）。git 默认
+      `core.quotepath=true` 会把非 ASCII 路径**转成八进制转义**输出
+      （`"docs/marketing/01-\\347\\253\\236\\345\\223\\201..."`）⇒ `staged()` 拿到的名字
+      与台账 `file-audit.jsonl` 里的真 UTF-8 名**永远对不上** ⇒ 中文名文件
+      **永远过不了"新文件必须有裁决"这道门**，而门禁却报"台账里没有它"，
+      看不出是编码问题。⇒ 在源头统一成真路径，不改台账、不改判据。
+    """
     return subprocess.run(
-        ("git",) + args,
+        ("git", "-c", "core.quotepath=false") + args,
         cwd=ROOT,
         stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
