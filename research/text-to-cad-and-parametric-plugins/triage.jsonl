@@ -1,0 +1,53 @@
+{"id":"bearing-deep-groove","name":"深沟球轴承","source":"zsc 第5章 / mechtool 滚动轴承设计与查询","verdict":"买","why":"标准件，尺寸/额定载荷由厂商目录定义，自算几何无意义","where":"MISUMI（项目已有 sw_misumi.py）/ SKF / NSK / 3D ContentCentral","code":null,"action":"接选型器"}
+{"id":"bearing-linear","name":"直线轴承","source":"zsc 第5章 / mechtool 直线轴承选型","verdict":"买","why":"标准件；选型看载荷与行程","where":"MISUMI / THK","code":null,"action":"接选型器"}
+{"id":"guide-linear","name":"直线导轨","source":"mechtool 直线导轨选型","verdict":"买","why":"标准件；Toolbox 实测为 0，必须走厂商","where":"HIWIN / THK / MISUMI","code":null,"action":"接选型器"}
+{"id":"ball-screw","name":"滚珠丝杠","source":"mechtool 滚珠丝杆副设计计算","verdict":"买","why":"精密传动元件，制造门槛高","where":"MISUMI / THK / NSK","code":null,"action":"接选型器"}
+{"id":"trapezoid-screw","name":"梯形丝杠（滑动）","source":"mechtool 螺旋传动设计","verdict":"造","why":"常为非标自制，螺纹牙型有标准表","where":null,"code":"BOSL2 threading.scad / cq_warehouse threads（牙型）","action":"接入（与螺纹族合并）"}
+{"id":"fastener","name":"螺栓螺钉螺母","source":"zsc 第4章 / mechtool 紧固件","verdict":"买","why":"标准件；Toolbox 本机 1844 件可索引（螺纹为近似示意）","where":"Toolbox / MISUMI","code":null,"action":"接选型器（注意 Toolbox 螺纹非精确）"}
+{"id":"washer-ring","name":"垫圈/挡圈/卡簧","source":"zsc 第4章 / mechtool 垫圈及挡圈","verdict":"买","why":"标准件","where":"Toolbox / MISUMI","code":null,"action":"接选型器"}
+{"id":"key","name":"键（平键/半圆键）","source":"mechtool 键连接设计校核","verdict":"买","why":"键本身是标准件，但键槽要造","where":"Toolbox / MISUMI","code":"键槽几何用项目自有 sw_sketch_*","action":"买键 + 造键槽"}
+{"id":"pin","name":"销（圆柱/圆锥/开口销）","source":"mechtool 销汇总表","verdict":"买","why":"标准件","where":"Toolbox / MISUMI","code":null,"action":"接选型器"}
+{"id":"rivet","name":"铆钉/拉铆螺母/压铆螺母","source":"mechtool 铆接","verdict":"买","why":"标准件","where":"MISUMI / 厂商","code":null,"action":"接选型器"}
+{"id":"seal","name":"O 圈/油封/密封件","source":"zsc 第13章 / mechtool 密封系统设计","verdict":"买","why":"材料与沟槽尺寸由标准定义","where":"MISUMI / NOK / 厂商","code":null,"action":"接选型器（沟槽要造）"}
+{"id":"coupling","name":"联轴器","source":"zsc 第6章","verdict":"买","why":"成品件，选型看扭矩/转速/补偿量","where":"MISUMI / R+W / 国产","code":null,"action":"接选型器"}
+{"id":"spring-standard","name":"标准弹簧（压/拉/扭）","source":"zsc 第14章 / mechtool 弹簧设计","verdict":"买","why":"标准系列可直采；非标才自制","where":"MISUMI / 米思米弹簧目录","code":null,"action":"选型 + 非标转造"}
+{"id":"motor","name":"电机/减速机","source":"zsc 第7章 / mechtool 电动机(减速机)选型计算","verdict":"买","why":"选型器逻辑（功率-转速-扭矩-工况）","where":"SEW Workbench / 东方马达 / NORD","code":null,"action":"接选型器"}
+{"id":"servo","name":"舵机","source":"zsc 第7章","verdict":"买","why":"成品模组，含控制","where":"厂商目录","code":null,"action":"接选型器"}
+{"id":"pneumatic","name":"气缸/液压缸/阀","source":"zsc 无 / mechtool 气压·液压传动系统计算","verdict":"买","why":"成品元件","where":"SMC / CHELIC（mechtool 收录其 3D 选型软件）","code":null,"action":"接选型器"}
+{"id":"buffer","name":"油压缓冲器","source":"mechtool 油压缓冲器选型","verdict":"买","why":"成品件","where":"厂商","code":null,"action":"接选型器"}
+{"id":"cam-indexer","name":"凸轮分度器（成品）","source":"mechtool 凸轮分度(割)器选型","verdict":"买","why":"成品机构，非单件","where":"厂商","code":null,"action":"接选型器"}
+{"id":"belt-standard","name":"同步带 / V 带（带体）","source":"zsc 第6章 / mechtool 带传动设计","verdict":"买","why":"带体是成品，带轮才是自制件","where":"MISUMI / 盖茨 / 三星","code":null,"action":"接选型器"}
+{"id":"chain-standard","name":"滚子链 / 倍速链（链体）","source":"zsc 第6章 / mechtool 链传动设计","verdict":"买","why":"链体是成品，链轮才是自制件","where":"MISUMI / 椿本","code":null,"action":"接选型器"}
+{"id":"profile-aluminum","name":"铝型材","source":"zsc 第9章","verdict":"买","why":"型材是材料；切割/连接件才造","where":"厂商（Toolbox 实测无欧标型材）","code":null,"action":"接选型器 + 用项目 sw_weldment 轮廓"}
+{"id":"steel-profile","name":"型钢（角钢/槽钢/H 型钢）","source":"mechtool 型钢","verdict":"买","why":"轧制标准型材","where":"材料表 / 供应商","code":null,"action":"接选型器"}
+{"id":"drag-chain","name":"拖链","source":"zsc 第16章 / mechtool 拖链长度计算","verdict":"买","why":"成品件","where":"MISUMI / igus","code":null,"action":"接选型器"}
+{"id":"connector","name":"连接器/线材","source":"zsc 第16章","verdict":"买","why":"成品件","where":"厂商","code":null,"action":"接选型器"}
+{"id":"fan-heatsink","name":"风扇/成品散热器","source":"zsc 第15章","verdict":"买","why":"成品件","where":"厂商","code":null,"action":"接选型器"}
+{"id":"gear-cylindrical","name":"圆柱齿轮（直/斜/内/齿条）","source":"zsc 第6章 / mechtool 渐开线圆柱齿轮传动设计","verdict":"造","why":"齿形是几何，必须按参数生成；不能买","where":null,"code":"cq_gears（Apache-2.0）/ FCGear / MCAD","action":"接入（第一个族）"}
+{"id":"gear-bevel","name":"锥齿轮","source":"zsc 第6章","verdict":"造","why":"同上","where":null,"code":"cq_gears（直齿/斜齿锥齿）","action":"接入"}
+{"id":"worm","name":"蜗轮蜗杆","source":"mechtool 普通圆柱蜗杆传动设计","verdict":"造","why":"同上","where":null,"code":"未找到成熟开源实现（BOSL2 是否含 worm 待核）","action":"登记待核"}
+{"id":"timing-pulley","name":"同步带轮","source":"zsc 第6章","verdict":"造","why":"齿形按带型标准，不许买整件（除非标准库存件）","where":null,"code":"bd_warehouse sprockets 相关 / OpenSCAD 带轮生成器（许可待核）","action":"接入（许可待核）"}
+{"id":"sprocket","name":"链轮","source":"zsc 第6章","verdict":"造","why":"齿槽形状按链型标准","where":null,"code":"bd_warehouse Sprockets（Apache-2.0）","action":"接入"}
+{"id":"v-pulley","name":"V 带轮 / 多楔带轮","source":"zsc 第6章","verdict":"造","why":"槽形按标准","where":null,"code":"GearTrax 类商业插件；开源仅零散 OpenSCAD","action":"登记"}
+{"id":"thread-feature","name":"螺纹特征","source":"zsc 第4章 / mechtool 螺纹","verdict":"造","why":"紧固件可买，但零件上的内/外螺纹要建","where":null,"code":"BOSL2 threading.scad（BSD-2）/ cq_warehouse threads（Apache-2.0）","action":"接入"}
+{"id":"spring-custom","name":"非标弹簧/簧片","source":"zsc 第14章","verdict":"造","why":"非标才有价值","where":null,"code":"OpenSCAD Spring Generator（许可待核）+ 项目 sw_helix","action":"接入（许可待核）"}
+{"id":"shaft","name":"轴","source":"zsc 第6章 / mechtool 轴设计计算","verdict":"造","why":"非标件，但几何是基础体素","where":null,"code":"项目自有 sw_part / sw_sketch_* / sw_feature*","action":"用现有能力，不新建族"}
+{"id":"spline","name":"花键","source":"mechtool 键连接","verdict":"造","why":"内/外花键齿形有标准","where":null,"code":"未找到成熟开源实现","action":"登记待核"}
+{"id":"sheet-metal","name":"钣金件","source":"zsc 第9章","verdict":"造","why":"非标，但由工艺规则决定","where":null,"code":"项目自有 sw_sheet_metal.py","action":"用现有能力"}
+{"id":"weldment","name":"焊件/机架","source":"zsc 第3、9章","verdict":"造","why":"结构件，轮廓买、结构造","where":null,"code":"项目自有 sw_weldment.py","action":"用现有能力"}
+{"id":"routing","name":"管路","source":"zsc 第16章（线束）/ mechtool 管路系统绘制","verdict":"造","why":"路径非标，管件标准","where":null,"code":"项目自有 sw_routing.py + SWRoutingLib","action":"用现有能力"}
+{"id":"cam","name":"凸轮（盘形/圆柱/弧面）","source":"zsc 第6章 / mechtool 凸轮分度器选型","verdict":"造-无代码","why":"运动规律→轮廓，无成熟开源库；成品分度器可买，非标凸轮只能自建","where":null,"code":"无（商业 CamTrax64）","action":"记录，放一放"}
+{"id":"linkage","name":"连杆机构（四杆/六杆）","source":"zsc 第3章 / 第18章并联机构","verdict":"造-无代码","why":"综合是多解非线性问题，无成熟库；行业靠图解+经验","where":null,"code":"Pyslvs（AGPL，只读思想）/ PMKS+（仅分析）","action":"记录，放一放"}
+{"id":"nonstandard-bracket","name":"非标支架/连接件","source":"zsc 第3、9章","verdict":"造-无代码","why":"完全非标，行业手画","where":null,"code":null,"action":"记录，放一放（依赖通用建模能力而非生成器）"}
+{"id":"enclosure","name":"壳体/机箱","source":"zsc 第2、3章","verdict":"造-无代码","why":"非标手画","where":null,"code":null,"action":"记录，放一放"}
+{"id":"fixture","name":"夹具/工装","source":"zsc 第18章 3D打印夹具","verdict":"造-无代码","why":"完全非标","where":null,"code":null,"action":"记录，放一放"}
+{"id":"planetary","name":"行星轮系（装配级）","source":"zsc 第6章高级话题","verdict":"造-无代码","why":"装配级约束求解，属下一层","where":null,"code":null,"action":"记录，上层再做"}
+{"id":"harmonic","name":"谐波减速器/摆线针轮","source":"zsc 第6章高级话题","verdict":"买","why":"成品减速器","where":"哈默纳科 / 绿的 / 厂商","code":null,"action":"接选型器"}
+{"id":"tolerance","name":"公差与配合","source":"zsc 第1章 / mechtool 公差与配合查询","verdict":"非零件","why":"查询能力，不是零件族","where":"mechtool 在线查询","code":null,"action":"作为判据层数据源"}
+{"id":"gdt","name":"形状与位置公差","source":"mechtool 形状与位置公差查询","verdict":"非零件","why":"标注判据","where":"mechtool","code":"项目自有 sw_gtol.py","action":"用现有能力"}
+{"id":"material-data","name":"材料性能数据","source":"zsc 第1章 / mechtool 金属材料","verdict":"非零件","why":"选材判据","where":"mechtool 材料库","code":"本机 mech-design 知识库 material_db.yaml","action":"复用知识库，不新建"}
+{"id":"heat-treatment","name":"热处理与表面处理","source":"mechtool 热处理/表面技术","verdict":"非零件","why":"工艺要求，标注在图上","where":"mechtool","code":null,"action":"作为工艺判据层"}
+{"id":"printing-rules","name":"3D 打印设计规则","source":"zsc 第8章","verdict":"非零件","why":"工艺约束（壁厚/悬垂/公差）","where":null,"code":null,"action":"作为 DFM 判据，暂不做族"}
+{"id":"balancing","name":"配重与动平衡","source":"zsc 第11章","verdict":"非零件","why":"计算与校核，不是几何生成","where":null,"code":null,"action":"作为校核能力，暂不做族"}
+{"id":"lubrication","name":"润滑与维护","source":"zsc 第13章","verdict":"非零件","why":"选型与维护策略","where":null,"code":null,"action":"暂不做"}
+{"id":"diagnosis","name":"故障诊断","source":"zsc 第17章","verdict":"非零件","why":"方法学（声音/振动/温度/FTA）","where":null,"code":null,"action":"暂不做"}

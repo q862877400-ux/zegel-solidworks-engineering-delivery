@@ -1,0 +1,25 @@
+{
+ "at": "2026-11-07T13:37:37",
+ "runs": [
+  {
+   "label": "T1a t_start=0.00（基圆上，曲率半径→0）",
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "T1b t_start=0.05",
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "T1c t_start=0.15",
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "T1d t_start=0.30",
+   "contours": 1,
+   "extrude": false
+  }
+ ]
+}

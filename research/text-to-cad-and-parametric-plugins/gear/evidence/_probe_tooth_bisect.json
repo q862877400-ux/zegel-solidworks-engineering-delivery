@@ -1,0 +1,29 @@
+{
+ "at": "2026-11-07T13:29:30",
+ "runs": [
+  {
+   "label": "tro=2 inv=3 样条点合计=12 闭合=0.0000µm",
+   "segments": 4,
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "tro=4 inv=6 样条点合计=22 闭合=0.0000µm",
+   "segments": 4,
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "tro=8 inv=12 样条点合计=42 闭合=0.0000µm",
+   "segments": 4,
+   "contours": 1,
+   "extrude": false
+  },
+  {
+   "label": "tro=24 inv=40 样条点合计=130 闭合=0.0000µm",
+   "segments": 4,
+   "contours": 1,
+   "extrude": false
+  }
+ ]
+}

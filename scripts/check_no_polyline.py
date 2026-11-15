@@ -22,6 +22,11 @@ ROOT = Path(__file__).resolve().parents[1]
 SCAN_DIRS = (
     "scripts", "tools", "mcp-server", "subskills", "apps", "tests",
     "research/text-to-cad-and-parametric-plugins/proto",
+    #: ★ 2026-11-16 加：`gear/` 是齿轮族真曲线构造与拉伸实证的正式落点
+    #:   （业主令「但凡是个文档、未来可能用上的都要放进去」后从 output/ 搬来）。
+    #:   它一旦入库就从「scratch」变成「可能被复制的实现来源」⇒ 必须被禁令覆盖，
+    #:   否则下次有人从这里抄一段折线出去，门禁还是绿的。
+    "research/text-to-cad-and-parametric-plugins/gear",
 )
 #: 路径里出现这些片段即视为追溯区/产物，跳过
 SKIP_PARTS = (

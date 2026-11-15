@@ -1,0 +1,17 @@
+{
+ "at": "2026-11-07T13:40:19",
+ "runs": [
+  {
+   "label": "折线齿廓 n=30（每边 31 点）",
+   "segments": 62,
+   "contours": 3,
+   "extrude": false
+  },
+  {
+   "label": "折线齿廓 n=120（每边 121 点）",
+   "segments": 242,
+   "contours": 3,
+   "extrude": false
+  }
+ ]
+}

@@ -1,0 +1,6 @@
+{
+ "at": "2026-11-07T13:32:48",
+ "steps": [],
+ "tooth_extrude": false,
+ "error": "RuntimeError: 单齿拉伸失败"
+}

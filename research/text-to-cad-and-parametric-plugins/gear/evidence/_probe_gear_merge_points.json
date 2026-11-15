@@ -1,0 +1,61 @@
+{
+ "at": "2026-10-11T00:34:03",
+ "_": "★ MergePoints 合并亚微米缝 ⇒ 真曲线齿廓闭合",
+ "tooth_meta": {
+  "P": 0.09344420020708127,
+  "P_tro": 0.1506130520013417,
+  "ang_tip": 0.031585453844147404,
+  "phi_b": 0.23519620175517253,
+  "span_rad": 0.3012261040026834,
+  "pitch_rad": 0.3141592653589793
+ },
+ "cases": [
+  {
+   "tag": "① 不合并（对照）",
+   "distance_m": null,
+   "curves_ok": 6,
+   "before": {
+    "segments": 6,
+    "points": 6
+   },
+   "after": {
+    "segments": 6,
+    "points": 6
+   },
+   "constrained_status": 2,
+   "extrude_ok": false
+  },
+  {
+   "tag": "② MergePoints(1e-6 m = 1 µm)",
+   "distance_m": 1e-06,
+   "curves_ok": 6,
+   "before": {
+    "segments": 6,
+    "points": 6
+   },
+   "merge_returned": false,
+   "after": {
+    "segments": 6,
+    "points": 6
+   },
+   "constrained_status": 2,
+   "extrude_ok": false
+  },
+  {
+   "tag": "③ MergePoints(1e-5 m = 10 µm)",
+   "distance_m": 1e-05,
+   "curves_ok": 6,
+   "before": {
+    "segments": 6,
+    "points": 6
+   },
+   "merge_returned": true,
+   "after": {
+    "segments": 6,
+    "points": 5
+   },
+   "constrained_status": 2,
+   "extrude_ok": false
+  }
+ ]
+}

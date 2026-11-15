@@ -29,8 +29,14 @@ _raw/
 #    同类：以下两个也是反射产物，共 22.5 MB
 interop-dimension-census.json
 research/interop-dimensions/
-# 分系统方法层工作区（子系统 scratch，见其 README.md）
-research/text-to-cad-and-parametric-plugins/
+# 分系统方法层工作区（见其 README.md）
+#
+# ★★ 2026-11-16 业主令：「但凡是个文档，但凡未来继续开发的时候可能用上的，都要放进去」
+#   ⇒ 反转原先整目录排除。**只保留抓取证据排除**，代码与文档全部入库。
+#   实测体积：本目录 87.6 MB 里，`_evidence/` 占 86.06 MB（抓取的网页/PDF/HTML，
+#   可用 15-造环节验证报告.md 里的链接重新取回），其余代码+文档只有 **1.56 MB**。
+#   ⇒ 排除后者等于把「造环节」的实际代码现状丢掉，代价与收益完全不成比例。
+research/text-to-cad-and-parametric-plugins/_evidence/
 
 # ── ④ 探索期截图（50 MB）──────────────────────────────────────────
 #    Git 对二进制不友好；**关键证据**保留在 evidence/ 与 batch_evidence/。

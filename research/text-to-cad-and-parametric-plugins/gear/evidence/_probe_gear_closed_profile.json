@@ -1,0 +1,126 @@
+{
+ "at": "2026-11-07T13:12:38",
+ "_": "★ 完整齿轮轮廓（★ 每条边都是真曲线）",
+ "spec": {
+  "module_mm": 1.0,
+  "teeth": 20,
+  "face_width_mm": 10.0,
+  "bore_diameter_mm": 8.0
+ },
+ "analytic": {
+  "gear_type": "standard_external_spur_involute",
+  "profile_curve": "true_involute_equation_driven",
+  "root_form": "true_trochoid_rack_tool_envelope",
+  "standards": [
+   "GB/T 1356",
+   "GB/T 1357",
+   "ISO 53",
+   "ANSI B6.1"
+  ],
+  "input": {
+   "module_mm": 1.0,
+   "teeth": 20,
+   "face_width_mm": 10.0,
+   "pressure_angle_deg": 20.0,
+   "bore_diameter_mm": 8.0
+  },
+  "coefficients": {
+   "addendum": 1.0,
+   "dedendum": 1.25,
+   "tool_tip_radius": 0.38
+  },
+  "dimensions_mm": {
+   "pitch_diameter": 20.0,
+   "base_diameter": 18.79385241571817,
+   "outside_diameter": 22.0,
+   "root_diameter": 17.5,
+   "circular_pitch": 3.141592653589793,
+   "tooth_thickness_at_pitch": 1.5707963267948966,
+   "whole_depth": 2.25,
+   "clearance": 0.25,
+   "tool_tip_radius": 0.38
+  },
+  "involute_parameter_range": {
+   "t_root": 0.0,
+   "t_tip": 0.6085178231017319
+  },
+  "minimum_teeth_without_undercut": 18,
+  "undercut_risk": false,
+  "contact_ratio": 1.7688237002102773,
+  "warnings": []
+ },
+ "curve_meta": {
+  "P": 0.09344420020708127,
+  "ang_tip": 0.031585453844147404,
+  "pitch": 0.3141592653589793,
+  "t_range": [
+   0.0,
+   0.6085178231017319
+  ],
+  "profile_form": "true_involute_radial_root_arc"
+ },
+ "curve_count": 120,
+ "steps": [
+  {
+   "curves_ok": 120,
+   "curves_failed": 0,
+   "fails": []
+  },
+  {
+   "bore_circle": true
+  },
+  {
+   "extrude": false,
+   "target": "__current_selection__"
+  }
+ ],
+ "sketch_points": 120,
+ "coincident_merged": 0,
+ "coincident_fails": [],
+ "sketch_segments": 121,
+ "sketch_contours": 2,
+ "sketch_name": "草图1",
+ "rebuilt_before_extrude": true,
+ "contour_is_closed": [
+  true,
+  true
+ ],
+ "contour_seg_counts": [
+  1,
+  120
+ ],
+ "contour_radii_mm": [],
+ "contours_selected": 1,
+ "contours_pick": "1",
+ "selection_count_at_fail": 1,
+ "new_features": [
+  "草图1"
+ ],
+ "volume_m3": 0.0,
+ "volume_mm3": 0.0,
+ "bbox": {
+  "units": "mm",
+  "measurement_source": "SolidWorks API GetPartBox(True) + B-Rep cylindrical faces",
+  "envelope_mm": {
+   "length": 22.000035,
+   "width": 22.000035,
+   "height": 0.0,
+   "axis_order": "model_xyz"
+  },
+  "holes": [],
+  "compound_holes": [],
+  "slot_arc_candidates": [],
+  "cylindrical_faces": [],
+  "errors": [],
+  "hole_count": 0,
+  "hole_groups": []
+ },
+ "profile_area_mm2": 306.52621239587165,
+ "expected_volume_mm3": 2562.6072993843495,
+ "checks": {
+  "gear_feature_in_tree": false,
+  "bbox_is_analytic": false,
+  "volume_matches_analytic": false
+ },
+ "closed": true
+}

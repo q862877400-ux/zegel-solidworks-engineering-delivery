@@ -1,0 +1,29 @@
+{
+ "at": "2026-11-07T13:35:41",
+ "runs": [
+  {
+   "label": "A 扇角60 r6→10 点21",
+   "contours": 1,
+   "extrude": true,
+   "volume_mm3": 355.475
+  },
+  {
+   "label": "B 扇角10.7 r6→10 点21",
+   "contours": 1,
+   "extrude": true,
+   "volume_mm3": 1211.105
+  },
+  {
+   "label": "C 扇角60 r8.75→11 点21",
+   "contours": 1,
+   "extrude": true,
+   "volume_mm3": 246.817
+  },
+  {
+   "label": "D 扇角10.7 r8.75→11 点65",
+   "contours": 1,
+   "extrude": true,
+   "volume_mm3": 2460.915
+  }
+ ]
+}

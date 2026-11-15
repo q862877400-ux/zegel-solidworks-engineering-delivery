@@ -1,0 +1,22 @@
+{
+ "at": "2026-11-07T13:25:04",
+ "steps": [
+  {
+   "splines": 40,
+   "arcs": 40,
+   "errors": []
+  }
+ ],
+ "segments": 80,
+ "contours": 1,
+ "contours_selected": 1,
+ "extrude": false,
+ "volume_mm3": 0.0,
+ "bbox": {
+  "length": 22.0,
+  "width": 22.0,
+  "height": 0.0,
+  "axis_order": "model_xyz"
+ },
+ "ok": false
+}
